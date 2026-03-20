@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ambera AI — Enregistrer un bien</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --gold:#ffb432;--gold2:#ffe08a;--bronze:#e8720a;
+  --dark:#07070f;--dark2:#0d0d1a;--dark3:#131328;
+  --line:#1e1e3a;--muted:#5a5a8a;--text:#d0cce0;
+  --green:#22c55e;--red:#ef4444;--blue:#38bdf8;
+}
+body{background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Rajdhani',sans-serif;padding:20px;}
+.phone{width:375px;height:812px;background:var(--dark);border-radius:48px;border:2px solid #1a1a2e;box-shadow:0 40px 120px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,255,255,0.05);position:relative;overflow:hidden;flex-shrink:0;}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:34px;background:#000;border-radius:0 0 20px 20px;z-index:100;}
+.status-bar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 6px;z-index:99;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);}
+
+/* SCREENS */
+.screen{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 0.3s ease,transform 0.3s ease;transform:translateX(30px);overflow:hidden;}
+.screen.active{opacity:1;pointer-events:all;transform:translateX(0);}
+.screen.exit{opacity:0;transform:translateX(-30px);}
+
+/* HEADER */
+.page-header{padding:54px 24px 16px;background:linear-gradient(180deg,var(--dark) 0%,transparent 100%);}
+.back-btn{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer;margin-bottom:14px;}
+.back-btn:active{color:var(--gold);}
+.page-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--gold);}
+.page-sub{font-size:12px;color:var(--muted);margin-top:3px;letter-spacing:0.5px;}
+
+/* PROGRESS STEPS */
+.progress-steps{
+  display:flex;align-items:center;padding:0 24px;margin-bottom:4px;
+}
+.step{
+  display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;
+}
+.step-circle{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;border:2px solid var(--line);
+  color:var(--muted);transition:all 0.3s;
+}
+.step.active .step-circle{border-color:var(--gold);color:var(--gold);background:rgba(255,180,50,0.08);}
+.step.done .step-circle{border-color:var(--green);background:var(--green);color:#fff;}
+.step-label{font-size:9px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
+.step.active .step-label{color:var(--gold);}
+.step.done .step-label{color:var(--green);}
+.step-line{flex:1;height:1px;background:var(--line);margin:0 4px;margin-bottom:16px;transition:background 0.3s;}
+.step-line.done{background:var(--green);}
+
+/* SCROLL */
+.scroll-area{padding:8px 24px 40px;overflow-y:auto;height:calc(100% - 200px);}
+.scroll-area::-webkit-scrollbar{display:none;}
+
+/* FORM */
+.form-group{margin-bottom:14px;}
+.form-label{font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:7px;display:block;}
+.form-input{
+  width:100%;background:var(--dark3);border:1px solid var(--line);
+  border-radius:12px;padding:13px 14px;
+  font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:500;
+  color:var(--text);outline:none;transition:border-color 0.2s;
+}
+.form-input:focus{border-color:rgba(255,180,50,0.4);}
+.form-input::placeholder{color:#3a3a5a;}
+.form-select{
+  width:100%;background:var(--dark3);border:1px solid var(--line);
+  border-radius:12px;padding:13px 14px;
+  font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:500;
+  color:var(--text);outline:none;cursor:pointer;
+  -webkit-appearance:none;transition:border-color 0.2s;
+}
+.form-select:focus{border-color:rgba(255,180,50,0.4);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+/* TYPE SELECTOR */
+.type-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.type-card{
+  background:var(--dark3);border:2px solid var(--line);
+  border-radius:14px;padding:14px 8px;text-align:center;
+  cursor:pointer;transition:all 0.2s;
+}
+.type-card.selected{border-color:var(--gold);background:rgba(255,180,50,0.07);}
+.type-card:active{transform:scale(0.96);}
+.type-icon{font-size:26px;margin-bottom:6px;}
+.type-name{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:0.5px;}
+.type-card.selected .type-name{color:var(--gold);}
+.type-check{
+  position:absolute;top:6px;right:6px;width:16px;height:16px;
+  border-radius:50%;background:var(--gold);display:none;
+  align-items:center;justify-content:center;font-size:9px;color:#0a0a14;
+}
+.type-card{position:relative;}
+.type-card.selected .type-check{display:flex;}
+
+/* SCAN VIN BOX */
+.scan-vin-box{
+  background:var(--dark3);border:1px dashed rgba(255,180,50,0.3);
+  border-radius:14px;padding:20px;text-align:center;
+  cursor:pointer;transition:all 0.2s;margin-bottom:14px;
+}
+.scan-vin-box:active{border-color:var(--gold);background:rgba(255,180,50,0.05);}
+.svb-icon{font-size:32px;margin-bottom:8px;}
+.svb-title{font-size:14px;font-weight:600;color:#c0b870;margin-bottom:4px;}
+.svb-sub{font-size:11px;color:var(--muted);}
+.svb-result{
+  background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);
+  border-radius:10px;padding:10px;margin-top:10px;display:none;
+  font-size:12px;color:#6ada9a;text-align:left;
+}
+.svb-result.show{display:block;animation:fadeUp 0.3s ease;}
+
+/* PROTECTION LAYERS */
+.layer-toggles{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;}
+.layer-toggle{
+  display:flex;align-items:center;gap:12px;
+  background:var(--dark3);border:1px solid var(--line);
+  border-radius:12px;padding:14px;transition:border-color 0.2s;
+}
+.layer-toggle.on{border-color:rgba(255,180,50,0.2);}
+.lt-icon{font-size:22px;flex-shrink:0;}
+.lt-info{flex:1;}
+.lt-name{font-size:14px;font-weight:600;color:#c0b870;}
+.lt-desc{font-size:11px;color:var(--muted);margin-top:2px;}
+.lt-toggle{
+  width:42px;height:24px;border-radius:12px;
+  background:var(--line);cursor:pointer;
+  display:flex;align-items:center;padding:3px;
+  transition:background 0.3s;flex-shrink:0;
+}
+.lt-toggle.on{background:var(--gold);}
+.lt-knob{
+  width:18px;height:18px;border-radius:50%;background:#fff;
+  transition:transform 0.3s;
+}
+.lt-toggle.on .lt-knob{transform:translateX(18px);}
+
+/* PHOTO UPLOAD */
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.photo-slot{
+  aspect-ratio:1;background:var(--dark3);border:1px dashed var(--line);
+  border-radius:12px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;cursor:pointer;
+  transition:all 0.2s;font-size:22px;gap:4px;
+}
+.photo-slot:active{border-color:var(--gold);background:rgba(255,180,50,0.05);}
+.photo-slot.filled{border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.05);}
+.photo-label{font-size:9px;color:var(--muted);letter-spacing:1px;}
+
+/* BUTTONS */
+.btn-primary{
+  width:100%;background:linear-gradient(135deg,var(--gold),var(--bronze));
+  border:none;border-radius:14px;padding:16px;
+  font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;
+  letter-spacing:2px;color:#0a0a14;cursor:pointer;
+  text-transform:uppercase;box-shadow:0 4px 20px rgba(255,180,50,0.25);
+  transition:all 0.2s;margin-bottom:10px;
+}
+.btn-primary:active{transform:scale(0.97);}
+.btn-secondary{
+  width:100%;background:transparent;border:1px solid var(--line);
+  border-radius:14px;padding:14px;
+  font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;
+  color:var(--muted);cursor:pointer;transition:all 0.2s;
+}
+.btn-secondary:active{border-color:rgba(255,180,50,0.3);color:var(--gold);}
+
+/* SUCCESS */
+#success{
+  background:var(--dark);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;
+  padding:40px 28px;text-align:center;
+}
+#success::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 45%,rgba(34,197,94,0.06) 0%,transparent 70%);}
+.success-ring{width:90px;height:90px;border-radius:50%;background:rgba(34,197,94,0.1);border:2px solid rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;z-index:2;animation:pop 0.5s ease;}
+@keyframes pop{0%{transform:scale(0);}60%{transform:scale(1.15);}100%{transform:scale(1);}}
+.success-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--green);position:relative;z-index:2;}
+.success-vehicle{font-family:'Cinzel',serif;font-size:18px;color:var(--gold);position:relative;z-index:2;}
+.success-desc{font-size:13px;color:var(--muted);line-height:1.6;max-width:280px;position:relative;z-index:2;}
+
+.blockchain-card{
+  background:var(--dark2);border:1px solid rgba(168,85,247,0.2);
+  border-radius:14px;padding:14px;width:100%;position:relative;z-index:2;
+}
+.bc-title{font-size:10px;letter-spacing:2px;color:#a855f7;text-transform:uppercase;margin-bottom:8px;}
+.bc-hash{font-size:10px;color:#6a6a9a;font-family:monospace;word-break:break-all;line-height:1.6;}
+
+.layers-active{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;position:relative;z-index:2;}
+.la-tag{background:rgba(255,180,50,0.08);border:1px solid rgba(255,180,50,0.15);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--gold);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* LOADING */
+.btn-loading{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,0,0,0.3);border-top-color:#0a0a14;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+  <!-- Lang bar -->
+  <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;padding:6px 14px 0;position:relative;">
+    <input id="rgSrInput" placeholder="🔍 Chercher..." oninput="rgSrFilter()" onfocus="rgSrOpen()" onblur="setTimeout(rgSrClose,200)"
+      style="flex:1;padding:5px 10px;border-radius:14px;border:1px solid #FFB432;background:rgba(255,180,50,.08);color:#FFE08A;font-size:11px;outline:none;max-width:130px;" />
+    <div id="rgSrDrop" style="position:absolute;top:34px;left:14px;width:220px;background:#0D0D1A;border:1px solid #FFB432;border-radius:10px;overflow:hidden;display:none;z-index:9999;"></div>
+    <button onclick="rgLang('fr')" id="rgBtnFr" style="padding:3px 9px;border-radius:14px;border:2px solid #FFB432;background:#FFB432;color:#0D0D1A;font-weight:700;font-size:10px;cursor:pointer;">FR</button>
+    <button onclick="rgLang('en')" id="rgBtnEn" style="padding:3px 9px;border-radius:14px;border:2px solid #FFB432;background:transparent;color:#FFB432;font-weight:700;font-size:10px;cursor:pointer;">EN</button>
+  </div>
+
+  <!-- ══ STEP 1: TYPE DE BIEN ══ -->
+  <div class="screen active" id="step1">
+    <div class="page-header">
+      <div class="back-btn" onclick="history.back()">← Retour</div>
+      <div class="page-title">Nouveau bien</div>
+      <div class="page-sub">Enregistrez un bien à protéger</div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-steps">
+      <div class="step active" id="ps1"><div class="step-circle">1</div><div class="step-label">Type</div></div>
+      <div class="step-line" id="pl1"></div>
+      <div class="step" id="ps2"><div class="step-circle">2</div><div class="step-label">Infos</div></div>
+      <div class="step-line" id="pl2"></div>
+      <div class="step" id="ps3"><div class="step-circle">3</div><div class="step-label">Protection</div></div>
+      <div class="step-line" id="pl3"></div>
+      <div class="step" id="ps4"><div class="step-circle">4</div><div class="step-label">Photos</div></div>
+    </div>
+
+    <div class="scroll-area">
+      <div class="form-group" style="margin-bottom:20px;">
+        <label class="form-label">Quel type de bien ?</label>
+        <div class="type-grid">
+          <div class="type-card selected" onclick="selectType(this,'Moto')">
+            <div class="type-check">✓</div>
+            <div class="type-icon">🏍️</div>
+            <div class="type-name">Moto</div>
+          </div>
+          <div class="type-card" onclick="selectType(this,'Voiture')">
+            <div class="type-check">✓</div>
+            <div class="type-icon">🚗</div>
+            <div class="type-name">Voiture</div>
+          </div>
+          <div class="type-card" onclick="selectType(this,'Camion')">
+            <div class="type-check">✓</div>
+            <div class="type-icon">🚚</div>
+            <div class="type-name">Camion</div>
+          </div>
+          <div class="type-card" onclick="selectType(this,'Téléphone')">
+            <div class="type-check">✓</div>
+            <div class="type-icon">📱</div>
+            <div class="type-name">Téléphone</div>
+          </div>
+          <div class="type-card" onclick="selectType(this,'Ordinateur')">
+            <div class="type-check">✓</div>
+            <div class="type-icon">💻</div>
+            <div class="type-name">Ordi</div>
+          </div>
+          <div class="type-card" onclick="selectType(this,'Autre')">
+            <div class="type-check">✓</div>
+            <div class="type-icon">📦</div>
+            <div class="type-name">Autre</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scanner VIN -->
+      <div class="scan-vin-box" onclick="doVinScan()">
+        <div class="svb-icon">📷</div>
+        <div class="svb-title">Scanner le VIN / Numéro de série</div>
+        <div class="svb-sub">Pointez vers le châssis ou l'étiquette</div>
+        <div class="svb-result" id="vinResult">
+          ✅ VIN détecté : <strong>JTDBF10K400157842</strong><br>
+          Honda CB 125F · 2021 · Cameroun
+        </div>
+      </div>
+
+      <div style="text-align:center;font-size:12px;color:var(--muted);margin-bottom:14px;letter-spacing:1px;">— ou saisir manuellement —</div>
+
+      <div class="form-group">
+        <label class="form-label">Numéro VIN / Série</label>
+        <input class="form-input" type="text" placeholder="Ex: JTDBF10K400157842" id="vinInput">
+      </div>
+
+      <button class="btn-primary" onclick="goToStep(2)">Continuer →</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 2: INFORMATIONS ══ -->
+  <div class="screen" id="step2">
+    <div class="page-header">
+      <div class="back-btn" onclick="goToStep(1)">← Retour</div>
+      <div class="page-title">Informations</div>
+      <div class="page-sub">Détails du bien</div>
+    </div>
+    <div class="progress-steps">
+      <div class="step done" id="ps1b"><div class="step-circle">✓</div><div class="step-label">Type</div></div>
+      <div class="step-line done"></div>
+      <div class="step active"><div class="step-circle">2</div><div class="step-label">Infos</div></div>
+      <div class="step-line"></div>
+      <div class="step"><div class="step-circle">3</div><div class="step-label">Protection</div></div>
+      <div class="step-line"></div>
+      <div class="step"><div class="step-circle">4</div><div class="step-label">Photos</div></div>
+    </div>
+    <div class="scroll-area">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Marque</label>
+          <input class="form-input" type="text" placeholder="Ex: Honda" id="brand">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Modèle</label>
+          <input class="form-input" type="text" placeholder="Ex: CB 125F" id="model">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Année</label>
+          <input class="form-input" type="number" placeholder="2021" id="year">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Couleur</label>
+          <input class="form-input" type="text" placeholder="Ex: Rouge" id="color">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Plaque d'immatriculation</label>
+        <input class="form-input" type="text" placeholder="Ex: CE · 4821 · A" id="plate">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Valeur estimée (FCFA)</label>
+        <input class="form-input" type="number" placeholder="Ex: 450 000" id="value">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Zone de stationnement habituelle</label>
+        <input class="form-input" type="text" placeholder="Ex: Quartier Melen, Yaoundé" id="zone">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Notes (optionnel)</label>
+        <input class="form-input" type="text" placeholder="Ex: Moto principale de travail" id="notes">
+      </div>
+
+      <button class="btn-primary" onclick="goToStep(3)">Continuer →</button>
+      <button class="btn-secondary" onclick="goToStep(1)">Retour</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 3: PROTECTION ══ -->
+  <div class="screen" id="step3">
+    <div class="page-header">
+      <div class="back-btn" onclick="goToStep(2)">← Retour</div>
+      <div class="page-title">Protection</div>
+      <div class="page-sub">Choisissez vos couches de sécurité</div>
+    </div>
+    <div class="progress-steps">
+      <div class="step done"><div class="step-circle">✓</div><div class="step-label">Type</div></div>
+      <div class="step-line done"></div>
+      <div class="step done"><div class="step-circle">✓</div><div class="step-label">Infos</div></div>
+      <div class="step-line done"></div>
+      <div class="step active"><div class="step-circle">3</div><div class="step-label">Protection</div></div>
+      <div class="step-line"></div>
+      <div class="step"><div class="step-circle">4</div><div class="step-label">Photos</div></div>
+    </div>
+    <div class="scroll-area">
+
+      <div style="background:rgba(255,180,50,0.04);border:1px solid rgba(255,180,50,0.1);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:13px;color:#8080a8;line-height:1.5;">
+        💡 Activez au moins 2 couches pour une protection optimale. Les 4 couches ensemble = protection maximale.
+      </div>
+
+      <div class="layer-toggles">
+        <div class="layer-toggle on" id="lt1">
+          <div class="lt-icon">👁️</div>
+          <div class="lt-info">
+            <div class="lt-name">IA Vision</div>
+            <div class="lt-desc">Scan VIN + détection altération</div>
+          </div>
+          <div class="lt-toggle on" onclick="toggleLayer('lt1',this)"><div class="lt-knob"></div></div>
+        </div>
+        <div class="layer-toggle on" id="lt2">
+          <div class="lt-icon">📡</div>
+          <div class="lt-info">
+            <div class="lt-name">Tracker GPS</div>
+            <div class="lt-desc">Localisation 24h/24 · Alertes</div>
+          </div>
+          <div class="lt-toggle on" onclick="toggleLayer('lt2',this)"><div class="lt-knob"></div></div>
+        </div>
+        <div class="layer-toggle on" id="lt3">
+          <div class="lt-icon">⛓️</div>
+          <div class="lt-info">
+            <div class="lt-name">Blockchain</div>
+            <div class="lt-desc">Identité immuable enregistrée</div>
+          </div>
+          <div class="lt-toggle on" onclick="toggleLayer('lt3',this)"><div class="lt-knob"></div></div>
+        </div>
+        <div class="layer-toggle" id="lt4">
+          <div class="lt-icon">🧬</div>
+          <div class="lt-info">
+            <div class="lt-name">ADN Physique</div>
+            <div class="lt-desc">Marquage UV · Technicien requis</div>
+          </div>
+          <div class="lt-toggle" onclick="toggleLayer('lt4',this)"><div class="lt-knob"></div></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Zone de sécurité GPS (géofencing)</label>
+        <select class="form-select">
+          <option>Rayon 500m autour du domicile</option>
+          <option>Rayon 1km autour du domicile</option>
+          <option>Quartier complet</option>
+          <option>Zone personnalisée</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Alerte si immobile plus de</label>
+        <select class="form-select">
+          <option>Ne pas alerter</option>
+          <option>30 minutes</option>
+          <option>1 heure</option>
+          <option>3 heures</option>
+          <option>8 heures</option>
+        </select>
+      </div>
+
+      <button class="btn-primary" onclick="goToStep(4)">Continuer →</button>
+      <button class="btn-secondary" onclick="goToStep(2)">Retour</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 4: PHOTOS ══ -->
+  <div class="screen" id="step4">
+    <div class="page-header">
+      <div class="back-btn" onclick="goToStep(3)">← Retour</div>
+      <div class="page-title">Photos</div>
+      <div class="page-sub">Documentez votre bien</div>
+    </div>
+    <div class="progress-steps">
+      <div class="step done"><div class="step-circle">✓</div><div class="step-label">Type</div></div>
+      <div class="step-line done"></div>
+      <div class="step done"><div class="step-circle">✓</div><div class="step-label">Infos</div></div>
+      <div class="step-line done"></div>
+      <div class="step done"><div class="step-circle">✓</div><div class="step-label">Protection</div></div>
+      <div class="step-line done"></div>
+      <div class="step active"><div class="step-circle">4</div><div class="step-label">Photos</div></div>
+    </div>
+    <div class="scroll-area">
+
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5;">
+        📸 Prenez des photos de votre bien. Elles serviront de preuve en cas de vol.
+      </div>
+
+      <label class="form-label">Photos du véhicule</label>
+      <div class="photo-grid">
+        <div class="photo-slot" onclick="addPhoto(this,'face')">
+          <span>📷</span><span class="photo-label">Face</span>
+        </div>
+        <div class="photo-slot" onclick="addPhoto(this,'arrière')">
+          <span>📷</span><span class="photo-label">Arrière</span>
+        </div>
+        <div class="photo-slot" onclick="addPhoto(this,'côté')">
+          <span>📷</span><span class="photo-label">Côté</span>
+        </div>
+        <div class="photo-slot" onclick="addPhoto(this,'châssis')">
+          <span>📷</span><span class="photo-label">Châssis</span>
+        </div>
+        <div class="photo-slot" onclick="addPhoto(this,'plaque')">
+          <span>📷</span><span class="photo-label">Plaque</span>
+        </div>
+        <div class="photo-slot" onclick="addPhoto(this,'autre')">
+          <span>➕</span><span class="photo-label">Autre</span>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top:8px;">
+        <label class="form-label">Couleur principale</label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <div onclick="selectColor(this,'Rouge')" style="width:32px;height:32px;border-radius:50%;background:#ef4444;cursor:pointer;border:2px solid transparent;transition:all 0.2s;"></div>
+          <div onclick="selectColor(this,'Bleu')" style="width:32px;height:32px;border-radius:50%;background:#38bdf8;cursor:pointer;border:2px solid transparent;transition:all 0.2s;"></div>
+          <div onclick="selectColor(this,'Noir')" style="width:32px;height:32px;border-radius:50%;background:#1a1a2e;cursor:pointer;border:2px solid transparent;border-color:var(--line);transition:all 0.2s;"></div>
+          <div onclick="selectColor(this,'Blanc')" style="width:32px;height:32px;border-radius:50%;background:#f0f0f0;cursor:pointer;border:2px solid transparent;transition:all 0.2s;"></div>
+          <div onclick="selectColor(this,'Argent')" style="width:32px;height:32px;border-radius:50%;background:#9ca3af;cursor:pointer;border:2px solid transparent;transition:all 0.2s;"></div>
+          <div onclick="selectColor(this,'Jaune')" style="width:32px;height:32px;border-radius:50%;background:#fbbf24;cursor:pointer;border:2px solid transparent;transition:all 0.2s;"></div>
+          <div onclick="selectColor(this,'Vert')" style="width:32px;height:32px;border-radius:50%;background:#22c55e;cursor:pointer;border:2px solid transparent;transition:all 0.2s;"></div>
+          <div onclick="selectColor(this,'Marron')" style="width:32px;height:32px;border-radius:50%;background:#92400e;cursor:pointer;border:2px solid transparent;transition:all 0.2s;"></div>
+        </div>
+      </div>
+
+      <button class="btn-primary" id="finalBtn" onclick="doRegister()" style="margin-top:14px;">
+        🛡️ Enregistrer & Protéger
+      </button>
+      <button class="btn-secondary" onclick="goToStep(3)">Retour</button>
+    </div>
+  </div>
+
+  <!-- ══ SUCCESS ══ -->
+  <div class="screen" id="success">
+    <div class="success-ring">🛡️</div>
+    <div class="success-title">Bien enregistré !</div>
+    <div class="success-vehicle" id="successVehicle">Honda CB 125F</div>
+    <div class="success-desc">Votre bien est maintenant protégé et enregistré sur la Blockchain Ambera AI.</div>
+
+    <div class="blockchain-card">
+      <div class="bc-title">⛓️ Blockchain — Identité enregistrée</div>
+      <div class="bc-hash" id="bcHash">0x7f4a...b3c2 · Bloc #847291<br>JTDBF10K400157842 · 07/03/2026 09:41</div>
+    </div>
+
+    <div class="layers-active" id="layersActive">
+      <span class="la-tag">👁️ IA Vision</span>
+      <span class="la-tag">📡 GPS Actif</span>
+      <span class="la-tag">⛓️ Blockchain</span>
+    </div>
+
+    <button class="btn-primary" onclick="goToStep(1)" style="width:100%;margin-top:6px;position:relative;z-index:2;">
+      + Ajouter un autre bien
+    </button>
+    <button class="btn-secondary" style="width:100%;position:relative;z-index:2;" onclick="goToStep(1)">
+      Retour au tableau de bord
+    </button>
+  </div>
+
+</div>
+
+<script>
+let current = 'step1';
+let selectedTypeName = 'Moto';
+
+function goTo(id){
+  if(id===current) return;
+  const prev=document.getElementById(current);
+  const next=document.getElementById(id);
+  prev.classList.add('exit');
+  setTimeout(()=>{prev.classList.remove('active','exit');next.classList.add('active');current=id;},280);
+}
+
+function goToStep(n){ goTo(n===5?'success':'step'+n); }
+
+function selectType(card, name){
+  document.querySelectorAll('.type-card').forEach(c=>c.classList.remove('selected'));
+  card.classList.add('selected');
+  selectedTypeName = name;
+}
+
+function doVinScan(){
+  const result = document.getElementById('vinResult');
+  const input  = document.getElementById('vinInput');
+  result.classList.add('show');
+  input.value = 'JTDBF10K400157842';
+}
+
+function toggleLayer(id, toggle){
+  const card = document.getElementById(id);
+  toggle.classList.toggle('on');
+  card.classList.toggle('on');
+}
+
+function addPhoto(slot, label){
+  slot.classList.add('filled');
+  slot.innerHTML = `<span>✅</span><span class="photo-label">${label}</span>`;
+}
+
+function selectColor(dot, name){
+  document.querySelectorAll('.photo-slot').forEach(()=>{});
+  dot.style.border = '2px solid #fff';
+  const colorInput = document.getElementById('color');
+  if(colorInput) colorInput.value = name;
+}
+
+function doRegister(){
+  const btn = document.getElementById('finalBtn');
+  btn.innerHTML = '<span class="btn-loading"></span> Enregistrement...';
+  btn.disabled = true;
+
+  // simulate blockchain steps
+  setTimeout(()=>{
+    const brand = document.getElementById('brand').value || 'Honda';
+    const model = document.getElementById('model').value || 'CB 125F';
+    const vehicleName = `${brand} ${model}`;
+    document.getElementById('successVehicle').textContent = vehicleName || 'Votre bien';
+
+    // random blockchain hash
+    const hash = '0x' + Math.random().toString(16).substr(2,4) + '...' + Math.random().toString(16).substr(2,4);
+    const bloc = Math.floor(800000 + Math.random()*99999);
+    document.getElementById('bcHash').textContent = `${hash} · Bloc #${bloc}\nJTDBF10K400157842 · 07/03/2026 09:41`;
+
+    btn.innerHTML = '🛡️ Enregistrer & Protéger';
+    btn.disabled = false;
+    goTo('success');
+  }, 2200);
+}
+</script>
+
+<script>
+var _rgLang='fr';
+var RG_SR={
+  fr:[
+    {t:'Type de bien — Moto, Voiture, Téléphone', k:'type moto voiture téléphone colis'},
+    {t:'Informations VIN — Châssis plaque', k:'vin chassis plaque infos véhicule'},
+    {t:'Protection — GPS Blockchain ADN IA', k:'protection gps blockchain adn ia couches'},
+    {t:'Géofencing — Zone sécurisée', k:'géofencing zone sécurisée périmètre'},
+    {t:'Photos — Enregistrement images', k:'photos images enregistrement bien'}
+  ],
+  en:[
+    {t:'Asset type — Bike, Car, Phone', k:'type bike car phone parcel'},
+    {t:'VIN Info — Chassis plate', k:'vin chassis plate vehicle info'},
+    {t:'Protection — GPS Blockchain DNA AI', k:'protection gps blockchain dna ai layers'},
+    {t:'Geofencing — Secure zone', k:'geofencing secure zone perimeter'},
+    {t:'Photos — Recording images', k:'photos images recording asset'}
+  ]
+};
+var RG_LABELS={
+  fr:{step1:{title:'Nouveau bien',sub:'Enregistrez un bien à protéger'},step2:{title:'Informations VIN',sub:'Renseignez les détails du véhicule'},step3:{title:'Couches de protection',sub:'Choisissez votre niveau de protection'},step4:{title:'Photos du bien',sub:'Prenez des photos pour identification'}},
+  en:{step1:{title:'New asset',sub:'Register an asset to protect'},step2:{title:'VIN Information',sub:'Enter vehicle details'},step3:{title:'Protection layers',sub:'Choose your protection level'},step4:{title:'Asset photos',sub:'Take photos for identification'}}
+};
+function rgLang(l){
+  _rgLang=l;
+  document.getElementById('rgBtnFr').style.background=l==='fr'?'#FFB432':'transparent';
+  document.getElementById('rgBtnFr').style.color=l==='fr'?'#0D0D1A':'#FFB432';
+  document.getElementById('rgBtnEn').style.background=l==='en'?'#FFB432':'transparent';
+  document.getElementById('rgBtnEn').style.color=l==='en'?'#0D0D1A':'#FFB432';
+  var steps=['step1','step2','step3','step4'];
+  steps.forEach(function(s,i){
+    var el=document.getElementById(s);
+    if(!el)return;
+    var d=RG_LABELS[l][s];
+    var tEl=el.querySelector('.page-title');
+    var sEl=el.querySelector('.page-sub');
+    if(tEl&&d)tEl.textContent=d.title;
+    if(sEl&&d)sEl.textContent=d.sub;
+  });
+}
+function rgSrOpen(){
+  var idx=RG_SR[_rgLang];
+  var drop=document.getElementById('rgSrDrop');
+  drop.innerHTML=idx.map(function(it,i){return'<div style="padding:8px 12px;color:#FFE08A;font-size:11px;cursor:pointer;border-bottom:1px solid #1e1e3a;" onmousedown="rgSrGo('+i+')">'+it.t+'</div>';}).join('');
+  drop.style.display='block';
+}
+function rgSrClose(){document.getElementById('rgSrDrop').style.display='none';}
+function rgSrFilter(){
+  var q=document.getElementById('rgSrInput').value.toLowerCase();
+  var idx=RG_SR[_rgLang];
+  var drop=document.getElementById('rgSrDrop');
+  var res=q?idx.filter(function(it){return it.k.indexOf(q)>-1||it.t.toLowerCase().indexOf(q)>-1;}):idx;
+  drop.innerHTML=res.length?res.map(function(it){var gi=idx.indexOf(it);return'<div style="padding:8px 12px;color:#FFE08A;font-size:11px;cursor:pointer;border-bottom:1px solid #1e1e3a;" onmousedown="rgSrGo('+gi+')">'+it.t+'</div>';}).join(''):'<div style="padding:8px 12px;color:#6a6a8a;font-size:11px;">Aucun résultat</div>';
+  drop.style.display='block';
+}
+function rgSrGo(i){
+  var steps=['step1','step2','step3','step4'];
+  var target=steps[i]||'step1';
+  if(typeof goToStep==='function')goToStep(i+1);
+  else{
+    document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+    var el=document.getElementById(target);
+    if(el)el.classList.add('active');
+  }
+  document.getElementById('rgSrInput').value='';
+  rgSrClose();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ambera AI — Interface Police</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --gold:#ffb432;--gold2:#ffe08a;--bronze:#e8720a;
+  --dark:#07070f;--dark2:#0d0d1a;--dark3:#131328;
+  --line:#1e1e3a;--muted:#5a5a8a;--text:#d0cce0;
+  --green:#22c55e;--red:#ef4444;--blue:#38bdf8;
+  --police:#1a3a6e;--police2:#1e4080;--police-accent:#4a8fff;
+}
+body{background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Rajdhani',sans-serif;padding:20px;}
+.phone{width:375px;height:812px;background:var(--dark);border-radius:48px;border:2px solid #1a1a2e;box-shadow:0 40px 120px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,255,255,0.05);position:relative;overflow:hidden;flex-shrink:0;}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:34px;background:#000;border-radius:0 0 20px 20px;z-index:100;}
+.status-bar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 6px;z-index:99;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);}
+
+.screen{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 0.3s ease,transform 0.3s ease;transform:translateX(30px);overflow:hidden;}
+.screen.active{opacity:1;pointer-events:all;transform:translateX(0);}
+.screen.exit{opacity:0;transform:translateX(-30px);}
+
+/* ════════════════════
+   SCREEN 1 — LOGIN POLICE
+════════════════════ */
+#login{
+  background:var(--dark);
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:space-between;padding:60px 28px 48px;
+}
+#login::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 55% at 50% 35%,rgba(26,58,110,0.3) 0%,transparent 70%);
+}
+
+.login-top{display:flex;flex-direction:column;align-items:center;gap:12px;position:relative;z-index:2;}
+.police-badge{
+  width:90px;height:90px;border-radius:50%;
+  background:linear-gradient(135deg,#1a3a6e,#1e4080);
+  border:3px solid rgba(74,143,255,0.4);
+  display:flex;align-items:center;justify-content:center;
+  font-size:40px;
+  box-shadow:0 0 0 6px rgba(74,143,255,0.1),0 0 30px rgba(74,143,255,0.2);
+  animation:badgePulse 3s ease-in-out infinite;
+}
+@keyframes badgePulse{0%,100%{box-shadow:0 0 0 4px rgba(74,143,255,0.1);}50%{box-shadow:0 0 0 10px rgba(74,143,255,0.05),0 0 30px rgba(74,143,255,0.15);}}
+.login-title{font-family:'Cinzel',serif;font-size:18px;font-weight:900;color:#c0d0f0;letter-spacing:2px;text-align:center;}
+.login-sub{font-size:11px;letter-spacing:3px;color:#3a4a8a;text-transform:uppercase;text-align:center;}
+.ambera-tag{font-size:11px;color:var(--gold);letter-spacing:2px;margin-top:4px;}
+
+.login-form{width:100%;display:flex;flex-direction:column;gap:12px;position:relative;z-index:2;}
+.form-label{font-size:10px;letter-spacing:2px;color:#3a4a8a;text-transform:uppercase;margin-bottom:6px;display:block;}
+.form-input{
+  width:100%;background:rgba(26,58,110,0.2);
+  border:1px solid rgba(74,143,255,0.2);
+  border-radius:12px;padding:13px 14px;
+  font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:500;
+  color:var(--text);outline:none;transition:border-color 0.2s;
+}
+.form-input:focus{border-color:rgba(74,143,255,0.5);}
+.form-input::placeholder{color:#2a3a6a;}
+
+.btn-police{
+  width:100%;background:linear-gradient(135deg,#1e4080,#1a3a6e);
+  border:1px solid rgba(74,143,255,0.3);border-radius:14px;padding:16px;
+  font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;
+  letter-spacing:2px;color:#c0d0ff;cursor:pointer;
+  text-transform:uppercase;position:relative;z-index:2;
+  box-shadow:0 4px 20px rgba(26,58,110,0.4);
+  transition:all 0.2s;
+}
+.btn-police:active{transform:scale(0.97);}
+
+.login-footer{font-size:11px;color:#2a3a6a;text-align:center;position:relative;z-index:2;letter-spacing:1px;}
+
+/* ════════════════════
+   BOTTOM NAV
+════════════════════ */
+.bottom-nav{
+  position:absolute;bottom:0;left:0;right:0;height:82px;
+  background:rgba(10,14,30,0.97);border-top:1px solid rgba(74,143,255,0.1);
+  display:flex;align-items:center;justify-content:space-around;
+  padding:0 10px 20px;backdrop-filter:blur(20px);z-index:90;
+}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:8px 14px;border-radius:12px;transition:all 0.2s;font-size:10px;letter-spacing:1px;color:#3a4a8a;}
+.nav-item.active{color:var(--police-accent);}
+.nav-item:active{transform:scale(0.9);}
+.nav-icon{font-size:20px;}
+
+/* PAGE HEADER */
+.page-header{padding:54px 20px 14px;background:linear-gradient(180deg,rgba(7,7,15,0.98) 0%,transparent 100%);}
+.page-title{font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--police-accent);}
+.page-sub{font-size:11px;color:#3a4a8a;margin-top:2px;letter-spacing:1px;}
+.scroll-area{padding:8px 20px 100px;overflow-y:auto;height:calc(100% - 120px);}
+.scroll-area::-webkit-scrollbar{display:none;}
+
+/* SCAN PANEL */
+.scan-box{
+  background:rgba(26,58,110,0.15);
+  border:1px dashed rgba(74,143,255,0.25);
+  border-radius:16px;padding:0;overflow:hidden;margin-bottom:16px;
+}
+.scan-camera-area{
+  height:160px;background:#050a14;position:relative;overflow:hidden;
+}
+.scan-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(74,143,255,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(74,143,255,0.05) 1px,transparent 1px);
+  background-size:30px 30px;
+}
+.scan-frame-corners{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:180px;height:80px;}
+.sfc{position:absolute;width:18px;height:18px;}
+.sfc.tl{top:0;left:0;border-top:2px solid var(--police-accent);border-left:2px solid var(--police-accent);}
+.sfc.tr{top:0;right:0;border-top:2px solid var(--police-accent);border-right:2px solid var(--police-accent);}
+.sfc.bl{bottom:0;left:0;border-bottom:2px solid var(--police-accent);border-left:2px solid var(--police-accent);}
+.sfc.br{bottom:0;right:0;border-bottom:2px solid var(--police-accent);border-right:2px solid var(--police-accent);}
+.scan-line-police{
+  position:absolute;left:20%;right:20%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--police-accent),transparent);
+  animation:scanPolice 2s ease-in-out infinite;top:30%;
+}
+@keyframes scanPolice{0%{top:15%;}100%{top:85%;}}
+.scan-cam-label{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-size:10px;letter-spacing:2px;color:rgba(74,143,255,0.5);white-space:nowrap;}
+
+.scan-controls{padding:12px 14px;display:flex;gap:8px;}
+.scan-btn-police{
+  flex:1;background:rgba(26,58,110,0.3);border:1px solid rgba(74,143,255,0.2);
+  border-radius:10px;padding:11px;
+  font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;
+  color:var(--police-accent);cursor:pointer;transition:all 0.2s;
+  text-align:center;
+}
+.scan-btn-police:active{background:rgba(26,58,110,0.5);}
+.scan-btn-police.primary{
+  background:linear-gradient(135deg,#1e4080,#1a3a6e);
+  color:#c0d0ff;border-color:rgba(74,143,255,0.3);
+}
+
+/* RESULT CARDS */
+.result-card{
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:14px;padding:14px;margin-bottom:12px;
+}
+.result-card.danger{border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.04);}
+.result-card.safe{border-color:rgba(34,197,94,0.25);background:rgba(34,197,94,0.03);}
+.result-card.warning{border-color:rgba(255,180,50,0.25);background:rgba(255,180,50,0.03);}
+
+.rc-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.rc-icon{font-size:22px;}
+.rc-title{font-family:'Cinzel',serif;font-size:14px;font-weight:700;}
+.rc-title.red{color:var(--red);}
+.rc-title.green{color:var(--green);}
+.rc-title.gold{color:var(--gold);}
+.rc-badge{margin-left:auto;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:1px;}
+.badge-danger{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3);}
+.badge-safe{background:rgba(34,197,94,0.1);color:var(--green);border:1px solid rgba(34,197,94,0.2);}
+.badge-warn{background:rgba(255,180,50,0.1);color:var(--gold);border:1px solid rgba(255,180,50,0.2);}
+
+.rc-row{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.rc-row:last-child{border-bottom:none;}
+.rc-key{color:var(--muted);}
+.rc-val{color:#c0c0d0;font-weight:600;}
+.rc-val.red{color:var(--red);}
+.rc-val.green{color:var(--green);}
+
+.action-row{display:flex;gap:8px;margin-top:10px;}
+.action-btn{
+  flex:1;background:rgba(26,58,110,0.25);border:1px solid rgba(74,143,255,0.15);
+  border-radius:10px;padding:10px;text-align:center;cursor:pointer;
+  font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;
+  color:var(--police-accent);letter-spacing:1px;transition:all 0.2s;
+}
+.action-btn:active{background:rgba(26,58,110,0.5);}
+.action-btn.red{color:var(--red);border-color:rgba(239,68,68,0.2);background:rgba(239,68,68,0.05);}
+.action-btn.green{color:var(--green);border-color:rgba(34,197,94,0.2);background:rgba(34,197,94,0.05);}
+
+/* SECTION TITLE */
+.s-title{font-size:10px;letter-spacing:3px;color:#3a4a8a;text-transform:uppercase;margin:16px 0 10px;}
+
+/* STATS ROW */
+.stats-row{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;}
+.stat-box{
+  background:rgba(26,58,110,0.15);border:1px solid rgba(74,143,255,0.1);
+  border-radius:12px;padding:14px;
+}
+.stat-num{font-family:'Cinzel',serif;font-size:26px;font-weight:900;color:var(--police-accent);}
+.stat-num.red{color:var(--red);}
+.stat-num.green{color:var(--green);}
+.stat-label{font-size:10px;color:#3a4a8a;margin-top:2px;letter-spacing:1px;}
+
+/* ALERT ITEMS */
+.alert-item{
+  display:flex;gap:10px;align-items:flex-start;
+  background:var(--dark3);border:1px solid var(--line);
+  border-radius:12px;padding:12px;margin-bottom:8px;
+  border-left:3px solid transparent;cursor:pointer;
+}
+.alert-item.high{border-left-color:var(--red);}
+.alert-item.med{border-left-color:var(--gold);}
+.ai-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.ai-dot.red{background:var(--red);animation:blink 1.2s ease-in-out infinite;}
+.ai-dot.gold{background:var(--gold);}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+.ai-content{flex:1;}
+.ai-title{font-size:13px;font-weight:600;color:#c0c0d0;}
+.ai-desc{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4;}
+.ai-time{font-size:10px;color:#2a2a4a;}
+
+/* BLOCKCHAIN VERIF */
+.bc-verif{
+  background:rgba(168,85,247,0.05);border:1px solid rgba(168,85,247,0.15);
+  border-radius:12px;padding:14px;margin-bottom:12px;
+}
+.bc-title{font-size:10px;letter-spacing:2px;color:#a855f7;text-transform:uppercase;margin-bottom:8px;}
+.bc-hash{font-size:10px;color:#6a6a9a;font-family:monospace;word-break:break-all;line-height:1.6;}
+.bc-status{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:var(--green);font-weight:600;}
+
+/* MAP MINI */
+.mini-map{
+  width:100%;height:140px;border-radius:12px;
+  background:#050a14;position:relative;overflow:hidden;margin-bottom:12px;
+}
+.mm-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(74,143,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(74,143,255,0.04) 1px,transparent 1px);background-size:25px 25px;}
+.mm-road{position:absolute;background:rgba(255,255,255,0.06);}
+.mm-pulse{position:absolute;width:14px;height:14px;border-radius:50%;background:var(--red);transform:translate(-50%,-50%);box-shadow:0 0 0 4px rgba(239,68,68,0.2);animation:redPulse 1.5s ease-in-out infinite;}
+@keyframes redPulse{0%,100%{box-shadow:0 0 0 3px rgba(239,68,68,0.3);}50%{box-shadow:0 0 0 12px rgba(239,68,68,0);}}
+.mm-label{position:absolute;bottom:8px;left:10px;font-size:9px;color:rgba(74,143,255,0.4);letter-spacing:2px;}
+
+/* INPUT */
+.search-input{
+  width:100%;background:rgba(26,58,110,0.15);border:1px solid rgba(74,143,255,0.15);
+  border-radius:12px;padding:12px 14px;
+  font-family:'Rajdhani',sans-serif;font-size:14px;color:var(--text);
+  outline:none;margin-bottom:12px;
+}
+.search-input::placeholder{color:#2a3a6a;}
+.search-input:focus{border-color:rgba(74,143,255,0.4);}
+
+/* PROFILE OFFICER */
+.officer-card{
+  background:rgba(26,58,110,0.15);border:1px solid rgba(74,143,255,0.15);
+  border-radius:14px;padding:16px;text-align:center;margin-bottom:16px;
+}
+.officer-avatar{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#1e4080,#1a3a6e);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 10px;border:2px solid rgba(74,143,255,0.3);}
+.officer-name{font-family:'Cinzel',serif;font-size:16px;color:#c0d0f0;font-weight:700;}
+.officer-grade{font-size:11px;color:#3a4a8a;letter-spacing:2px;margin-top:2px;}
+.officer-id{font-size:11px;color:var(--police-accent);margin-top:4px;}
+
+.btn-loading{display:inline-block;width:16px;height:16px;border:2px solid rgba(192,208,255,0.3);border-top-color:#c0d0ff;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── LANG TOGGLE ── */
+.lang-toggle{display:flex;align-items:center;background:rgba(255,255,255,0.04);border:1px solid var(--line);border-radius:20px;overflow:hidden;flex-shrink:0;}
+.lang-btn{padding:5px 11px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;color:var(--muted);border:none;background:transparent;transition:all 0.2s;}
+.lang-btn.active{background:linear-gradient(135deg,var(--gold),var(--bronze));color:#0a0a14;border-radius:18px;margin:2px;}
+.toast-lang{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(255,180,50,0.12);border:1px solid rgba(255,180,50,0.25);border-radius:20px;padding:7px 16px;font-size:12px;font-weight:600;color:var(--gold);white-space:nowrap;z-index:300;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+.toast-lang.show{opacity:1;}
+
+/* ── SEARCH BAR ── */
+.srch-wrap{padding:0 20px 10px;position:relative;}
+.srch-box{width:100%;background:var(--dark3);border:1px solid var(--line);border-radius:14px;padding:10px 38px 10px 40px;font-family:'Rajdhani',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color 0.2s;}
+.srch-box:focus{border-color:rgba(255,180,50,0.35);}
+.srch-box::placeholder{color:var(--muted);}
+.srch-ico{position:absolute;left:32px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;}
+.srch-clr{position:absolute;right:30px;top:50%;transform:translateY(-50%);font-size:13px;cursor:pointer;color:var(--muted);display:none;}
+.srch-clr.show{display:block;}
+.srch-drop{display:none;position:absolute;top:50px;left:20px;right:20px;background:var(--dark2);border:1px solid rgba(255,180,50,0.18);border-radius:14px;z-index:150;overflow:hidden;max-height:280px;overflow-y:auto;box-shadow:0 8px 30px rgba(0,0,0,0.6);}
+.srch-drop.show{display:block;animation:srFadeDown 0.2s ease;}
+.srch-drop::-webkit-scrollbar{display:none;}
+@keyframes srFadeDown{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.sr-sec{font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;padding:10px 14px 4px;}
+.sr-row{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;transition:background 0.15s;border-bottom:1px solid rgba(255,255,255,0.03);}
+.sr-row:last-child{border-bottom:none;}
+.sr-row:active{background:rgba(255,180,50,0.05);}
+.sr-ri{font-size:17px;flex-shrink:0;width:24px;text-align:center;}
+.sr-rtxt{flex:1;}
+.sr-rttl{font-size:13px;font-weight:600;color:#c0b870;}
+.sr-rsub{font-size:11px;color:var(--muted);margin-top:1px;}
+.sr-rcat{font-size:10px;color:var(--gold);background:rgba(255,180,50,0.08);border:1px solid rgba(255,180,50,0.1);border-radius:8px;padding:2px 6px;flex-shrink:0;}
+.sr-empty{padding:18px;text-align:center;font-size:12px;color:var(--muted);}
+
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="toast-lang" id="toastLang"></div>
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+
+  <!-- ══ LOGIN POLICE ══ -->
+  <div class="screen active" id="login">
+    <div class="login-top">
+      <div class="police-badge">🚔</div>
+      <div class="login-title">FORCES DE L'ORDRE</div>
+      <div class="login-sub">Accès sécurisé · Niveau 2</div>
+      <div class="ambera-tag">Propulsé par Ambera AI</div>
+    </div>
+
+    <div class="login-form">
+      <div>
+        <label class="form-label">Matricule officiel</label>
+        <input class="form-input" type="text" placeholder="Ex: CM-POL-2024-4821" id="matricule">
+      </div>
+      <div>
+        <label class="form-label">Code secret</label>
+        <input class="form-input" type="password" placeholder="••••••••" id="secret">
+      </div>
+      <button class="btn-police" onclick="doLogin()">🔐 Connexion sécurisée</button>
+    </div>
+
+    <div class="login-footer">
+      🇨🇲 Police Nationale · Gendarmerie · Cameroun<br>
+      Accès réservé aux agents accrédités
+    </div>
+  </div>
+
+  <!-- ══ HOME POLICE ══ -->
+  <div class="screen" id="home">
+    <div class="page-header">
+    <div class="lang-toggle" style="margin-bottom:8px;"><button class="lang-btn active" id="lt-pol-fr" onclick="switchLang('fr')">FR</button><button class="lang-btn" id="lt-pol-en" onclick="switchLang('en')">EN</button></div>
+    <div class="lang-toggle" style="margin-bottom:8px;"><button class="lang-btn active" id="lt-pol-fr" onclick="switchLang('fr')">FR</button><button class="lang-btn" id="lt-pol-en" onclick="switchLang('en')">EN</button></div>
+      <div class="page-title">🚔 Tableau de bord</div>
+      <div class="page-sub">Agent Commandant Mvogo · CM-POL-4821</div>
+    </div>
+    <div class="scroll-area">
+
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-num red">3</div><div class="stat-label">Alertes actives</div></div>
+        <div class="stat-box"><div class="stat-num">47</div><div class="stat-label">Scans aujourd'hui</div></div>
+        <div class="stat-box"><div class="stat-num red">2</div><div class="stat-label">Véhicules volés détectés</div></div>
+        <div class="stat-box"><div class="stat-num green">12</div><div class="stat-label">Cas résolus ce mois</div></div>
+      </div>
+
+      <div class="s-title">Alertes en cours</div>
+
+      <div class="alert-item high" onclick="goTo('scan')">
+        <div class="ai-dot red"></div>
+        <div class="ai-content">
+          <div class="ai-title">🚨 Honda CB 125 — Mouvement suspect</div>
+          <div class="ai-desc">CE·4821·A · Briqueterie, Yaoundé · GPS actif</div>
+        </div>
+        <div class="ai-time">02:14</div>
+      </div>
+
+      <div class="alert-item high" onclick="goTo('scan')">
+        <div class="ai-dot red"></div>
+        <div class="ai-content">
+          <div class="ai-title">🧬 VIN altéré — Yamaha FZ 150</div>
+          <div class="ai-desc">LT·3312·B · Mvog-Ada · Traces effacement</div>
+        </div>
+        <div class="ai-time">Hier 18:32</div>
+      </div>
+
+      <div class="alert-item med" onclick="goTo('scan')">
+        <div class="ai-dot gold"></div>
+        <div class="ai-content">
+          <div class="ai-title">📡 Signal GPS perdu — Toyota Corolla</div>
+          <div class="ai-desc">SW·1123·Y · Bastos · Reconnecté à 16:14</div>
+        </div>
+        <div class="ai-time">Hier 16:10</div>
+      </div>
+
+      <div class="s-title">Localisation GPS — Alertes actives</div>
+      <div class="mini-map">
+        <div class="mm-grid"></div>
+        <div class="mm-road" style="height:3px;top:40%;left:0;right:0;"></div>
+        <div class="mm-road" style="height:3px;top:65%;left:0;right:0;"></div>
+        <div class="mm-road" style="width:3px;left:35%;top:0;bottom:0;"></div>
+        <div class="mm-road" style="width:3px;left:65%;top:0;bottom:0;"></div>
+        <div class="mm-pulse" style="top:45%;left:52%"></div>
+        <div class="mm-pulse" style="top:30%;left:70%;width:10px;height:10px;"></div>
+        <div class="mm-label">YAOUNDÉ · TEMPS RÉEL</div>
+      </div>
+
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item active" onclick="goTo('home')"><div class="nav-icon">🏠</div>Accueil</div>
+      <div class="nav-item" onclick="goTo('scan')"><div class="nav-icon">📷</div>Scanner</div>
+      <div class="nav-item" onclick="goTo('search')"><div class="nav-icon">🔍</div>Recherche</div>
+      <div class="nav-item" onclick="goTo('profile')"><div class="nav-icon">👮</div>Profil</div>
+    </div>
+  </div>
+
+  <!-- ══ SCAN VIN ══ -->
+  <div class="screen" id="scan">
+    <div class="page-header">
+      <div class="page-title">Scanner un véhicule</div>
+      <div class="page-sub">Vérification instantanée · Ambera AI</div>
+    </div>
+    <div class="scroll-area">
+
+      <div class="scan-box">
+        <div class="scan-camera-area">
+          <div class="scan-grid"></div>
+          <div class="scan-frame-corners">
+            <div class="sfc tl"></div><div class="sfc tr"></div>
+            <div class="sfc bl"></div><div class="sfc br"></div>
+          </div>
+          <div class="scan-line-police"></div>
+          <div class="scan-cam-label">POINTEZ VERS LE CHÂSSIS</div>
+        </div>
+        <div class="scan-controls">
+          <div class="scan-btn-police" onclick="scanManual()">Saisie manuelle</div>
+          <div class="scan-btn-police primary" onclick="doScan('safe')">📷 Scanner</div>
+          <div class="scan-btn-police" onclick="doScan('stolen')" style="color:var(--red);border-color:rgba(239,68,68,0.2);">🚨 Tester volé</div>
+        </div>
+      </div>
+
+      <!-- Manual input -->
+      <input class="search-input" id="manualVin" placeholder="Saisir VIN manuellement..." style="display:none;">
+
+      <!-- Results -->
+      <div id="scanResults" style="display:none;animation:fadeUp 0.4s ease;">
+
+        <!-- SAFE RESULT -->
+        <div id="safeResult" style="display:none;">
+          <div class="result-card safe">
+            <div class="rc-header">
+              <div class="rc-icon">✅</div>
+              <div class="rc-title green">Véhicule PROPRE</div>
+              <div class="rc-badge badge-safe">NON VOLÉ</div>
+            </div>
+            <div class="rc-row"><span class="rc-key">VIN</span><span class="rc-val">JTDBF10K400157842</span></div>
+            <div class="rc-row"><span class="rc-key">Véhicule</span><span class="rc-val">Honda CB 125F · 2021</span></div>
+            <div class="rc-row"><span class="rc-key">Plaque</span><span class="rc-val">CE · 4821 · A</span></div>
+            <div class="rc-row"><span class="rc-key">Propriétaire</span><span class="rc-val">Jean-Pierre Mballa</span></div>
+            <div class="rc-row"><span class="rc-key">Téléphone</span><span class="rc-val">+237 677 123 456</span></div>
+            <div class="rc-row"><span class="rc-key">Blockchain</span><span class="rc-val green">✓ Vérifié</span></div>
+            <div class="rc-row"><span class="rc-key">ADN physique</span><span class="rc-val green">✓ Intact</span></div>
+            <div class="action-row">
+              <div class="action-btn green">📋 Rapport</div>
+              <div class="action-btn">📞 Contacter</div>
+              <div class="action-btn">🗺️ GPS</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STOLEN RESULT -->
+        <div id="stolenResult" style="display:none;">
+          <div class="result-card danger">
+            <div class="rc-header">
+              <div class="rc-icon">🚨</div>
+              <div class="rc-title red">VÉHICULE VOLÉ !</div>
+              <div class="rc-badge badge-danger">ALERTE</div>
+            </div>
+            <div class="rc-row"><span class="rc-key">VIN</span><span class="rc-val">VF1BB1T0H12345678</span></div>
+            <div class="rc-row"><span class="rc-key">Véhicule</span><span class="rc-val">Renault Clio · 2020</span></div>
+            <div class="rc-row"><span class="rc-key">Plaque</span><span class="rc-val red">DL · 7721 · X</span></div>
+            <div class="rc-row"><span class="rc-key">Signalement</span><span class="rc-val red">06/03/2026 · 23:14</span></div>
+            <div class="rc-row"><span class="rc-key">Propriétaire</span><span class="rc-val">Sylvie Tchamba</span></div>
+            <div class="rc-row"><span class="rc-key">Tél propriétaire</span><span class="rc-val">+237 699 456 789</span></div>
+            <div class="rc-row"><span class="rc-key">Dernière position GPS</span><span class="rc-val red">Nlongkak · 02:08</span></div>
+
+            <div class="bc-verif" style="margin-top:10px;">
+              <div class="bc-title">⛓️ Blockchain — Alerte confirmée</div>
+              <div class="bc-hash">0x9f2b...c4a1 · Signalement #AMB-2026-4421<br>Identité propriétaire vérifiée · Immuable</div>
+              <div class="bc-status">✓ Authentifié par Ambera AI</div>
+            </div>
+
+            <div class="action-row">
+              <div class="action-btn red" onclick="doArrest()">🚨 Interpeller</div>
+              <div class="action-btn">📞 Propriétaire</div>
+            </div>
+            <div class="action-row">
+              <div class="action-btn">📋 PV numérique</div>
+              <div class="action-btn">🗺️ Dernière pos.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo('home')"><div class="nav-icon">🏠</div>Accueil</div>
+      <div class="nav-item active" onclick="goTo('scan')"><div class="nav-icon">📷</div>Scanner</div>
+      <div class="nav-item" onclick="goTo('search')"><div class="nav-icon">🔍</div>Recherche</div>
+      <div class="nav-item" onclick="goTo('profile')"><div class="nav-icon">👮</div>Profil</div>
+    </div>
+  </div>
+
+  <!-- ══ RECHERCHE ══ -->
+  <div class="screen" id="search">
+    <div class="page-header">
+      <div class="page-title">Recherche nationale</div>
+      <div class="page-sub">Base Ambera AI · Véhicules Cameroun</div>
+    </div>
+    <div class="scroll-area">
+
+      <input class="search-input" placeholder="🔍 Plaque, VIN, nom propriétaire..." id="searchInput" oninput="doSearch(this)">
+
+      <div class="s-title">Résultats récents</div>
+
+      <div class="result-card safe" style="margin-bottom:10px;">
+        <div class="rc-header"><div class="rc-icon">🏍️</div><div class="rc-title green">Honda CB 125F</div><div class="rc-badge badge-safe">PROPRE</div></div>
+        <div class="rc-row"><span class="rc-key">Plaque</span><span class="rc-val">CE · 4821 · A</span></div>
+        <div class="rc-row"><span class="rc-key">Propriétaire</span><span class="rc-val">J.P. Mballa · Yaoundé</span></div>
+      </div>
+
+      <div class="result-card danger" style="margin-bottom:10px;">
+        <div class="rc-header"><div class="rc-icon">🚗</div><div class="rc-title red">Renault Clio 2020</div><div class="rc-badge badge-danger">VOLÉ</div></div>
+        <div class="rc-row"><span class="rc-key">Plaque</span><span class="rc-val red">DL · 7721 · X</span></div>
+        <div class="rc-row"><span class="rc-key">Signalé le</span><span class="rc-val red">06/03/2026</span></div>
+      </div>
+
+      <div class="result-card warning" style="margin-bottom:10px;">
+        <div class="rc-header"><div class="rc-icon">🏍️</div><div class="rc-title gold">Yamaha FZ 150</div><div class="rc-badge badge-warn">VIN ALTÉRÉ</div></div>
+        <div class="rc-row"><span class="rc-key">Plaque</span><span class="rc-val">LT · 3312 · B</span></div>
+        <div class="rc-row"><span class="rc-key">Anomalie</span><span class="rc-val" style="color:var(--gold);">Grattage détecté · ADN OK</span></div>
+      </div>
+
+      <div class="s-title">Statistiques nationales</div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-num">612</div><div class="stat-label">Véhicules enregistrés</div></div>
+        <div class="stat-box"><div class="stat-num red">18</div><div class="stat-label">Signalés volés</div></div>
+        <div class="stat-box"><div class="stat-num green">14</div><div class="stat-label">Retrouvés ce mois</div></div>
+        <div class="stat-box"><div class="stat-num">99.2%</div><div class="stat-label">Précision IA</div></div>
+      </div>
+
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo('home')"><div class="nav-icon">🏠</div>Accueil</div>
+      <div class="nav-item" onclick="goTo('scan')"><div class="nav-icon">📷</div>Scanner</div>
+      <div class="nav-item active" onclick="goTo('search')"><div class="nav-icon">🔍</div>Recherche</div>
+      <div class="nav-item" onclick="goTo('profile')"><div class="nav-icon">👮</div>Profil</div>
+    </div>
+  </div>
+
+  <!-- ══ PROFIL OFFICIER ══ -->
+  <div class="screen" id="profile">
+    <div class="page-header">
+      <div class="page-title">Mon profil</div>
+      <div class="page-sub">Agent accrédité Ambera AI</div>
+    </div>
+    <div class="scroll-area">
+
+      <div class="officer-card">
+        <div class="officer-avatar">👮</div>
+        <div class="officer-name">Commandant Mvogo</div>
+        <div class="officer-grade">Commissariat Central · Yaoundé</div>
+        <div class="officer-id">Matricule : CM-POL-2024-4821</div>
+      </div>
+
+      <div class="s-title">Activité du jour</div>
+      <div class="stats-row">
+        <div class="stat-box"><div class="stat-num">12</div><div class="stat-label">Scans effectués</div></div>
+        <div class="stat-box"><div class="stat-num green">2</div><div class="stat-label">Véhicules volés arrêtés</div></div>
+      </div>
+
+      <div class="s-title">Accès autorisés</div>
+      <div class="result-card" style="margin-bottom:10px;">
+        <div class="rc-row"><span class="rc-key">Base nationale véhicules</span><span class="rc-val green">✓ Accès total</span></div>
+        <div class="rc-row"><span class="rc-key">GPS temps réel</span><span class="rc-val green">✓ Actif</span></div>
+        <div class="rc-row"><span class="rc-key">Blockchain Ambera</span><span class="rc-val green">✓ Vérification</span></div>
+        <div class="rc-row"><span class="rc-key">PV numérique</span><span class="rc-val green">✓ Autorisé</span></div>
+        <div class="rc-row"><span class="rc-key">Niveau d'accréditation</span><span class="rc-val" style="color:var(--police-accent);">Niveau 2 — Senior</span></div>
+      </div>
+
+      <div class="scan-btn-police" style="text-align:center;border-radius:12px;padding:14px;color:var(--red);border-color:rgba(239,68,68,0.2);background:rgba(239,68,68,0.05);cursor:pointer;margin-top:8px;" onclick="goTo('login')">
+        🔒 Se déconnecter
+      </div>
+
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo('home')"><div class="nav-icon">🏠</div>Accueil</div>
+      <div class="nav-item" onclick="goTo('scan')"><div class="nav-icon">📷</div>Scanner</div>
+      <div class="nav-item" onclick="goTo('search')"><div class="nav-icon">🔍</div>Recherche</div>
+      <div class="nav-item active" onclick="goTo('profile')"><div class="nav-icon">👮</div>Profil</div>
+    </div>
+  </div>
+
+  <!-- ARREST OVERLAY -->
+  <div id="arrestOverlay" style="display:none;position:absolute;inset:0;background:rgba(239,68,68,0.15);backdrop-filter:blur(4px);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:40px;">
+    <div style="font-size:60px;animation:pop 0.4s ease;">🚨</div>
+    <div style="font-family:'Cinzel',serif;font-size:20px;color:var(--red);font-weight:700;text-align:center;">INTERPELLATION<br>ENREGISTRÉE</div>
+    <div style="font-size:13px;color:#fca5a5;text-align:center;line-height:1.6;">PV numérique créé automatiquement<br>Propriétaire notifié<br>Blockchain mise à jour</div>
+    <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:12px;padding:12px 16px;font-size:11px;color:#fca5a5;font-family:monospace;">PV-2026-YDE-0847 · 07/03 09:41</div>
+    <button onclick="closeArrest()" style="background:var(--red);border:none;border-radius:12px;padding:14px 32px;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#fff;cursor:pointer;letter-spacing:1px;">OK — Fermer</button>
+  </div>
+
+</div>
+
+<script>
+let current = 'login';
+
+function goTo(id){
+  if(id===current) return;
+  const prev=document.getElementById(current);
+  const next=document.getElementById(id);
+  prev.classList.add('exit');
+  setTimeout(()=>{prev.classList.remove('active','exit');next.classList.add('active');current=id;},280);
+}
+
+function doLogin(){
+  const mat = document.getElementById('matricule').value;
+  const sec = document.getElementById('secret').value;
+  const btn = document.querySelector('.btn-police');
+  if(!mat || !sec){ alert('Veuillez remplir tous les champs.'); return; }
+  btn.innerHTML = '<span class="btn-loading"></span> Authentification...';
+  btn.disabled = true;
+  setTimeout(()=>{
+    btn.innerHTML = '🔐 Connexion sécurisée';
+    btn.disabled = false;
+    goTo('home');
+  }, 1800);
+}
+
+function scanManual(){
+  const input = document.getElementById('manualVin');
+  input.style.display = input.style.display==='none' ? 'block' : 'none';
+}
+
+function doScan(type){
+  const results = document.getElementById('scanResults');
+  const safe    = document.getElementById('safeResult');
+  const stolen  = document.getElementById('stolenResult');
+  results.style.display = 'none';
+  safe.style.display    = 'none';
+  stolen.style.display  = 'none';
+
+  setTimeout(()=>{
+    results.style.display = 'block';
+    if(type==='safe') safe.style.display = 'block';
+    else stolen.style.display = 'block';
+  }, 1400);
+}
+
+function doArrest(){
+  const overlay = document.getElementById('arrestOverlay');
+  overlay.style.display = 'flex';
+}
+function closeArrest(){
+  document.getElementById('arrestOverlay').style.display = 'none';
+}
+function doSearch(input){}
+
+
+// ── BILINGUAL ENGINE ──
+var _lang = 'fr';
+var _allLtFr = document.querySelectorAll('[id$="-fr"].lang-btn');
+var _allLtEn = document.querySelectorAll('[id$="-en"].lang-btn');
+function switchLang(l){
+  if(l===_lang) return;
+  _lang = l;
+  document.querySelectorAll('[data-fr]').forEach(function(el){
+    var v = el.getAttribute('data-'+l);
+    if(v==null) return;
+    if(el.tagName==='INPUT') el.placeholder = v;
+    else el.innerHTML = v;
+  });
+  _allLtFr = document.querySelectorAll('[id$="-fr"].lang-btn');
+  _allLtEn = document.querySelectorAll('[id$="-en"].lang-btn');
+  _allLtFr.forEach(function(b){b.classList.toggle('active', l==='fr');});
+  _allLtEn.forEach(function(b){b.classList.toggle('active', l==='en');});
+  var t = document.getElementById('toastLang');
+  if(t){ t.textContent = l==='fr'?'🇫🇷 Français activé':'🇬🇧 English activated'; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},2000); }
+}
+
+// ── SEARCH ENGINE ──
+var _srData = {"fr": [{"ic": "🚨", "t": "Alerte vol en cours", "s": "Honda CB 125 · Briqueterie", "c": "Urgence"}, {"ic": "📷", "t": "Scanner VIN suspect", "s": "Vérifier numéro châssis", "c": "Scan"}, {"ic": "⛓️", "t": "Vérification blockchain", "s": "Preuve numérique irréfutable", "c": "Blockchain"}, {"ic": "📋", "t": "PV numérique", "s": "Procès-verbal automatique", "c": "Rapport"}, {"ic": "🗺️", "t": "GPS véhicule volé", "s": "Localisation temps réel", "c": "GPS"}, {"ic": "👮", "t": "Profil officier", "s": "Matricule · Accréditation", "c": "Profil"}], "en": [{"ic": "🚨", "t": "Active theft alert", "s": "Honda CB 125 · Briqueterie", "c": "Emergency"}, {"ic": "📷", "t": "Scan suspect VIN", "s": "Check chassis number", "c": "Scan"}, {"ic": "⛓️", "t": "Blockchain verification", "s": "Irrefutable digital proof", "c": "Blockchain"}, {"ic": "📋", "t": "Digital report", "s": "Automatic police report", "c": "Report"}, {"ic": "🗺️", "t": "Stolen vehicle GPS", "s": "Real-time location", "c": "GPS"}, {"ic": "👮", "t": "Officer profile", "s": "Badge · Accreditation", "c": "Profile"}]};
+var _srIdx = _srData['fr'];
+function _srBuild(){{ _srIdx = _srData[_lang]; }}
+function _srOpen(){{
+  var v = document.getElementById('srchBox').value;
+  if(v) _srDoSearch(v); else _srPopular();
+  document.getElementById('srchDrop').classList.add('show');
+}}
+function _srInput(v){{
+  document.getElementById('srchClr').classList.toggle('show', v.length>0);
+  if(v) _srDoSearch(v); else _srPopular();
+  document.getElementById('srchDrop').classList.add('show');
+}}
+function _srDoSearch(v){{
+  var drop = document.getElementById('srchDrop');
+  var q = v.toLowerCase();
+  var res = _srIdx.filter(function(d){{
+    return d.t.toLowerCase().indexOf(q)>-1 || d.s.toLowerCase().indexOf(q)>-1 || d.c.toLowerCase().indexOf(q)>-1;
+  }});
+  if(!res.length){{
+    drop.innerHTML = '<div class="sr-empty">'+(_lang==='fr'?'😕 Aucun résultat pour':'😕 No result for')+' "<b>'+v+'</b>"</div>';
+    return;
+  }}
+  drop.innerHTML = res.map(function(d){{
+    return '<div class="sr-row"><div class="sr-ri">'+d.ic+'</div><div class="sr-rtxt"><div class="sr-rttl">'+d.t+'</div><div class="sr-rsub">'+d.s+'</div></div><div class="sr-rcat">'+d.c+'</div></div>';
+  }}).join('');
+}}
+function _srPopular(){{
+  var drop = document.getElementById('srchDrop');
+  drop.innerHTML = '<div class="sr-sec">'+(_lang==='fr'?'Suggestions':'Suggestions')+'</div>'+
+    _srIdx.slice(0,5).map(function(d){{
+      return '<div class="sr-row"><div class="sr-ri">'+d.ic+'</div><div class="sr-rtxt"><div class="sr-rttl">'+d.t+'</div><div class="sr-rsub">'+d.s+'</div></div><div class="sr-rcat">'+d.c+'</div></div>';
+    }}).join('');
+}}
+function _srClear(){{
+  document.getElementById('srchBox').value='';
+  document.getElementById('srchClr').classList.remove('show');
+  document.getElementById('srchDrop').classList.remove('show');
+}}
+document.addEventListener('click', function(e){{
+  if(!e.target.closest('.srch-wrap')) document.getElementById('srchDrop').classList.remove('show');
+}});
+
+_srBuild();
+</script>
+</body>
+</html>

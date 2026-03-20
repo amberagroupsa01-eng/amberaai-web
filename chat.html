@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ambera AI — Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --gold:#ffb432;--gold2:#ffe08a;--bronze:#e8720a;
+  --dark:#07070f;--dark2:#0d0d1a;--dark3:#131328;
+  --line:#1e1e3a;--muted:#5a5a8a;--text:#d0cce0;
+  --green:#22c55e;--red:#ef4444;
+}
+body{
+  background:#111;display:flex;align-items:center;
+  justify-content:center;min-height:100vh;
+  font-family:'Rajdhani',sans-serif;padding:20px;
+}
+.phone{
+  width:375px;height:812px;background:var(--dark);
+  border-radius:48px;border:2px solid #1a1a2e;
+  box-shadow:0 40px 120px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,255,255,0.05);
+  position:relative;overflow:hidden;flex-shrink:0;
+  display:flex;flex-direction:column;
+}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:34px;background:#000;border-radius:0 0 20px 20px;z-index:100;}
+.status-bar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 6px;z-index:99;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);}
+
+/* ── CHAT HEADER ── */
+.chat-header{
+  padding:54px 20px 14px;
+  background:linear-gradient(180deg,var(--dark) 0%,rgba(7,7,15,0.95) 100%);
+  border-bottom:1px solid var(--line);
+  display:flex;align-items:center;gap:12px;
+  flex-shrink:0;z-index:10;
+}
+.chat-avatar{
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--bronze));
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  box-shadow:0 0 0 2px rgba(255,180,50,0.2);
+  animation:avatarPulse 3s ease-in-out infinite;
+}
+@keyframes avatarPulse{
+  0%,100%{box-shadow:0 0 0 2px rgba(255,180,50,0.2);}
+  50%{box-shadow:0 0 0 4px rgba(255,180,50,0.1),0 0 16px rgba(255,180,50,0.2);}
+}
+.chat-avatar svg{width:24px;height:24px;}
+.chat-info{flex:1;}
+.chat-name{font-family:'Cinzel',serif;font-size:15px;font-weight:700;color:var(--gold);}
+.chat-status{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--green);margin-top:1px;}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.chat-clear{
+  font-size:11px;color:var(--muted);cursor:pointer;
+  padding:6px 10px;border-radius:8px;border:1px solid var(--line);
+  transition:all 0.2s;
+}
+.chat-clear:active{border-color:rgba(255,180,50,0.3);color:var(--gold);}
+
+/* ── MESSAGES AREA ── */
+.messages{
+  flex:1;overflow-y:auto;
+  padding:16px 16px 8px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.messages::-webkit-scrollbar{display:none;}
+
+/* ── MESSAGE BUBBLES ── */
+.msg{display:flex;flex-direction:column;max-width:82%;}
+.msg.bot{align-self:flex-start;}
+.msg.user{align-self:flex-end;}
+
+.bubble{
+  padding:11px 14px;border-radius:18px;
+  font-size:14px;line-height:1.55;
+  word-break:break-word;
+}
+.msg.bot .bubble{
+  background:var(--dark2);border:1px solid var(--line);
+  color:var(--text);border-bottom-left-radius:4px;
+}
+.msg.user .bubble{
+  background:linear-gradient(135deg,rgba(255,180,50,0.18),rgba(232,114,10,0.12));
+  border:1px solid rgba(255,180,50,0.2);
+  color:#e0d8b8;border-bottom-right-radius:4px;
+}
+
+.msg-time{
+  font-size:10px;color:#3a3a5a;margin-top:3px;letter-spacing:0.5px;
+}
+.msg.user .msg-time{text-align:right;}
+
+/* bot avatar small */
+.bot-row{display:flex;align-items:flex-end;gap:8px;}
+.bot-mini-avatar{
+  width:26px;height:26px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--bronze));
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;flex-shrink:0;margin-bottom:2px;
+}
+
+/* typing indicator */
+.typing-indicator{
+  display:none;align-self:flex-start;
+}
+.typing-indicator.show{display:flex;}
+.typing-bubble{
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:18px;border-bottom-left-radius:4px;
+  padding:12px 16px;display:flex;gap:4px;align-items:center;
+}
+.t-dot{
+  width:7px;height:7px;border-radius:50%;background:var(--muted);
+  animation:typingDot 1.2s ease-in-out infinite;
+}
+.t-dot:nth-child(2){animation-delay:0.2s;}
+.t-dot:nth-child(3){animation-delay:0.4s;}
+@keyframes typingDot{0%,100%{transform:translateY(0);opacity:0.4;}50%{transform:translateY(-5px);opacity:1;}}
+
+/* quick replies */
+.quick-replies{
+  display:flex;flex-wrap:wrap;gap:8px;
+  padding:0 16px 10px;
+}
+.qr-btn{
+  background:rgba(255,180,50,0.06);
+  border:1px solid rgba(255,180,50,0.15);
+  border-radius:50px;padding:8px 14px;
+  font-family:'Rajdhani',sans-serif;font-size:12px;
+  font-weight:600;color:var(--gold);cursor:pointer;
+  letter-spacing:0.5px;transition:all 0.2s;white-space:nowrap;
+}
+.qr-btn:active{background:rgba(255,180,50,0.14);transform:scale(0.96);}
+
+/* ── INPUT BAR ── */
+.chat-input-bar{
+  padding:10px 14px 28px;
+  background:rgba(13,13,26,0.95);
+  border-top:1px solid var(--line);
+  display:flex;align-items:center;gap:10px;
+  flex-shrink:0;backdrop-filter:blur(20px);
+}
+.chat-input{
+  flex:1;background:var(--dark3);border:1px solid var(--line);
+  border-radius:24px;padding:11px 16px;
+  font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:500;
+  color:var(--text);outline:none;resize:none;
+  transition:border-color 0.2s;
+  max-height:80px;overflow-y:auto;
+}
+.chat-input:focus{border-color:rgba(255,180,50,0.3);}
+.chat-input::placeholder{color:#3a3a5a;}
+.chat-input::-webkit-scrollbar{display:none;}
+.send-btn{
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--bronze));
+  border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+  transition:all 0.2s;
+  box-shadow:0 4px 12px rgba(255,180,50,0.25);
+}
+.send-btn:active{transform:scale(0.92);}
+
+/* ── SPECIAL BUBBLE CONTENT ── */
+.alert-bubble{
+  background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);
+  border-radius:10px;padding:10px 12px;margin-top:6px;
+  font-size:13px;color:#fca5a5;
+}
+.info-card{
+  background:rgba(255,180,50,0.05);border:1px solid rgba(255,180,50,0.1);
+  border-radius:10px;padding:10px 12px;margin-top:6px;
+}
+.info-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.info-row:last-child{border-bottom:none;}
+.ir-key{color:var(--muted);}
+.ir-val{color:#c0b870;font-weight:600;}
+.status-badge{
+  display:inline-block;font-size:11px;padding:3px 10px;
+  border-radius:20px;margin-top:6px;font-weight:600;
+}
+.sb-safe{background:rgba(34,197,94,0.1);color:var(--green);}
+.sb-alert{background:rgba(239,68,68,0.1);color:var(--red);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.msg{animation:fadeUp 0.3s ease;}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+
+  <!-- HEADER -->
+  <div class="chat-header">
+    <div class="chat-avatar">
+      <svg viewBox="0 0 90 90" fill="none">
+        <polygon points="45,4 82,24 82,66 45,86 8,66 8,24" fill="none" stroke="url(#cg)" stroke-width="3" opacity="0.8"/>
+        <circle cx="45" cy="45" r="14" fill="none" stroke="url(#cg)" stroke-width="2"/>
+        <circle cx="45" cy="45" r="6" fill="url(#cg)"/>
+        <circle cx="45" cy="45" r="2.5" fill="#fff8e0"/>
+        <defs>
+          <linearGradient id="cg" x1="0" y1="0" x2="90" y2="90" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#ffe08a"/>
+            <stop offset="100%" stop-color="#e8720a"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+    <div class="chat-info">
+      <div class="chat-name">Ambera IA</div>
+      <div class="chat-status"><div class="status-dot"></div>En ligne · Toujours disponible</div>
+    </div>
+    <div class="chat-clear" onclick="clearChat()">Effacer</div>
+  </div>
+
+  <!-- MESSAGES -->
+  <div class="messages" id="messages">
+
+    <!-- Welcome message -->
+    <div class="msg bot">
+      <div class="bot-row">
+        <div class="bot-mini-avatar">🛡️</div>
+        <div class="bubble">
+          Bonjour ! Je suis <strong>Ambera IA</strong>, votre assistant de protection. 👋<br><br>
+          Je peux vous aider à :<br>
+          • Scanner un véhicule<br>
+          • Vérifier une alerte<br>
+          • Gérer votre abonnement<br>
+          • Répondre à toutes vos questions
+        </div>
+      </div>
+      <div class="msg-time">09:41</div>
+    </div>
+
+  </div>
+
+  <!-- TYPING INDICATOR -->
+  <div class="typing-indicator" id="typingIndicator">
+    <div class="bot-row" style="padding:0 0 0 16px;">
+      <div class="bot-mini-avatar">🛡️</div>
+      <div class="typing-bubble">
+        <div class="t-dot"></div>
+        <div class="t-dot"></div>
+        <div class="t-dot"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUICK REPLIES -->
+  <div class="quick-replies" id="quickReplies">
+    <div class="qr-btn" onclick="sendQuick('📷 Scanner un véhicule')">📷 Scanner</div>
+    <div class="qr-btn" onclick="sendQuick('🚨 Voir mes alertes')">🚨 Alertes</div>
+    <div class="qr-btn" onclick="sendQuick('📡 Localiser ma moto')">📡 GPS</div>
+    <div class="qr-btn" onclick="sendQuick('💰 Mon abonnement')">💰 Abonnement</div>
+    <div class="qr-btn" onclick="sendQuick('🆘 Urgence — véhicule volé !')">🆘 Urgence</div>
+  </div>
+
+  <!-- INPUT -->
+  <div class="chat-input-bar">
+    <textarea class="chat-input" id="chatInput" placeholder="Posez votre question..." rows="1"
+      onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <button class="send-btn" onclick="sendMessage()">➤</button>
+  </div>
+</div>
+
+<script>
+const now = () => {
+  const d = new Date();
+  return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0');
+};
+
+// ── RESPONSES DATABASE ──
+const responses = {
+  scanner: {
+    text: "Pour scanner un véhicule :",
+    extra: `<div class="info-card">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">📷 Mode scan activé</div>
+      <div class="info-row"><span class="ir-key">Honda CB 125</span><span class="ir-val">CE·4821·A</span></div>
+      <div class="info-row"><span class="ir-key">VIN</span><span class="ir-val">JTD...7842</span></div>
+      <div class="info-row"><span class="ir-key">Propriétaire</span><span class="ir-val">J.P. Mballa</span></div>
+      <span class="status-badge sb-safe">✅ Non signalé volé</span>
+    </div>`
+  },
+  alerte: {
+    text: "Vous avez 1 alerte active :",
+    extra: `<div class="alert-bubble">⚠ Honda CB 125 · CE 4821 A<br>Mouvement détecté à 02h14<br>📍 Briqueterie, Yaoundé</div>`
+  },
+  gps: {
+    text: "Localisation de vos véhicules en temps réel :",
+    extra: `<div class="info-card">
+      <div class="info-row"><span class="ir-key">🏍️ Honda CB 125</span><span class="ir-val" style="color:#ef4444;">⚠ Alerte</span></div>
+      <div class="info-row"><span class="ir-key">🏍️ Yamaha YBR</span><span class="ir-val" style="color:#22c55e;">✓ Mvog-Ada</span></div>
+      <div class="info-row"><span class="ir-key">🚗 Toyota</span><span class="ir-val" style="color:#22c55e;">✓ Bastos</span></div>
+      <div class="info-row"><span class="ir-key">📱 iPhone 14</span><span class="ir-val" style="color:#22c55e;">✓ Melen</span></div>
+    </div>`
+  },
+  abonnement: {
+    text: "Votre abonnement actuel :",
+    extra: `<div class="info-card">
+      <div class="info-row"><span class="ir-key">Plan</span><span class="ir-val">Pro · 5 000 FCFA/mois</span></div>
+      <div class="info-row"><span class="ir-key">Statut</span><span class="ir-val" style="color:#22c55e;">✓ Actif</span></div>
+      <div class="info-row"><span class="ir-key">Véhicules</span><span class="ir-val">4 / 4</span></div>
+      <div class="info-row"><span class="ir-key">Renouvellement</span><span class="ir-val">07 Avril 2026</span></div>
+      <div class="info-row"><span class="ir-key">Opérateur</span><span class="ir-val">MTN MoMo</span></div>
+    </div>`
+  },
+  urgence: {
+    text: "🚨 MODE URGENCE ACTIVÉ\n\nVoici les actions immédiates :",
+    extra: `<div class="alert-bubble">
+      <strong>1.</strong> Alerte envoyée à la Police — Yaoundé ✓<br>
+      <strong>2.</strong> GPS activé en mode haute fréquence ✓<br>
+      <strong>3.</strong> Blockchain verrouillée — transfert bloqué ✓<br>
+      <strong>4.</strong> Numéro d'urgence : <strong>117</strong>
+    </div>`
+  },
+  default: [
+    "Je comprends votre question. Pouvez-vous préciser ce que vous recherchez ? Je peux vous aider avec le scan de véhicules, les alertes GPS, ou votre abonnement.",
+    "Bonne question ! Pour cette demande, je vous recommande de contacter notre support via WhatsApp. Souhaitez-vous que je vous donne le numéro ?",
+    "Je suis là pour vous aider. Votre compte Ambera AI est actif avec 4 couches de protection. Que souhaitez-vous faire ?",
+    "D'accord ! Je peux vous aider avec ça. Naviguez vers l'onglet correspondant dans l'application, ou décrivez-moi votre problème plus en détail.",
+    "Merci pour votre message. Ambera AI surveille vos biens 24h/24. Avez-vous des questions sur une alerte spécifique ?"
+  ]
+};
+
+function getResponse(msg) {
+  const m = msg.toLowerCase();
+  if(m.includes('scan') || m.includes('châssis') || m.includes('vin') || m.includes('vérif')) return responses.scanner;
+  if(m.includes('alert') || m.includes('vol') && !m.includes('urgence')) return responses.alerte;
+  if(m.includes('gps') || m.includes('local') || m.includes('moto') || m.includes('voiture')) return responses.gps;
+  if(m.includes('abonn') || m.includes('paiement') || m.includes('fcfa') || m.includes('plan')) return responses.abonnement;
+  if(m.includes('urgent') || m.includes('volé') || m.includes('🆘')) return responses.urgence;
+  const arr = responses.default;
+  return { text: arr[Math.floor(Math.random()*arr.length)], extra: null };
+}
+
+function addMessage(text, type, extra=null){
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = `msg ${type}`;
+
+  if(type === 'bot'){
+    let extraHTML = extra ? extra : '';
+    div.innerHTML = `
+      <div class="bot-row">
+        <div class="bot-mini-avatar">🛡️</div>
+        <div class="bubble">${text.replace(/\n/g,'<br>')}${extraHTML}</div>
+      </div>
+      <div class="msg-time">${now()}</div>`;
+  } else {
+    div.innerHTML = `
+      <div class="bubble">${text}</div>
+      <div class="msg-time">${now()}</div>`;
+  }
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping(){
+  document.getElementById('typingIndicator').classList.add('show');
+  const msgs = document.getElementById('messages');
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function hideTyping(){
+  document.getElementById('typingIndicator').classList.remove('show');
+}
+
+function sendMessage(){
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if(!text) return;
+  input.value = '';
+  input.style.height = 'auto';
+  addMessage(text, 'user');
+  document.getElementById('quickReplies').style.display = 'none';
+  showTyping();
+  const resp = getResponse(text);
+  setTimeout(()=>{
+    hideTyping();
+    addMessage(resp.text, 'bot', resp.extra);
+  }, 1200 + Math.random()*600);
+}
+
+function sendQuick(text){
+  document.getElementById('chatInput').value = text;
+  sendMessage();
+}
+
+function handleKey(e){
+  if(e.key === 'Enter' && !e.shiftKey){
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function autoResize(el){
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 80)+'px';
+}
+
+function clearChat(){
+  const msgs = document.getElementById('messages');
+  msgs.innerHTML = '';
+  document.getElementById('quickReplies').style.display = 'flex';
+  addMessage('Conversation effacée. Comment puis-je vous aider ?', 'bot');
+}
+</script>
+</body>
+</html>

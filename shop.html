@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ambera AI — Boutique Hardware</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --gold:#ffb432;--gold2:#ffe08a;--bronze:#e8720a;
+  --dark:#07070f;--dark2:#0d0d1a;--dark3:#131328;
+  --line:#1e1e3a;--muted:#5a5a8a;--text:#d0cce0;
+  --green:#22c55e;--red:#ef4444;--blue:#38bdf8;
+}
+body{background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Rajdhani',sans-serif;padding:20px;}
+.phone{width:375px;height:812px;background:var(--dark);border-radius:48px;border:2px solid #1a1a2e;box-shadow:0 40px 120px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,255,255,0.05);position:relative;overflow:hidden;flex-shrink:0;}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:34px;background:#000;border-radius:0 0 20px 20px;z-index:100;}
+.status-bar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 6px;z-index:99;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);}
+
+.screen{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 0.3s ease,transform 0.3s ease;transform:translateX(30px);overflow:hidden;}
+.screen.active{opacity:1;pointer-events:all;transform:translateX(0);}
+.screen.exit{opacity:0;transform:translateX(-30px);}
+
+/* SCROLL */
+.scroll-area{padding:8px 20px 100px;overflow-y:auto;height:calc(100% - 116px);}
+.scroll-area::-webkit-scrollbar{display:none;}
+
+/* HEADER */
+.page-header{
+  padding:54px 20px 14px;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  background:linear-gradient(180deg,var(--dark) 0%,transparent 100%);
+}
+.header-left{}
+.page-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--gold);}
+.page-sub{font-size:11px;color:var(--muted);margin-top:2px;letter-spacing:0.5px;}
+.cart-btn{
+  position:relative;background:var(--dark3);border:1px solid var(--line);
+  border-radius:12px;padding:10px 12px;font-size:20px;cursor:pointer;
+  transition:border-color 0.2s;
+}
+.cart-btn:active{border-color:var(--gold);}
+.cart-count{
+  position:absolute;top:-4px;right:-4px;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--red);color:#fff;font-size:10px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+
+/* BOTTOM NAV */
+.bottom-nav{
+  position:absolute;bottom:0;left:0;right:0;height:82px;
+  background:rgba(7,7,15,0.97);border-top:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-around;
+  padding:0 10px 20px;backdrop-filter:blur(20px);z-index:90;
+}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:8px 12px;border-radius:12px;transition:all 0.2s;font-size:10px;letter-spacing:1px;color:var(--muted);}
+.nav-item.active{color:var(--gold);}
+.nav-item:active{transform:scale(0.9);}
+.nav-icon{font-size:20px;}
+
+/* ══ CATEGORY PILLS ══ */
+.cat-pills{
+  display:flex;gap:8px;overflow-x:auto;padding:0 20px 12px;
+  scrollbar-width:none;
+}
+.cat-pills::-webkit-scrollbar{display:none;}
+.cat-pill{
+  background:var(--dark3);border:1px solid var(--line);
+  border-radius:50px;padding:7px 16px;
+  font-size:12px;font-weight:600;color:var(--muted);
+  white-space:nowrap;cursor:pointer;transition:all 0.2s;flex-shrink:0;
+}
+.cat-pill.active{background:rgba(255,180,50,0.1);border-color:rgba(255,180,50,0.3);color:var(--gold);}
+.cat-pill:active{transform:scale(0.96);}
+
+/* ══ PROMO BANNER ══ */
+.promo-banner{
+  margin:0 20px 16px;
+  background:linear-gradient(135deg,rgba(255,180,50,0.12),rgba(232,114,10,0.08));
+  border:1px solid rgba(255,180,50,0.2);border-radius:16px;
+  padding:16px;display:flex;align-items:center;gap:14px;
+  position:relative;overflow:hidden;
+}
+.promo-banner::before{
+  content:'';position:absolute;top:-20px;right:-20px;
+  width:80px;height:80px;border-radius:50%;
+  background:rgba(255,180,50,0.08);
+}
+.promo-emoji{font-size:36px;flex-shrink:0;}
+.promo-title{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--gold);}
+.promo-desc{font-size:11px;color:#8a7848;margin-top:2px;line-height:1.4;}
+.promo-badge{
+  background:var(--gold);color:#0a0a14;
+  font-size:11px;font-weight:700;letter-spacing:1px;
+  padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;
+}
+
+/* ══ SECTION TITLE ══ */
+.s-title{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin:4px 0 12px;}
+
+/* ══ PRODUCT CARD ══ */
+.product-card{
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:18px;overflow:hidden;margin-bottom:14px;
+  cursor:pointer;transition:border-color 0.25s,transform 0.2s;
+}
+.product-card:hover{border-color:rgba(255,180,50,0.2);transform:translateY(-2px);}
+.product-card:active{transform:scale(0.98);}
+
+.product-img{
+  height:130px;display:flex;align-items:center;justify-content:center;
+  font-size:60px;position:relative;overflow:hidden;
+}
+.product-img.gps-bg{background:linear-gradient(135deg,#0d1a0d,#0a140a);}
+.product-img.dna-bg{background:linear-gradient(135deg,#1a0d1a,#140a14);}
+.product-img.kit-bg{background:linear-gradient(135deg,#0a0d1a,#070a14);}
+.product-img.acc-bg{background:linear-gradient(135deg,#1a100a,#140a07);}
+
+.product-img-glow{
+  position:absolute;width:80px;height:80px;border-radius:50%;
+  opacity:0.15;filter:blur(20px);
+}
+.product-badge-img{
+  position:absolute;top:10px;right:10px;
+  font-size:10px;font-weight:700;letter-spacing:1px;
+  padding:4px 10px;border-radius:20px;
+}
+.pb-new{background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,0.25);}
+.pb-hot{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.25);}
+.pb-promo{background:rgba(255,180,50,0.15);color:var(--gold);border:1px solid rgba(255,180,50,0.25);}
+
+.product-body{padding:14px;}
+.product-name{font-family:'Cinzel',serif;font-size:15px;font-weight:700;color:#d0c8a0;margin-bottom:4px;}
+.product-desc{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:10px;}
+.product-features{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;}
+.pf-tag{
+  background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);
+  border-radius:20px;padding:3px 10px;font-size:10px;color:#6a6a8a;
+}
+.product-footer{display:flex;align-items:center;justify-content:space-between;}
+.product-price{font-family:'Cinzel',serif;font-size:20px;font-weight:900;color:var(--gold);}
+.product-price-sub{font-size:10px;color:var(--muted);margin-top:1px;}
+.product-old-price{font-size:12px;color:#3a3a5a;text-decoration:line-through;margin-right:4px;}
+.add-btn{
+  background:linear-gradient(135deg,var(--gold),var(--bronze));
+  border:none;border-radius:12px;padding:10px 18px;
+  font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;
+  letter-spacing:1px;color:#0a0a14;cursor:pointer;
+  transition:all 0.2s;
+}
+.add-btn:active{transform:scale(0.95);}
+
+/* PRODUCT GRID 2COL */
+.product-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.product-mini{
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:14px;overflow:hidden;cursor:pointer;
+  transition:border-color 0.2s;
+}
+.product-mini:active{border-color:var(--gold);}
+.pm-img{height:80px;display:flex;align-items:center;justify-content:center;font-size:36px;}
+.pm-body{padding:10px;}
+.pm-name{font-size:13px;font-weight:600;color:#c0b870;margin-bottom:2px;}
+.pm-price{font-family:'Cinzel',serif;font-size:15px;color:var(--gold);font-weight:700;}
+.pm-add{
+  width:100%;background:rgba(255,180,50,0.08);border:1px solid rgba(255,180,50,0.15);
+  border-radius:8px;padding:7px;margin-top:8px;
+  font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;
+  color:var(--gold);cursor:pointer;text-align:center;letter-spacing:1px;
+}
+.pm-add:active{background:rgba(255,180,50,0.18);}
+
+/* ══ CART SCREEN ══ */
+.cart-item{
+  display:flex;gap:12px;align-items:center;
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:14px;padding:12px;margin-bottom:10px;
+}
+.ci-emoji{font-size:32px;flex-shrink:0;}
+.ci-info{flex:1;}
+.ci-name{font-size:14px;font-weight:600;color:#c0b870;}
+.ci-desc{font-size:11px;color:var(--muted);margin-top:1px;}
+.ci-price{font-family:'Cinzel',serif;font-size:16px;color:var(--gold);font-weight:700;margin-top:4px;}
+.ci-qty{
+  display:flex;align-items:center;gap:8px;flex-shrink:0;
+}
+.qty-btn{
+  width:28px;height:28px;border-radius:8px;
+  background:var(--dark3);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;color:var(--text);
+  transition:all 0.2s;
+}
+.qty-btn:active{border-color:var(--gold);}
+.qty-num{font-size:15px;font-weight:700;color:var(--text);min-width:16px;text-align:center;}
+
+.cart-summary{
+  background:var(--dark2);border:1px solid rgba(255,180,50,0.15);
+  border-radius:14px;padding:14px;margin-bottom:14px;
+}
+.cs-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.cs-row:last-child{border-bottom:none;}
+.cs-key{color:var(--muted);}
+.cs-val{color:#c0b870;font-weight:600;}
+.cs-val.gold{color:var(--gold);font-family:'Cinzel',serif;font-size:18px;}
+
+.btn-primary{
+  width:100%;background:linear-gradient(135deg,var(--gold),var(--bronze));
+  border:none;border-radius:14px;padding:16px;
+  font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;
+  letter-spacing:2px;color:#0a0a14;cursor:pointer;
+  text-transform:uppercase;box-shadow:0 4px 20px rgba(255,180,50,0.25);
+  transition:all 0.2s;margin-bottom:10px;
+}
+.btn-primary:active{transform:scale(0.97);}
+
+/* ══ ORDER SUCCESS ══ */
+#orderSuccess{
+  background:var(--dark);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:12px;
+  padding:40px 28px;text-align:center;
+}
+#orderSuccess::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 45%,rgba(34,197,94,0.06) 0%,transparent 70%);}
+.success-ring{width:90px;height:90px;border-radius:50%;background:rgba(34,197,94,0.1);border:2px solid rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;font-size:40px;position:relative;z-index:2;animation:pop 0.5s ease;}
+@keyframes pop{0%{transform:scale(0);}60%{transform:scale(1.15);}100%{transform:scale(1);}}
+.so-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--green);position:relative;z-index:2;}
+.so-sub{font-size:13px;color:var(--muted);line-height:1.6;max-width:280px;position:relative;z-index:2;}
+.order-card{
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:14px;padding:14px;width:100%;position:relative;z-index:2;
+}
+.oc-row{display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,0.03);}
+.oc-row:last-child{border-bottom:none;}
+.oc-key{color:var(--muted);}
+.oc-val{color:#c0b870;font-weight:600;}
+.delivery-track{
+  background:rgba(34,197,94,0.05);border:1px solid rgba(34,197,94,0.15);
+  border-radius:12px;padding:12px;width:100%;position:relative;z-index:2;
+}
+.dt-title{font-size:10px;letter-spacing:2px;color:var(--green);text-transform:uppercase;margin-bottom:10px;}
+.dt-steps{display:flex;flex-direction:column;gap:8px;}
+.dt-step{display:flex;align-items:center;gap:10px;font-size:12px;}
+.dt-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.dt-step.done .dt-dot{background:var(--green);}
+.dt-step.active .dt-dot{background:var(--gold);animation:blink 1.5s ease-in-out infinite;}
+.dt-step .dt-dot{background:var(--line);}
+.dt-step.done{color:#6ada9a;}
+.dt-step.active{color:var(--gold);}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+.btn-loading{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,0,0,0.3);border-top-color:#0a0a14;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── LANG TOGGLE ── */
+.lang-toggle{display:flex;align-items:center;background:rgba(255,255,255,0.04);border:1px solid var(--line);border-radius:20px;overflow:hidden;flex-shrink:0;}
+.lang-btn{padding:5px 11px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;color:var(--muted);border:none;background:transparent;transition:all 0.2s;}
+.lang-btn.active{background:linear-gradient(135deg,var(--gold),var(--bronze));color:#0a0a14;border-radius:18px;margin:2px;}
+.toast-lang{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(255,180,50,0.12);border:1px solid rgba(255,180,50,0.25);border-radius:20px;padding:7px 16px;font-size:12px;font-weight:600;color:var(--gold);white-space:nowrap;z-index:300;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+.toast-lang.show{opacity:1;}
+
+/* ── SEARCH BAR ── */
+.srch-wrap{padding:0 20px 10px;position:relative;}
+.srch-box{width:100%;background:var(--dark3);border:1px solid var(--line);border-radius:14px;padding:10px 38px 10px 40px;font-family:'Rajdhani',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color 0.2s;}
+.srch-box:focus{border-color:rgba(255,180,50,0.35);}
+.srch-box::placeholder{color:var(--muted);}
+.srch-ico{position:absolute;left:32px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;}
+.srch-clr{position:absolute;right:30px;top:50%;transform:translateY(-50%);font-size:13px;cursor:pointer;color:var(--muted);display:none;}
+.srch-clr.show{display:block;}
+.srch-drop{display:none;position:absolute;top:50px;left:20px;right:20px;background:var(--dark2);border:1px solid rgba(255,180,50,0.18);border-radius:14px;z-index:150;overflow:hidden;max-height:280px;overflow-y:auto;box-shadow:0 8px 30px rgba(0,0,0,0.6);}
+.srch-drop.show{display:block;animation:srFadeDown 0.2s ease;}
+.srch-drop::-webkit-scrollbar{display:none;}
+@keyframes srFadeDown{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.sr-sec{font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;padding:10px 14px 4px;}
+.sr-row{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;transition:background 0.15s;border-bottom:1px solid rgba(255,255,255,0.03);}
+.sr-row:last-child{border-bottom:none;}
+.sr-row:active{background:rgba(255,180,50,0.05);}
+.sr-ri{font-size:17px;flex-shrink:0;width:24px;text-align:center;}
+.sr-rtxt{flex:1;}
+.sr-rttl{font-size:13px;font-weight:600;color:#c0b870;}
+.sr-rsub{font-size:11px;color:var(--muted);margin-top:1px;}
+.sr-rcat{font-size:10px;color:var(--gold);background:rgba(255,180,50,0.08);border:1px solid rgba(255,180,50,0.1);border-radius:8px;padding:2px 6px;flex-shrink:0;}
+.sr-empty{padding:18px;text-align:center;font-size:12px;color:var(--muted);}
+
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="toast-lang" id="toastLang"></div>
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+
+  <!-- ══ SHOP HOME ══ -->
+  <div class="screen active" id="shop">
+    <div class="page-header">
+      <div class="header-left">
+        <div class="page-title">Boutique</div>
+        <div class="page-sub">Hardware officiel Ambera AI</div>
+      </div>
+      <div class="cart-btn" onclick="goTo('cart')">
+        🛒
+        <div class="cart-count" id="cartCount">2</div>
+      </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="cat-pills">
+      <div class="cat-pill active" onclick="selectCat(this)">Tout</div>
+      <div class="cat-pill" onclick="selectCat(this)">📡 Trackers GPS</div>
+      <div class="cat-pill" onclick="selectCat(this)">🧬 Kit ADN</div>
+      <div class="cat-pill" onclick="selectCat(this)">🔧 Accessoires</div>
+      <div class="cat-pill" onclick="selectCat(this)">📦 Packs</div>
+    </div>
+
+    <div class="scroll-area">
+
+      <!-- Promo -->
+      <div class="promo-banner">
+        <div class="promo-emoji">🎁</div>
+        <div>
+          <div class="promo-title">Offre lancement</div>
+          <div class="promo-desc">Tracker GPS Pro + Kit ADN offert pour tout abonné Pro</div>
+        </div>
+        <div class="promo-badge">-20%</div>
+      </div>
+
+      <div class="s-title">Produits phares</div>
+
+      <!-- GPS Pro -->
+      <div class="product-card" onclick="goTo('detail1')">
+        <div class="product-img gps-bg">
+          <div class="product-img-glow" style="background:var(--green)"></div>
+          📡
+          <div class="product-badge-img pb-hot">🔥 Bestseller</div>
+        </div>
+        <div class="product-body">
+          <div class="product-name">Tracker GPS Pro</div>
+          <div class="product-desc">Tracker haute précision, waterproof IP67, autonomie 30 jours. Installation cachée dans le châssis.</div>
+          <div class="product-features">
+            <div class="pf-tag">📡 Temps réel</div>
+            <div class="pf-tag">🔋 30 jours</div>
+            <div class="pf-tag">💧 IP67</div>
+            <div class="pf-tag">📏 4cm × 2cm</div>
+          </div>
+          <div class="product-footer">
+            <div>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <span class="product-old-price">37 500 FCFA</span>
+              </div>
+              <div class="product-price">30 000 FCFA</div>
+              <div class="product-price-sub">Installation incluse</div>
+            </div>
+            <button class="add-btn" onclick="addToCart(event,'GPS Pro',30000)">+ Panier</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kit ADN -->
+      <div class="product-card" onclick="goTo('detail2')">
+        <div class="product-img dna-bg">
+          <div class="product-img-glow" style="background:#a855f7"></div>
+          🧬
+          <div class="product-badge-img pb-new">✨ Nouveau</div>
+        </div>
+        <div class="product-body">
+          <div class="product-name">Kit ADN Physique</div>
+          <div class="product-desc">Marquage invisible UV appliqué en 5 points cachés. Lisible sous lampe UV par la police. Indélébile.</div>
+          <div class="product-features">
+            <div class="pf-tag">🔦 UV invisible</div>
+            <div class="pf-tag">♾️ Permanent</div>
+            <div class="pf-tag">🛡️ 5 points</div>
+            <div class="pf-tag">👮 Police ready</div>
+          </div>
+          <div class="product-footer">
+            <div>
+              <div class="product-price">15 000 FCFA</div>
+              <div class="product-price-sub">Application technicien incluse</div>
+            </div>
+            <button class="add-btn" onclick="addToCart(event,'Kit ADN',15000)">+ Panier</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="s-title">Accessoires</div>
+
+      <div class="product-grid">
+        <div class="product-mini">
+          <div class="pm-img acc-bg" style="background:linear-gradient(135deg,#1a100a,#0a0805);">🔋</div>
+          <div class="pm-body">
+            <div class="pm-name">Batterie extra GPS</div>
+            <div class="pm-price">8 000 FCFA</div>
+            <div class="pm-add" onclick="addToCart(event,'Batterie GPS',8000)">+ Panier</div>
+          </div>
+        </div>
+        <div class="product-mini">
+          <div class="pm-img" style="background:linear-gradient(135deg,#0a1014,#080c10);">🔦</div>
+          <div class="pm-body">
+            <div class="pm-name">Lampe UV Pro</div>
+            <div class="pm-price">5 000 FCFA</div>
+            <div class="pm-add" onclick="addToCart(event,'Lampe UV',5000)">+ Panier</div>
+          </div>
+        </div>
+        <div class="product-mini">
+          <div class="pm-img" style="background:linear-gradient(135deg,#0a0d14,#070a10);">📦</div>
+          <div class="pm-body">
+            <div class="pm-name">Support discret</div>
+            <div class="pm-price">3 500 FCFA</div>
+            <div class="pm-add" onclick="addToCart(event,'Support',3500)">+ Panier</div>
+          </div>
+        </div>
+        <div class="product-mini">
+          <div class="pm-img" style="background:linear-gradient(135deg,#0a140a,#080e08);">🔌</div>
+          <div class="pm-body">
+            <div class="pm-name">Câble alimentation</div>
+            <div class="pm-price">2 000 FCFA</div>
+            <div class="pm-add" onclick="addToCart(event,'Câble',2000)">+ Panier</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="s-title">Pack complet</div>
+      <div class="product-card">
+        <div class="product-img kit-bg">
+          <div class="product-img-glow" style="background:var(--gold)"></div>
+          🛡️
+          <div class="product-badge-img pb-promo">-25%</div>
+        </div>
+        <div class="product-body">
+          <div class="product-name">Pack Protection Totale</div>
+          <div class="product-desc">Tracker GPS Pro + Kit ADN + Batterie extra + Lampe UV. La protection maximale Ambera AI.</div>
+          <div class="product-features">
+            <div class="pf-tag">📡 GPS Pro</div>
+            <div class="pf-tag">🧬 Kit ADN</div>
+            <div class="pf-tag">🔋 Batterie</div>
+            <div class="pf-tag">🔦 Lampe UV</div>
+          </div>
+          <div class="product-footer">
+            <div>
+              <div style="display:flex;align-items:center;gap:4px;">
+                <span class="product-old-price">60 500 FCFA</span>
+              </div>
+              <div class="product-price">45 000 FCFA</div>
+              <div class="product-price-sub">Économisez 15 500 FCFA</div>
+            </div>
+            <button class="add-btn" onclick="addToCart(event,'Pack Total',45000)">+ Panier</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item active" onclick="goTo('shop')"><div class="nav-icon">🏪</div>Boutique</div>
+      <div class="nav-item" onclick="goTo('cart')"><div class="nav-icon">🛒</div>Panier</div>
+      <div class="nav-item" onclick="goTo('orders')"><div class="nav-icon">📦</div>Commandes</div>
+    </div>
+  </div>
+
+  <!-- ══ CART ══ -->
+  <div class="screen" id="cart">
+    <div class="page-header">
+      <div class="header-left">
+        <div class="back-btn" onclick="goTo('shop')" style="display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer;margin-bottom:8px;">← Boutique</div>
+    <div class="lang-toggle" style="margin-bottom:8px;"><button class="lang-btn active" id="lt-shp-fr" onclick="switchLang('fr')">FR</button><button class="lang-btn" id="lt-shp-en" onclick="switchLang('en')">EN</button></div>
+    <div class="lang-toggle" style="margin-bottom:8px;"><button class="lang-btn active" id="lt-shp-fr" onclick="switchLang('fr')">FR</button><button class="lang-btn" id="lt-shp-en" onclick="switchLang('en')">EN</button></div>
+        <div class="page-title">Mon panier</div>
+        <div class="page-sub" id="cartSubtitle">2 articles</div>
+      </div>
+    </div>
+    <div class="scroll-area">
+
+      <div id="cartItems">
+        <div class="cart-item" id="ci-0">
+          <div class="ci-emoji">📡</div>
+          <div class="ci-info">
+            <div class="ci-name">Tracker GPS Pro</div>
+            <div class="ci-desc">Waterproof · 30 jours autonomie</div>
+            <div class="ci-price">30 000 FCFA</div>
+          </div>
+          <div class="ci-qty">
+            <div class="qty-btn" onclick="changeQty(0,-1)">−</div>
+            <div class="qty-num" id="qty-0">1</div>
+            <div class="qty-btn" onclick="changeQty(0,1)">+</div>
+          </div>
+        </div>
+        <div class="cart-item" id="ci-1">
+          <div class="ci-emoji">🧬</div>
+          <div class="ci-info">
+            <div class="ci-name">Kit ADN Physique</div>
+            <div class="ci-desc">Marquage UV · 5 points</div>
+            <div class="ci-price">15 000 FCFA</div>
+          </div>
+          <div class="ci-qty">
+            <div class="qty-btn" onclick="changeQty(1,-1)">−</div>
+            <div class="qty-num" id="qty-1">1</div>
+            <div class="qty-btn" onclick="changeQty(1,1)">+</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cart-summary">
+        <div class="cs-row"><span class="cs-key">Sous-total</span><span class="cs-val">45 000 FCFA</span></div>
+        <div class="cs-row"><span class="cs-key">Livraison Yaoundé</span><span class="cs-val" style="color:var(--green);">Gratuit</span></div>
+        <div class="cs-row"><span class="cs-key">Installation technicien</span><span class="cs-val" style="color:var(--green);">Incluse</span></div>
+        <div class="cs-row" style="padding-top:10px;">
+          <span class="cs-key" style="font-size:15px;font-weight:700;color:#c0b870;">Total</span>
+          <span class="cs-val gold">45 000 FCFA</span>
+        </div>
+      </div>
+
+      <div style="background:rgba(255,180,50,0.04);border:1px solid rgba(255,180,50,0.1);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:#8a7848;line-height:1.6;">
+        📍 Livraison sous 48h à Yaoundé · Le technicien Ambera vous contacte pour fixer l'installation.
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <label style="font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:7px;display:block;">Adresse de livraison</label>
+        <input style="width:100%;background:var(--dark3);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-family:'Rajdhani',sans-serif;font-size:14px;color:var(--text);outline:none;" placeholder="Quartier, rue, repère..." type="text">
+      </div>
+
+      <button class="btn-primary" id="orderBtn" onclick="doOrder()">
+        💳 Commander · 45 000 FCFA
+      </button>
+
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo('shop')"><div class="nav-icon">🏪</div>Boutique</div>
+      <div class="nav-item active" onclick="goTo('cart')"><div class="nav-icon">🛒</div>Panier</div>
+      <div class="nav-item" onclick="goTo('orders')"><div class="nav-icon">📦</div>Commandes</div>
+    </div>
+  </div>
+
+  <!-- ══ ORDER SUCCESS ══ -->
+  <div class="screen" id="orderSuccess">
+    <div class="success-ring">📦</div>
+    <div class="so-title">Commande confirmée !</div>
+    <div class="so-sub">Votre technicien Ambera AI vous contactera dans les 24h pour l'installation.</div>
+
+    <div class="order-card">
+      <div class="oc-row"><span class="oc-key">Référence</span><span class="oc-val" id="orderRef">AMB-SHOP-2026-0147</span></div>
+      <div class="oc-row"><span class="oc-key">Articles</span><span class="oc-val">GPS Pro + Kit ADN</span></div>
+      <div class="oc-row"><span class="oc-key">Total payé</span><span class="oc-val" style="color:var(--gold);">45 000 FCFA</span></div>
+      <div class="oc-row"><span class="oc-key">Livraison</span><span class="oc-val">Yaoundé · 48h max</span></div>
+      <div class="oc-row"><span class="oc-key">Paiement</span><span class="oc-val">MTN MoMo ✓</span></div>
+    </div>
+
+    <div class="delivery-track">
+      <div class="dt-title">📦 Suivi de livraison</div>
+      <div class="dt-steps">
+        <div class="dt-step done"><div class="dt-dot"></div>Commande confirmée</div>
+        <div class="dt-step active"><div class="dt-dot"></div>Technicien assigné</div>
+        <div class="dt-step"><div class="dt-dot"></div>En route vers vous</div>
+        <div class="dt-step"><div class="dt-dot"></div>Installation effectuée</div>
+      </div>
+    </div>
+
+    <button class="btn-primary" onclick="goTo('shop')" style="width:100%;margin-top:4px;position:relative;z-index:2;">
+      Continuer mes achats →
+    </button>
+  </div>
+
+  <!-- ══ COMMANDES ══ -->
+  <div class="screen" id="orders">
+    <div class="page-header">
+      <div class="header-left">
+        <div class="page-title">Mes commandes</div>
+        <div class="page-sub">Historique & suivi</div>
+      </div>
+    </div>
+    <div class="scroll-area">
+
+      <div class="cart-item" style="border-left:3px solid var(--green);">
+        <div class="ci-emoji">📡</div>
+        <div class="ci-info">
+          <div class="ci-name">Tracker GPS Pro</div>
+          <div class="ci-desc">AMB-SHOP-2026-0089 · 02/03/2026</div>
+          <div style="display:inline-block;margin-top:4px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(34,197,94,0.1);color:var(--green);">✓ Installé</div>
+        </div>
+        <div style="font-family:'Cinzel',serif;font-size:14px;color:var(--gold);font-weight:700;flex-shrink:0;">30 000</div>
+      </div>
+
+      <div class="cart-item" style="border-left:3px solid var(--gold);">
+        <div class="ci-emoji">🛡️</div>
+        <div class="ci-info">
+          <div class="ci-name">Pack Protection Totale</div>
+          <div class="ci-desc">AMB-SHOP-2026-0041 · 15/02/2026</div>
+          <div style="display:inline-block;margin-top:4px;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(255,180,50,0.1);color:var(--gold);">🚚 En livraison</div>
+        </div>
+        <div style="font-family:'Cinzel',serif;font-size:14px;color:var(--gold);font-weight:700;flex-shrink:0;">45 000</div>
+      </div>
+
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo('shop')"><div class="nav-icon">🏪</div>Boutique</div>
+      <div class="nav-item" onclick="goTo('cart')"><div class="nav-icon">🛒</div>Panier</div>
+      <div class="nav-item active" onclick="goTo('orders')"><div class="nav-icon">📦</div>Commandes</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let current = 'shop';
+let cartTotal = 2;
+
+function goTo(id){
+  if(id===current) return;
+  const prev=document.getElementById(current);
+  const next=document.getElementById(id);
+  prev.classList.add('exit');
+  setTimeout(()=>{prev.classList.remove('active','exit');next.classList.add('active');current=id;},280);
+}
+
+function selectCat(el){
+  document.querySelectorAll('.cat-pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function addToCart(e, name, price){
+  e.stopPropagation();
+  cartTotal++;
+  document.getElementById('cartCount').textContent = cartTotal;
+  const btn = e.target;
+  btn.textContent = '✓ Ajouté';
+  btn.style.background = 'rgba(34,197,94,0.2)';
+  btn.style.color = 'var(--green)';
+  btn.style.border = '1px solid rgba(34,197,94,0.3)';
+  setTimeout(()=>{
+    btn.textContent = '+ Panier';
+    btn.style.background = '';
+    btn.style.color = '';
+    btn.style.border = '';
+  },1800);
+}
+
+const qtys = [1,1];
+function changeQty(idx, delta){
+  qtys[idx] = Math.max(1, qtys[idx]+delta);
+  document.getElementById('qty-'+idx).textContent = qtys[idx];
+}
+
+function doOrder(){
+  const btn = document.getElementById('orderBtn');
+  btn.innerHTML = '<span class="btn-loading"></span> Traitement...';
+  btn.disabled = true;
+  setTimeout(()=>{
+    const ref = 'AMB-SHOP-2026-' + Math.floor(100+Math.random()*900);
+    document.getElementById('orderRef').textContent = ref;
+    btn.innerHTML = '💳 Commander · 45 000 FCFA';
+    btn.disabled = false;
+    goTo('orderSuccess');
+  },2000);
+}
+
+
+// ── BILINGUAL ENGINE ──
+var _lang = 'fr';
+var _allLtFr = document.querySelectorAll('[id$="-fr"].lang-btn');
+var _allLtEn = document.querySelectorAll('[id$="-en"].lang-btn');
+function switchLang(l){
+  if(l===_lang) return;
+  _lang = l;
+  document.querySelectorAll('[data-fr]').forEach(function(el){
+    var v = el.getAttribute('data-'+l);
+    if(v==null) return;
+    if(el.tagName==='INPUT') el.placeholder = v;
+    else el.innerHTML = v;
+  });
+  _allLtFr = document.querySelectorAll('[id$="-fr"].lang-btn');
+  _allLtEn = document.querySelectorAll('[id$="-en"].lang-btn');
+  _allLtFr.forEach(function(b){b.classList.toggle('active', l==='fr');});
+  _allLtEn.forEach(function(b){b.classList.toggle('active', l==='en');});
+  var t = document.getElementById('toastLang');
+  if(t){ t.textContent = l==='fr'?'🇫🇷 Français activé':'🇬🇧 English activated'; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},2000); }
+}
+
+// ── SEARCH ENGINE ──
+var _srData = {"fr": [{"ic": "📡", "t": "GPS Pro Tracker", "s": "30 000 FCFA · Installation incluse", "c": "Hardware"}, {"ic": "🧬", "t": "Kit ADN Physique", "s": "15 000 FCFA · Marquage UV", "c": "Hardware"}, {"ic": "🔋", "t": "Batterie de rechange", "s": "8 000 FCFA · GPS longue durée", "c": "Accessoire"}, {"ic": "📦", "t": "Pack Total Protection", "s": "45 000 FCFA · GPS + ADN + Install", "c": "Pack"}, {"ic": "🛒", "t": "Mon panier", "s": "Articles sélectionnés", "c": "Panier"}, {"ic": "📦", "t": "Suivi commande", "s": "Livraison 24-48h Yaoundé", "c": "Livraison"}], "en": [{"ic": "📡", "t": "GPS Pro Tracker", "s": "30,000 FCFA · Installation included", "c": "Hardware"}, {"ic": "🧬", "t": "Physical DNA Kit", "s": "15,000 FCFA · UV marking", "c": "Hardware"}, {"ic": "🔋", "t": "Replacement battery", "s": "8,000 FCFA · Long-life GPS", "c": "Accessory"}, {"ic": "📦", "t": "Total Protection Pack", "s": "45,000 FCFA · GPS + DNA + Install", "c": "Pack"}, {"ic": "🛒", "t": "My cart", "s": "Selected items", "c": "Cart"}, {"ic": "📦", "t": "Order tracking", "s": "24-48h delivery Yaoundé", "c": "Delivery"}]};
+var _srIdx = _srData['fr'];
+function _srBuild(){{ _srIdx = _srData[_lang]; }}
+function _srOpen(){{
+  var v = document.getElementById('srchBox').value;
+  if(v) _srDoSearch(v); else _srPopular();
+  document.getElementById('srchDrop').classList.add('show');
+}}
+function _srInput(v){{
+  document.getElementById('srchClr').classList.toggle('show', v.length>0);
+  if(v) _srDoSearch(v); else _srPopular();
+  document.getElementById('srchDrop').classList.add('show');
+}}
+function _srDoSearch(v){{
+  var drop = document.getElementById('srchDrop');
+  var q = v.toLowerCase();
+  var res = _srIdx.filter(function(d){{
+    return d.t.toLowerCase().indexOf(q)>-1 || d.s.toLowerCase().indexOf(q)>-1 || d.c.toLowerCase().indexOf(q)>-1;
+  }});
+  if(!res.length){{
+    drop.innerHTML = '<div class="sr-empty">'+(_lang==='fr'?'😕 Aucun résultat pour':'😕 No result for')+' "<b>'+v+'</b>"</div>';
+    return;
+  }}
+  drop.innerHTML = res.map(function(d){{
+    return '<div class="sr-row"><div class="sr-ri">'+d.ic+'</div><div class="sr-rtxt"><div class="sr-rttl">'+d.t+'</div><div class="sr-rsub">'+d.s+'</div></div><div class="sr-rcat">'+d.c+'</div></div>';
+  }}).join('');
+}}
+function _srPopular(){{
+  var drop = document.getElementById('srchDrop');
+  drop.innerHTML = '<div class="sr-sec">'+(_lang==='fr'?'Suggestions':'Suggestions')+'</div>'+
+    _srIdx.slice(0,5).map(function(d){{
+      return '<div class="sr-row"><div class="sr-ri">'+d.ic+'</div><div class="sr-rtxt"><div class="sr-rttl">'+d.t+'</div><div class="sr-rsub">'+d.s+'</div></div><div class="sr-rcat">'+d.c+'</div></div>';
+    }}).join('');
+}}
+function _srClear(){{
+  document.getElementById('srchBox').value='';
+  document.getElementById('srchClr').classList.remove('show');
+  document.getElementById('srchDrop').classList.remove('show');
+}}
+document.addEventListener('click', function(e){{
+  if(!e.target.closest('.srch-wrap')) document.getElementById('srchDrop').classList.remove('show');
+}});
+
+_srBuild();
+</script>
+</body>
+</html>

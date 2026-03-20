@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ambera AI — Blocage à distance</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --gold:#ffb432;--gold2:#ffe08a;--bronze:#e8720a;
+  --dark:#07070f;--dark2:#0d0d1a;--dark3:#131328;
+  --line:#1e1e3a;--muted:#5a5a8a;--text:#d0cce0;
+  --green:#22c55e;--red:#ef4444;--blue:#38bdf8;--purple:#a855f7;
+  --orange:#f97316;
+}
+body{background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Rajdhani',sans-serif;padding:20px;}
+.phone{width:375px;height:812px;background:var(--dark);border-radius:48px;border:2px solid #1a1a2e;box-shadow:0 40px 120px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,255,255,0.05);position:relative;overflow:hidden;flex-shrink:0;}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:34px;background:#000;border-radius:0 0 20px 20px;z-index:100;}
+.status-bar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 6px;z-index:99;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);}
+
+.screen{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 0.3s ease,transform 0.3s ease;transform:translateX(30px);overflow:hidden;}
+.screen.active{opacity:1;pointer-events:all;transform:translateX(0);}
+.screen.exit{opacity:0;transform:translateX(-30px);}
+
+.scroll-area{padding:8px 20px 100px;overflow-y:auto;height:calc(100% - 120px);}
+.scroll-area::-webkit-scrollbar{display:none;}
+
+/* HEADER */
+.page-header{padding:54px 20px 14px;background:linear-gradient(180deg,var(--dark) 0%,transparent 100%);}
+.back-btn{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer;margin-bottom:10px;}
+.page-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--gold);}
+.page-sub{font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:0.5px;}
+
+/* BOTTOM NAV */
+.bottom-nav{position:absolute;bottom:0;left:0;right:0;height:82px;background:rgba(7,7,15,0.97);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-around;padding:0 10px 20px;backdrop-filter:blur(20px);z-index:90;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:8px 12px;border-radius:12px;font-size:10px;letter-spacing:1px;color:var(--muted);transition:all 0.2s;}
+.nav-item.active{color:var(--gold);}
+.nav-item:active{transform:scale(0.9);}
+.nav-icon{font-size:20px;}
+
+/* ══ URGENT BANNER ══ */
+.urgent-banner{
+  background:linear-gradient(135deg,rgba(239,68,68,0.15),rgba(239,68,68,0.06));
+  border:1px solid rgba(239,68,68,0.3);
+  border-radius:16px;padding:16px;margin-bottom:18px;
+  display:flex;align-items:center;gap:12px;
+  position:relative;overflow:hidden;
+  cursor:pointer;transition:all 0.2s;
+}
+.urgent-banner:active{transform:scale(0.98);}
+.urgent-banner::before{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;background:rgba(239,68,68,0.08);}
+.ub-icon{font-size:32px;flex-shrink:0;}
+.ub-title{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--red);}
+.ub-desc{font-size:11px;color:#7a3a3a;margin-top:2px;line-height:1.4;}
+.ub-arrow{font-size:18px;color:var(--red);margin-left:auto;flex-shrink:0;}
+
+/* ══ VEHICLE CARD ══ */
+.vehicle-card{
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:18px;padding:18px;margin-bottom:14px;
+  transition:border-color 0.3s;
+}
+.vehicle-card.locked{border-color:rgba(239,68,68,0.25);background:rgba(239,68,68,0.03);}
+.vehicle-card.geolocked{border-color:rgba(249,115,22,0.25);background:rgba(249,115,22,0.03);}
+
+.vc-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.vc-icon{font-size:32px;flex-shrink:0;}
+.vc-info{flex:1;}
+.vc-name{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#d0c8a0;}
+.vc-plate{font-size:12px;color:var(--muted);margin-top:2px;}
+.vc-status{display:flex;align-items:center;gap:5px;margin-top:4px;font-size:11px;}
+.vs-dot{width:6px;height:6px;border-radius:50%;}
+.vs-online{background:var(--green);}
+.vs-locked{background:var(--red);animation:blink 1.2s ease-in-out infinite;}
+.vs-geo{background:var(--orange);}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+
+/* LOCK CONTROLS */
+.lock-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.lock-btn{
+  border-radius:12px;padding:14px 10px;text-align:center;
+  cursor:pointer;transition:all 0.2s;border:1px solid transparent;
+  font-family:'Rajdhani',sans-serif;
+}
+.lock-btn:active{transform:scale(0.96);}
+
+.lb-engine{
+  background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.2);
+}
+.lb-engine.active{background:rgba(239,68,68,0.18);border-color:rgba(239,68,68,0.4);}
+.lb-geo{
+  background:rgba(249,115,22,0.08);border-color:rgba(249,115,22,0.2);
+}
+.lb-geo.active{background:rgba(249,115,22,0.18);border-color:rgba(249,115,22,0.4);}
+.lb-alert{
+  background:rgba(255,180,50,0.08);border-color:rgba(255,180,50,0.2);
+}
+.lb-track{
+  background:rgba(56,189,248,0.08);border-color:rgba(56,189,248,0.2);
+}
+
+.lb-icon{font-size:22px;margin-bottom:4px;}
+.lb-name{font-size:12px;font-weight:700;letter-spacing:0.5px;}
+.lb-engine .lb-name{color:var(--red);}
+.lb-engine.active .lb-name{color:#ff8080;}
+.lb-geo .lb-name{color:var(--orange);}
+.lb-alert .lb-name{color:var(--gold);}
+.lb-track .lb-name{color:var(--blue);}
+.lb-state{font-size:10px;margin-top:2px;opacity:0.6;}
+
+/* STATUS ROW */
+.status-row{
+  background:var(--dark3);border-radius:10px;padding:10px 12px;
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:12px;
+}
+.sr-key{color:var(--muted);}
+.sr-val{font-weight:600;}
+
+/* PHONE CARD */
+.phone-card{
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:18px;padding:18px;margin-bottom:14px;
+}
+.phone-card.locked{border-color:rgba(239,68,68,0.25);background:rgba(239,68,68,0.03);}
+.phone-actions{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+.phone-action-btn{
+  display:flex;align-items:center;gap:12px;
+  border-radius:12px;padding:12px 14px;cursor:pointer;
+  border:1px solid transparent;transition:all 0.2s;
+}
+.phone-action-btn:active{transform:scale(0.98);}
+.pab-lock{background:rgba(239,68,68,0.08);border-color:rgba(239,68,68,0.2);}
+.pab-locate{background:rgba(56,189,248,0.08);border-color:rgba(56,189,248,0.2);}
+.pab-erase{background:rgba(168,85,247,0.08);border-color:rgba(168,85,247,0.2);}
+.pab-icon{font-size:20px;flex-shrink:0;}
+.pab-info{flex:1;}
+.pab-name{font-size:13px;font-weight:600;}
+.pab-lock .pab-name{color:var(--red);}
+.pab-locate .pab-name{color:var(--blue);}
+.pab-erase .pab-name{color:var(--purple);}
+.pab-desc{font-size:11px;color:var(--muted);margin-top:1px;}
+.pab-arrow{font-size:14px;color:var(--muted);flex-shrink:0;}
+
+/* SECTION TITLE */
+.s-title{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin:4px 0 12px;}
+
+/* HISTORY */
+.history-item{
+  display:flex;gap:10px;align-items:flex-start;
+  background:var(--dark3);border:1px solid var(--line);
+  border-radius:12px;padding:12px;margin-bottom:8px;
+}
+.hi-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.hi-content{flex:1;}
+.hi-title{font-size:13px;font-weight:600;color:#a0a0b8;}
+.hi-desc{font-size:11px;color:var(--muted);margin-top:2px;}
+.hi-time{font-size:10px;color:#2a2a4a;flex-shrink:0;}
+
+/* ══ OVERLAYS ══ */
+.overlay{
+  display:none;position:absolute;inset:0;z-index:200;
+  flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;padding:32px;text-align:center;
+  backdrop-filter:blur(12px);
+}
+
+/* CONFIRM OVERLAY */
+#confirmOverlay{background:rgba(7,7,15,0.95);}
+.co-warn{font-size:52px;animation:shake 0.5s ease;}
+@keyframes shake{0%,100%{transform:rotate(0);}25%{transform:rotate(-8deg);}75%{transform:rotate(8deg);}}
+.co-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;}
+.co-desc{font-size:13px;color:var(--muted);line-height:1.6;max-width:280px;}
+.co-detail{
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:12px;padding:12px 16px;width:100%;
+  font-size:12px;color:#8080a0;text-align:left;
+}
+.co-detail-row{display:flex;justify-content:space-between;padding:4px 0;}
+.co-btns{display:flex;gap:10px;width:100%;}
+.co-btn-cancel{flex:1;background:transparent;border:1px solid var(--line);border-radius:12px;padding:14px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;}
+.co-btn-confirm{flex:1;border:none;border-radius:12px;padding:14px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;text-transform:uppercase;}
+.co-btn-confirm.red{background:var(--red);color:#fff;box-shadow:0 4px 16px rgba(239,68,68,0.3);}
+.co-btn-confirm.orange{background:var(--orange);color:#fff;box-shadow:0 4px 16px rgba(249,115,22,0.3);}
+.co-btn-confirm.purple{background:var(--purple);color:#fff;box-shadow:0 4px 16px rgba(168,85,247,0.3);}
+
+/* PROCESSING OVERLAY */
+#processingOverlay{background:rgba(7,7,15,0.97);}
+.proc-ring{
+  width:90px;height:90px;border-radius:50%;
+  border:3px solid rgba(255,180,50,0.1);border-top-color:var(--gold);
+  animation:spin 0.8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.proc-title{font-family:'Cinzel',serif;font-size:20px;color:var(--gold);}
+.proc-steps{display:flex;flex-direction:column;gap:8px;width:100%;}
+.proc-step{
+  display:flex;align-items:center;gap:10px;
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:10px;padding:10px 12px;font-size:12px;color:var(--muted);
+}
+.proc-step.done{color:var(--green);border-color:rgba(34,197,94,0.2);}
+.proc-step.active{color:var(--gold);border-color:rgba(255,180,50,0.2);}
+.ps-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.proc-step.done .ps-dot{background:var(--green);}
+.proc-step.active .ps-dot{background:var(--gold);animation:blink 1s ease-in-out infinite;}
+.proc-step .ps-dot{background:var(--line);}
+
+/* SUCCESS OVERLAY */
+#successOverlay{background:rgba(7,7,15,0.97);}
+.so-ring{width:90px;height:90px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:40px;animation:pop 0.5s ease;}
+@keyframes pop{0%{transform:scale(0);}60%{transform:scale(1.15);}100%{transform:scale(1);}}
+.so-ring.red-ring{background:rgba(239,68,68,0.1);border:2px solid rgba(239,68,68,0.3);}
+.so-ring.green-ring{background:rgba(34,197,94,0.1);border:2px solid rgba(34,197,94,0.3);}
+.so-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;}
+.so-desc{font-size:13px;color:var(--muted);line-height:1.6;max-width:280px;}
+.so-info{
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:12px;padding:12px;width:100%;
+  font-size:11px;color:#6a6a8a;text-align:left;line-height:1.6;
+  font-family:monospace;
+}
+.so-close{
+  width:100%;border:none;border-radius:12px;padding:15px;
+  font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;
+  letter-spacing:1px;cursor:pointer;text-transform:uppercase;
+}
+
+/* EMERGENCY SCREEN */
+#emergency{
+  background:var(--dark);
+}
+#emergency::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 60% at 50% 40%,rgba(239,68,68,0.1) 0%,transparent 70%);
+}
+.emrg-header{padding:54px 20px 20px;text-align:center;position:relative;z-index:2;}
+.emrg-icon{font-size:64px;margin-bottom:10px;animation:urgentPulse 1.5s ease-in-out infinite;}
+@keyframes urgentPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+.emrg-title{font-family:'Cinzel',serif;font-size:24px;font-weight:900;color:var(--red);}
+.emrg-sub{font-size:12px;color:#7a3a3a;margin-top:4px;letter-spacing:1px;}
+
+.emrg-btn{
+  width:calc(100% - 40px);margin:0 20px 12px;
+  border:none;border-radius:16px;padding:18px;
+  font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;
+  letter-spacing:2px;cursor:pointer;text-transform:uppercase;
+  transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:10px;
+  position:relative;z-index:2;
+}
+.emrg-btn:active{transform:scale(0.97);}
+.emrg-primary{
+  background:linear-gradient(135deg,#dc2626,#b91c1c);
+  color:#fff;box-shadow:0 6px 24px rgba(239,68,68,0.4);
+  font-size:18px;padding:22px;
+}
+.emrg-secondary{
+  background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);
+  color:var(--red);
+}
+.emrg-tertiary{
+  background:rgba(255,180,50,0.08);border:1px solid rgba(255,180,50,0.2);
+  color:var(--gold);
+}
+.emrg-info-row{
+  width:calc(100% - 40px);margin:0 20px 10px;
+  display:flex;align-items:center;gap:10px;
+  background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.12);
+  border-radius:12px;padding:12px;font-size:12px;color:#7a4a4a;
+  position:relative;z-index:2;
+}
+
+/* ── LANG TOGGLE ── */
+.lang-toggle{display:flex;align-items:center;background:rgba(255,255,255,0.04);border:1px solid var(--line);border-radius:20px;overflow:hidden;flex-shrink:0;}
+.lang-btn{padding:5px 11px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;color:var(--muted);border:none;background:transparent;transition:all 0.2s;}
+.lang-btn.active{background:linear-gradient(135deg,var(--gold),var(--bronze));color:#0a0a14;border-radius:18px;margin:2px;}
+.toast-lang{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(255,180,50,0.12);border:1px solid rgba(255,180,50,0.25);border-radius:20px;padding:7px 16px;font-size:12px;font-weight:600;color:var(--gold);white-space:nowrap;z-index:300;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+.toast-lang.show{opacity:1;}
+
+/* ── SEARCH BAR ── */
+.srch-wrap{padding:0 20px 10px;position:relative;}
+.srch-box{width:100%;background:var(--dark3);border:1px solid var(--line);border-radius:14px;padding:10px 38px 10px 40px;font-family:'Rajdhani',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color 0.2s;}
+.srch-box:focus{border-color:rgba(255,180,50,0.35);}
+.srch-box::placeholder{color:var(--muted);}
+.srch-ico{position:absolute;left:32px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;}
+.srch-clr{position:absolute;right:30px;top:50%;transform:translateY(-50%);font-size:13px;cursor:pointer;color:var(--muted);display:none;}
+.srch-clr.show{display:block;}
+.srch-drop{display:none;position:absolute;top:50px;left:20px;right:20px;background:var(--dark2);border:1px solid rgba(255,180,50,0.18);border-radius:14px;z-index:150;overflow:hidden;max-height:280px;overflow-y:auto;box-shadow:0 8px 30px rgba(0,0,0,0.6);}
+.srch-drop.show{display:block;animation:srFadeDown 0.2s ease;}
+.srch-drop::-webkit-scrollbar{display:none;}
+@keyframes srFadeDown{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.sr-sec{font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;padding:10px 14px 4px;}
+.sr-row{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;transition:background 0.15s;border-bottom:1px solid rgba(255,255,255,0.03);}
+.sr-row:last-child{border-bottom:none;}
+.sr-row:active{background:rgba(255,180,50,0.05);}
+.sr-ri{font-size:17px;flex-shrink:0;width:24px;text-align:center;}
+.sr-rtxt{flex:1;}
+.sr-rttl{font-size:13px;font-weight:600;color:#c0b870;}
+.sr-rsub{font-size:11px;color:var(--muted);margin-top:1px;}
+.sr-rcat{font-size:10px;color:var(--gold);background:rgba(255,180,50,0.08);border:1px solid rgba(255,180,50,0.1);border-radius:8px;padding:2px 6px;flex-shrink:0;}
+.sr-empty{padding:18px;text-align:center;font-size:12px;color:var(--muted);}
+
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="toast-lang" id="toastLang"></div>
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+
+  <!-- ══ SCREEN: LISTE VÉHICULES ══ -->
+  <div class="screen active" id="home">
+    <div class="page-header">
+      <div class="back-btn" onclick="history.back()">← Retour</div>
+    <div class="lang-toggle" style="margin-bottom:8px;"><button class="lang-btn active" id="lt-blc-fr" onclick="switchLang('fr')">FR</button><button class="lang-btn" id="lt-blc-en" onclick="switchLang('en')">EN</button></div>
+      <div class="page-title">Blocage à distance</div>
+      <div class="page-sub">Contrôle total de vos biens</div>
+    </div>
+    <div class="scroll-area">
+
+      <!-- Urgence -->
+      <div class="urgent-banner" onclick="goTo('emergency')">
+        <div class="ub-icon">🆘</div>
+        <div>
+          <div class="ub-title">Mode Urgence</div>
+          <div class="ub-desc">Tout bloquer en 1 tap si votre bien est volé maintenant</div>
+        </div>
+        <div class="ub-arrow">›</div>
+      </div>
+
+      <div class="s-title">Motos & Voitures</div>
+
+      <!-- Honda CB — LOCKED -->
+      <div class="vehicle-card locked" id="vc-honda">
+        <div class="vc-top">
+          <div class="vc-icon">🏍️</div>
+          <div class="vc-info">
+            <div class="vc-name">Honda CB 125F</div>
+            <div class="vc-plate">CE · 4821 · A</div>
+            <div class="vc-status">
+              <div class="vs-dot vs-locked"></div>
+              <span style="color:var(--red);font-size:11px;font-weight:600;">Moteur coupé</span>
+            </div>
+          </div>
+        </div>
+        <div class="lock-controls">
+          <div class="lock-btn lb-engine active" onclick="toggleEngine(this,'honda')">
+            <div class="lb-icon">🔴</div>
+            <div class="lb-name">Moteur</div>
+            <div class="lb-state">Coupé · Appuyer pour réactiver</div>
+          </div>
+          <div class="lock-btn lb-geo" onclick="toggleGeo(this,'honda')">
+            <div class="lb-icon">📍</div>
+            <div class="lb-name">Géoblocage</div>
+            <div class="lb-state">Inactif</div>
+          </div>
+          <div class="lock-btn lb-alert" onclick="doAlert(this)">
+            <div class="lb-icon">📢</div>
+            <div class="lb-name">Klaxon auto</div>
+            <div class="lb-state">Déclencher</div>
+          </div>
+          <div class="lock-btn lb-track" onclick="goTo('gps')">
+            <div class="lb-icon">🗺️</div>
+            <div class="lb-name">GPS live</div>
+            <div class="lb-state">Voir position</div>
+          </div>
+        </div>
+        <div class="status-row">
+          <span class="sr-key">Dernière position</span>
+          <span class="sr-val" style="color:var(--red);">Briqueterie · 02:14</span>
+        </div>
+      </div>
+
+      <!-- Yamaha — normal -->
+      <div class="vehicle-card" id="vc-yamaha">
+        <div class="vc-top">
+          <div class="vc-icon">🏍️</div>
+          <div class="vc-info">
+            <div class="vc-name">Yamaha FZ 150</div>
+            <div class="vc-plate">LT · 3312 · B</div>
+            <div class="vc-status">
+              <div class="vs-dot vs-online"></div>
+              <span style="color:var(--green);font-size:11px;font-weight:600;">Moteur actif</span>
+            </div>
+          </div>
+        </div>
+        <div class="lock-controls">
+          <div class="lock-btn lb-engine" onclick="toggleEngine(this,'yamaha')">
+            <div class="lb-icon">🔑</div>
+            <div class="lb-name">Moteur</div>
+            <div class="lb-state">Actif · Appuyer pour couper</div>
+          </div>
+          <div class="lock-btn lb-geo" onclick="toggleGeo(this,'yamaha')">
+            <div class="lb-icon">📍</div>
+            <div class="lb-name">Géoblocage</div>
+            <div class="lb-state">Inactif</div>
+          </div>
+          <div class="lock-btn lb-alert" onclick="doAlert(this)">
+            <div class="lb-icon">📢</div>
+            <div class="lb-name">Klaxon auto</div>
+            <div class="lb-state">Déclencher</div>
+          </div>
+          <div class="lock-btn lb-track">
+            <div class="lb-icon">🗺️</div>
+            <div class="lb-name">GPS live</div>
+            <div class="lb-state">Mvog-Ada</div>
+          </div>
+        </div>
+        <div class="status-row">
+          <span class="sr-key">Dernière position</span>
+          <span class="sr-val" style="color:var(--green);">Mvog-Ada · il y a 3 min</span>
+        </div>
+      </div>
+
+      <div class="s-title">Téléphones</div>
+
+      <!-- iPhone -->
+      <div class="phone-card" id="vc-iphone">
+        <div class="vc-top">
+          <div class="vc-icon">📱</div>
+          <div class="vc-info">
+            <div class="vc-name">iPhone 14 Pro</div>
+            <div class="vc-plate">IMEI · 3892 · J.P. Mballa</div>
+            <div class="vc-status">
+              <div class="vs-dot vs-online"></div>
+              <span style="color:var(--green);font-size:11px;font-weight:600;">En ligne · Melen</span>
+            </div>
+          </div>
+        </div>
+        <div class="phone-actions">
+          <div class="phone-action-btn pab-lock" onclick="showConfirm('lock-phone','Verrouiller iPhone','Cette action verrouillera immédiatement l\'iPhone à distance. L\'appareil affichera un message avec votre numéro.','red')">
+            <div class="pab-icon">🔒</div>
+            <div class="pab-info">
+              <div class="pab-name">Verrouiller à distance</div>
+              <div class="pab-desc">Afficher message + code de récupération</div>
+            </div>
+            <div class="pab-arrow">›</div>
+          </div>
+          <div class="phone-action-btn pab-locate">
+            <div class="pab-icon">📡</div>
+            <div class="pab-info">
+              <div class="pab-name">Localiser l'appareil</div>
+              <div class="pab-desc">GPS · Melen, Yaoundé · il y a 2 min</div>
+            </div>
+            <div class="pab-arrow">›</div>
+          </div>
+          <div class="phone-action-btn pab-erase" onclick="showConfirm('erase-phone','Effacer toutes les données','⚠️ ACTION IRRÉVERSIBLE. Toutes les données de l\'iPhone seront effacées définitivement.','purple')">
+            <div class="pab-icon">🗑️</div>
+            <div class="pab-info">
+              <div class="pab-name">Effacement à distance</div>
+              <div class="pab-desc">⚠ Irréversible · Données supprimées</div>
+            </div>
+            <div class="pab-arrow">›</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Historique -->
+      <div class="s-title">Historique des actions</div>
+      <div class="history-item">
+        <div class="hi-dot" style="background:var(--red);"></div>
+        <div class="hi-content">
+          <div class="hi-title">🔴 Moteur coupé — Honda CB 125</div>
+          <div class="hi-desc">Action déclenchée par alerte mouvement · GPS actif</div>
+        </div>
+        <div class="hi-time">02:14</div>
+      </div>
+      <div class="history-item">
+        <div class="hi-dot" style="background:var(--green);"></div>
+        <div class="hi-content">
+          <div class="hi-title">✅ Moteur réactivé — Yamaha FZ</div>
+          <div class="hi-desc">Propriétaire confirmé · Retour zone sécurisée</div>
+        </div>
+        <div class="hi-time">Hier 16:14</div>
+      </div>
+      <div class="history-item">
+        <div class="hi-dot" style="background:var(--orange);"></div>
+        <div class="hi-content">
+          <div class="hi-title">📍 Géoblocage activé — Toyota</div>
+          <div class="hi-desc">Zone Bastos configurée · Rayon 500m</div>
+        </div>
+        <div class="hi-time">05/03</div>
+      </div>
+
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item active" onclick="goTo('home')"><div class="nav-icon">🔒</div>Biens</div>
+      <div class="nav-item" onclick="goTo('gps')"><div class="nav-icon">🗺️</div>GPS</div>
+      <div class="nav-item" onclick="goTo('emergency')"><div class="nav-icon">🆘</div>Urgence</div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: GPS LIVE ══ -->
+  <div class="screen" id="gps">
+    <div class="page-header">
+      <div class="back-btn" onclick="goTo('home')">← Retour</div>
+      <div class="page-title">GPS Temps réel</div>
+      <div class="page-sub">Honda CB 125 · Position live</div>
+    </div>
+    <div class="scroll-area">
+      <div style="width:100%;height:200px;background:#050a08;border-radius:16px;position:relative;overflow:hidden;margin-bottom:14px;border:1px solid var(--line);">
+        <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(239,68,68,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(239,68,68,0.05) 1px,transparent 1px);background-size:28px 28px;"></div>
+        <div style="position:absolute;height:3px;top:38%;left:0;right:0;background:rgba(255,255,255,0.07);"></div>
+        <div style="position:absolute;height:3px;top:60%;left:0;right:0;background:rgba(255,255,255,0.07);"></div>
+        <div style="position:absolute;width:3px;left:32%;top:0;bottom:0;background:rgba(255,255,255,0.07);"></div>
+        <div style="position:absolute;width:3px;left:65%;top:0;bottom:0;background:rgba(255,255,255,0.07);"></div>
+        <!-- Pulsing red dot for stolen vehicle -->
+        <div id="livePin" style="position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);">
+          <div style="width:16px;height:16px;border-radius:50%;background:var(--red);box-shadow:0 0 0 4px rgba(239,68,68,0.25);animation:redPulse 1.5s ease-in-out infinite;"></div>
+        </div>
+        <div style="position:absolute;bottom:8px;left:10px;font-size:9px;color:rgba(239,68,68,0.4);letter-spacing:2px;">BRIQUETERIE · YAOUNDÉ · EN DIRECT</div>
+        <div style="position:absolute;top:10px;right:10px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:4px 10px;font-size:10px;color:var(--red);font-weight:700;">🔴 LIVE</div>
+      </div>
+      @keyframes redPulse{0%,100%{box-shadow:0 0 0 4px rgba(239,68,68,0.3);}50%{box-shadow:0 0 0 14px rgba(239,68,68,0);}}
+      <div style="background:var(--dark2);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);"><span style="color:var(--muted);">Position</span><span style="color:var(--red);font-weight:600;">Briqueterie, Yaoundé</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);"><span style="color:var(--muted);">Vitesse</span><span style="color:#c0b870;font-weight:600;">0 km/h · Arrêté</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);"><span style="color:var(--muted);">Statut moteur</span><span style="color:var(--red);font-weight:600;">🔴 Coupé</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;padding:6px 0;"><span style="color:var(--muted);">Mise à jour</span><span style="color:var(--green);font-weight:600;">Il y a 12 secondes</span></div>
+      </div>
+      <button style="width:100%;background:linear-gradient(135deg,var(--red),#b91c1c);border:none;border-radius:14px;padding:16px;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:2px;color:#fff;cursor:pointer;margin-bottom:10px;" onclick="goTo('emergency')">🆘 Passer en mode urgence</button>
+      <button style="width:100%;background:transparent;border:1px solid var(--line);border-radius:14px;padding:14px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;" onclick="goTo('home')">← Retour</button>
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo('home')"><div class="nav-icon">🔒</div>Biens</div>
+      <div class="nav-item active" onclick="goTo('gps')"><div class="nav-icon">🗺️</div>GPS</div>
+      <div class="nav-item" onclick="goTo('emergency')"><div class="nav-icon">🆘</div>Urgence</div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: URGENCE ══ -->
+  <div class="screen" id="emergency">
+    <div class="emrg-header">
+      <div class="emrg-icon">🆘</div>
+      <div class="emrg-title">MODE URGENCE</div>
+      <div class="emrg-sub">Agissez vite · Chaque seconde compte</div>
+    </div>
+
+    <button class="emrg-btn emrg-primary" onclick="showConfirm('all-lock','TOUT BLOQUER MAINTENANT','Coupe moteur + géoblocage + alerte police pour TOUS vos véhicules simultanément. Action immédiate.','red')">
+      🔒 TOUT BLOQUER — 1 TAP
+    </button>
+
+    <div class="emrg-info-row">
+      <span>🏍️</span>
+      <span>Honda CB 125 · CE 4821 A · Briqueterie</span>
+    </div>
+
+    <button class="emrg-btn emrg-secondary" onclick="showConfirm('engine-off','Couper le moteur','Le moteur du véhicule sera coupé à distance. Le voleur ne pourra plus démarrer.','red')">
+      🔴 Couper moteur à distance
+    </button>
+    <button class="emrg-btn emrg-secondary" onclick="showConfirm('geo-lock','Activer géoblocage','Le véhicule ne pourra pas démarrer hors de la zone définie.','orange')">
+      📍 Activer géoblocage
+    </button>
+    <button class="emrg-btn emrg-tertiary" onclick="callPolice()">
+      👮 Contacter Police — 117
+    </button>
+    <button class="emrg-btn emrg-tertiary" style="margin-top:0;" onclick="goTo('home')">
+      ← Retour
+    </button>
+  </div>
+
+  <!-- ══ CONFIRM OVERLAY ══ -->
+  <div class="overlay" id="confirmOverlay">
+    <div class="co-warn" id="coWarn">⚠️</div>
+    <div class="co-title" id="coTitle" style="color:var(--red);">Confirmer l'action</div>
+    <div class="co-desc" id="coDesc">Êtes-vous sûr ?</div>
+    <div class="co-detail">
+      <div class="co-detail-row"><span style="color:var(--muted);">Véhicule</span><span style="color:#c0b870;">Honda CB 125F</span></div>
+      <div class="co-detail-row"><span style="color:var(--muted);">Plaque</span><span style="color:#c0b870;">CE · 4821 · A</span></div>
+      <div class="co-detail-row"><span style="color:var(--muted);">Action</span><span id="coAction" style="color:var(--red);">Couper moteur</span></div>
+    </div>
+    <div class="co-btns">
+      <button class="co-btn-cancel" onclick="hideConfirm()">Annuler</button>
+      <button class="co-btn-confirm red" id="coConfirmBtn" onclick="doAction()">Confirmer</button>
+    </div>
+  </div>
+
+  <!-- ══ PROCESSING OVERLAY ══ -->
+  <div class="overlay" id="processingOverlay">
+    <div class="proc-ring"></div>
+    <div class="proc-title" id="procTitle">Blocage en cours...</div>
+    <div class="proc-steps" id="procSteps">
+      <div class="proc-step done"><div class="ps-dot"></div>Connexion au tracker GPS</div>
+      <div class="proc-step active" id="ps2"><div class="ps-dot"></div>Envoi commande de blocage</div>
+      <div class="proc-step" id="ps3"><div class="ps-dot"></div>Confirmation du véhicule</div>
+      <div class="proc-step" id="ps4"><div class="ps-dot"></div>Blockchain mis à jour</div>
+    </div>
+  </div>
+
+  <!-- ══ SUCCESS OVERLAY ══ -->
+  <div class="overlay" id="successOverlay">
+    <div class="so-ring red-ring" id="soRing">🔒</div>
+    <div class="so-title" id="soTitle" style="color:var(--red);">Moteur coupé !</div>
+    <div class="so-desc" id="soDesc">Le moteur de votre Honda CB 125F a été coupé à distance. Le véhicule ne peut plus démarrer.</div>
+    <div class="so-info" id="soInfo">
+      Action : Coupure moteur<br>
+      Véhicule : Honda CB 125F · CE 4821 A<br>
+      Heure : 07/03/2026 · 09:41<br>
+      Blockchain : Enregistrée ✓
+    </div>
+    <button class="so-close" id="soClose" style="background:var(--red);color:#fff;" onclick="hideSuccess()">OK — Compris</button>
+  </div>
+
+</div>
+
+<script>
+let current='home';
+let pendingAction='';
+
+function goTo(id){
+  if(id===current)return;
+  const prev=document.getElementById(current);
+  const next=document.getElementById(id);
+  prev.classList.add('exit');
+  setTimeout(()=>{prev.classList.remove('active','exit');next.classList.add('active');current=id;},280);
+}
+
+function showConfirm(action, title, desc, color){
+  pendingAction=action;
+  document.getElementById('coTitle').textContent=title;
+  document.getElementById('coTitle').style.color=color==='red'?'var(--red)':color==='orange'?'var(--orange)':'var(--purple)';
+  document.getElementById('coDesc').textContent=desc;
+  document.getElementById('coAction').textContent=title;
+  document.getElementById('coAction').style.color=color==='red'?'var(--red)':color==='orange'?'var(--orange)':'var(--purple)';
+  document.getElementById('coConfirmBtn').className='co-btn-confirm '+color;
+  document.getElementById('confirmOverlay').style.display='flex';
+}
+function hideConfirm(){document.getElementById('confirmOverlay').style.display='none';}
+
+function doAction(){
+  hideConfirm();
+  document.getElementById('processingOverlay').style.display='flex';
+  const steps=['ps2','ps3','ps4'];
+  let i=0;
+  const iv=setInterval(()=>{
+    if(i<steps.length){
+      document.getElementById(steps[i]).classList.remove('active');
+      document.getElementById(steps[i]).classList.add('done');
+      if(i+1<steps.length) document.getElementById(steps[i+1]).classList.add('active');
+      i++;
+    } else {
+      clearInterval(iv);
+      setTimeout(()=>{
+        document.getElementById('processingOverlay').style.display='none';
+        showSuccess();
+      },400);
+    }
+  },800);
+}
+
+function showSuccess(){
+  const configs={
+    'engine-off':{icon:'🔴',title:'Moteur coupé !',desc:'Le moteur de votre Honda CB 125F a été coupé à distance. Le véhicule ne peut plus démarrer.',ring:'red-ring',close:'red',info:'Action : Coupure moteur\nVéhicule : Honda CB 125F\nHeure : 07/03/2026 · 09:41\nBlockchain : Enregistrée ✓'},
+    'all-lock':{icon:'🔒',title:'Tous bloqués !',desc:'Tous vos véhicules sont maintenant bloqués. La police a été notifiée automatiquement.',ring:'red-ring',close:'red',info:'Véhicules bloqués : Honda + Yamaha\nPolice notifiée : ✓\nHeure : 07/03/2026 · 09:41\nBlockchain : Enregistrée ✓'},
+    'geo-lock':{icon:'📍',title:'Géoblocage actif !',desc:'Votre véhicule ne peut plus démarrer hors de la zone Melen. Toute tentative génère une alerte.',ring:'red-ring',close:'orange',info:'Zone : Melen, Yaoundé · 500m\nGéoblocage : Actif\nHeure : 07/03/2026 · 09:41'},
+    'lock-phone':{icon:'🔒',title:'iPhone verrouillé !',desc:'L\'iPhone 14 Pro a été verrouillé. Un message avec votre numéro s\'affiche sur l\'écran.',ring:'red-ring',close:'red',info:'Appareil : iPhone 14 Pro\nMessage affiché : "Téléphone perdu"\nContact : +237 677 123 456'},
+    'erase-phone':{icon:'🗑️',title:'Données effacées !',desc:'Toutes les données de l\'iPhone ont été supprimées définitivement.',ring:'red-ring',close:'purple',info:'⚠ Action irréversible\nDonnées : Effacées\nCompte : Déconnecté\nHeure : 07/03/2026 · 09:41'},
+  };
+  const c=configs[pendingAction]||configs['engine-off'];
+  document.getElementById('soRing').innerHTML=c.icon;
+  document.getElementById('soTitle').textContent=c.title;
+  document.getElementById('soDesc').textContent=c.desc;
+  document.getElementById('soInfo').textContent=c.info;
+  document.getElementById('soClose').style.background=c.close==='red'?'var(--red)':c.close==='orange'?'var(--orange)':'var(--purple)';
+  document.getElementById('successOverlay').style.display='flex';
+}
+function hideSuccess(){document.getElementById('successOverlay').style.display='none';}
+
+function toggleEngine(btn, vehicle){
+  const isActive=btn.classList.contains('active');
+  if(!isActive){
+    showConfirm('engine-off','Couper le moteur','Le moteur sera coupé immédiatement. Le voleur ne pourra plus démarrer.','red');
+  } else {
+    pendingAction='engine-on';
+    showConfirm('engine-on','Réactiver le moteur','Vous confirmez que le véhicule est en sécurité et que vous souhaitez réactiver le moteur ?','orange');
+  }
+}
+
+function toggleGeo(btn, vehicle){
+  showConfirm('geo-lock','Activer géoblocage','Le véhicule ne pourra pas démarrer hors de votre zone sécurisée.','orange');
+}
+
+function doAlert(btn){
+  btn.querySelector('.lb-icon').textContent='📢';
+  btn.querySelector('.lb-state').textContent='Klaxon actif 30s...';
+  setTimeout(()=>{btn.querySelector('.lb-state').textContent='Déclencher';},3000);
+}
+
+function callPolice(){
+  document.getElementById('confirmOverlay').style.display='flex';
+  document.getElementById('coTitle').textContent='Appeler le 117 ?';
+  document.getElementById('coTitle').style.color='var(--red)';
+  document.getElementById('coDesc').textContent='Vous allez être mis en relation avec la Police Nationale Cameroun avec le rapport d\'alerte Ambera AI.';
+  document.getElementById('coAction').textContent='Appel Police · 117';
+  document.getElementById('coConfirmBtn').textContent='Appeler maintenant';
+  document.getElementById('coConfirmBtn').className='co-btn-confirm red';
+  pendingAction='police';
+}
+
+
+// ── BILINGUAL ENGINE ──
+var _lang = 'fr';
+var _allLtFr = document.querySelectorAll('[id$="-fr"].lang-btn');
+var _allLtEn = document.querySelectorAll('[id$="-en"].lang-btn');
+function switchLang(l){
+  if(l===_lang) return;
+  _lang = l;
+  document.querySelectorAll('[data-fr]').forEach(function(el){
+    var v = el.getAttribute('data-'+l);
+    if(v==null) return;
+    if(el.tagName==='INPUT') el.placeholder = v;
+    else el.innerHTML = v;
+  });
+  _allLtFr = document.querySelectorAll('[id$="-fr"].lang-btn');
+  _allLtEn = document.querySelectorAll('[id$="-en"].lang-btn');
+  _allLtFr.forEach(function(b){b.classList.toggle('active', l==='fr');});
+  _allLtEn.forEach(function(b){b.classList.toggle('active', l==='en');});
+  var t = document.getElementById('toastLang');
+  if(t){ t.textContent = l==='fr'?'🇫🇷 Français activé':'🇬🇧 English activated'; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},2000); }
+}
+
+// ── SEARCH ENGINE ──
+var _srData = {"fr": [{"ic": "🔴", "t": "Couper moteur", "s": "Honda CB 125 · CE 4821 A", "c": "Blocage"}, {"ic": "📍", "t": "Géoblocage", "s": "Bloquer hors zone définie", "c": "Blocage"}, {"ic": "📢", "t": "Klaxon automatique", "s": "Déclencher alarme sonore", "c": "Sécurité"}, {"ic": "🔒", "t": "Verrouiller téléphone", "s": "iPhone 14 Pro · IMEI", "c": "Téléphone"}, {"ic": "🗑️", "t": "Effacer données", "s": "Suppression à distance irréversible", "c": "Téléphone"}, {"ic": "🆘", "t": "Mode urgence", "s": "Tout bloquer en 1 tap", "c": "Urgence"}], "en": [{"ic": "🔴", "t": "Cut engine", "s": "Honda CB 125 · CE 4821 A", "c": "Lock"}, {"ic": "📍", "t": "Geo-lock", "s": "Block outside defined zone", "c": "Lock"}, {"ic": "📢", "t": "Auto horn", "s": "Trigger sound alarm", "c": "Security"}, {"ic": "🔒", "t": "Lock phone", "s": "iPhone 14 Pro · IMEI", "c": "Phone"}, {"ic": "🗑️", "t": "Erase data", "s": "Irreversible remote deletion", "c": "Phone"}, {"ic": "🆘", "t": "Emergency mode", "s": "Lock everything in 1 tap", "c": "Emergency"}]};
+var _srIdx = _srData['fr'];
+function _srBuild(){{ _srIdx = _srData[_lang]; }}
+function _srOpen(){{
+  var v = document.getElementById('srchBox').value;
+  if(v) _srDoSearch(v); else _srPopular();
+  document.getElementById('srchDrop').classList.add('show');
+}}
+function _srInput(v){{
+  document.getElementById('srchClr').classList.toggle('show', v.length>0);
+  if(v) _srDoSearch(v); else _srPopular();
+  document.getElementById('srchDrop').classList.add('show');
+}}
+function _srDoSearch(v){{
+  var drop = document.getElementById('srchDrop');
+  var q = v.toLowerCase();
+  var res = _srIdx.filter(function(d){{
+    return d.t.toLowerCase().indexOf(q)>-1 || d.s.toLowerCase().indexOf(q)>-1 || d.c.toLowerCase().indexOf(q)>-1;
+  }});
+  if(!res.length){{
+    drop.innerHTML = '<div class="sr-empty">'+(_lang==='fr'?'😕 Aucun résultat pour':'😕 No result for')+' "<b>'+v+'</b>"</div>';
+    return;
+  }}
+  drop.innerHTML = res.map(function(d){{
+    return '<div class="sr-row"><div class="sr-ri">'+d.ic+'</div><div class="sr-rtxt"><div class="sr-rttl">'+d.t+'</div><div class="sr-rsub">'+d.s+'</div></div><div class="sr-rcat">'+d.c+'</div></div>';
+  }}).join('');
+}}
+function _srPopular(){{
+  var drop = document.getElementById('srchDrop');
+  drop.innerHTML = '<div class="sr-sec">'+(_lang==='fr'?'Suggestions':'Suggestions')+'</div>'+
+    _srIdx.slice(0,5).map(function(d){{
+      return '<div class="sr-row"><div class="sr-ri">'+d.ic+'</div><div class="sr-rtxt"><div class="sr-rttl">'+d.t+'</div><div class="sr-rsub">'+d.s+'</div></div><div class="sr-rcat">'+d.c+'</div></div>';
+    }}).join('');
+}}
+function _srClear(){{
+  document.getElementById('srchBox').value='';
+  document.getElementById('srchClr').classList.remove('show');
+  document.getElementById('srchDrop').classList.remove('show');
+}}
+document.addEventListener('click', function(e){{
+  if(!e.target.closest('.srch-wrap')) document.getElementById('srchDrop').classList.remove('show');
+}});
+
+_srBuild();
+</script>
+</body>
+</html>

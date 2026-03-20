@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ambera AI — Notifications</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --gold:#ffb432;--gold2:#ffe08a;--bronze:#e8720a;
+  --dark:#07070f;--dark2:#0d0d1a;--dark3:#131328;
+  --line:#1e1e3a;--muted:#5a5a8a;--text:#d0cce0;
+  --green:#22c55e;--red:#ef4444;--blue:#38bdf8;--purple:#a855f7;
+}
+body{background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Rajdhani',sans-serif;padding:20px;}
+.phone{width:375px;height:812px;background:var(--dark);border-radius:48px;border:2px solid #1a1a2e;box-shadow:0 40px 120px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,255,255,0.05);position:relative;overflow:hidden;flex-shrink:0;}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:34px;background:#000;border-radius:0 0 20px 20px;z-index:100;}
+.status-bar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 6px;z-index:99;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);}
+
+.screen{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 0.3s ease,transform 0.3s ease;transform:translateX(30px);overflow:hidden;}
+.screen.active{opacity:1;pointer-events:all;transform:translateX(0);}
+.screen.exit{opacity:0;transform:translateX(-30px);}
+
+/* HEADER */
+.page-header{
+  padding:54px 20px 14px;
+  background:linear-gradient(180deg,var(--dark) 0%,transparent 100%);
+  display:flex;align-items:flex-end;justify-content:space-between;
+}
+.page-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--gold);}
+.page-sub{font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:0.5px;}
+.header-actions{display:flex;gap:8px;align-items:center;}
+.hdr-btn{background:var(--dark3);border:1px solid var(--line);border-radius:10px;padding:7px 12px;font-family:'Rajdhani',sans-serif;font-size:12px;color:var(--muted);cursor:pointer;transition:all 0.2s;}
+.hdr-btn:active{border-color:rgba(255,180,50,0.3);color:var(--gold);}
+
+/* SCROLL */
+.scroll-area{padding:4px 0 100px;overflow-y:auto;height:calc(100% - 120px);}
+.scroll-area::-webkit-scrollbar{display:none;}
+
+/* BOTTOM NAV */
+.bottom-nav{position:absolute;bottom:0;left:0;right:0;height:82px;background:rgba(7,7,15,0.97);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-around;padding:0 10px 20px;backdrop-filter:blur(20px);z-index:90;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:8px 12px;border-radius:12px;font-size:10px;letter-spacing:1px;color:var(--muted);transition:all 0.2s;position:relative;}
+.nav-item.active{color:var(--gold);}
+.nav-item:active{transform:scale(0.9);}
+.nav-icon{font-size:20px;}
+.nav-badge{position:absolute;top:4px;right:8px;width:16px;height:16px;border-radius:50%;background:var(--red);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+
+/* FILTER PILLS */
+.filter-pills{display:flex;gap:8px;overflow-x:auto;padding:0 20px 12px;scrollbar-width:none;}
+.filter-pills::-webkit-scrollbar{display:none;}
+.f-pill{background:var(--dark3);border:1px solid var(--line);border-radius:50px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;cursor:pointer;transition:all 0.2s;flex-shrink:0;display:flex;align-items:center;gap:5px;}
+.f-pill.active{background:rgba(255,180,50,0.1);border-color:rgba(255,180,50,0.3);color:var(--gold);}
+.f-pill:active{transform:scale(0.96);}
+.f-pill-count{background:rgba(255,180,50,0.15);color:var(--gold);font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;}
+.f-pill.active .f-pill-count{background:rgba(255,180,50,0.25);}
+
+/* DATE DIVIDER */
+.date-divider{
+  padding:6px 20px;
+  font-size:10px;letter-spacing:3px;color:#2a2a4a;
+  text-transform:uppercase;background:rgba(7,7,15,0.6);
+  position:sticky;top:0;z-index:10;backdrop-filter:blur(10px);
+}
+
+/* NOTIFICATION ITEM */
+.notif-item{
+  display:flex;gap:12px;align-items:flex-start;
+  padding:14px 20px;
+  border-bottom:1px solid rgba(255,255,255,0.03);
+  cursor:pointer;transition:background 0.2s;
+  position:relative;
+}
+.notif-item:active{background:rgba(255,255,255,0.02);}
+.notif-item.unread{background:rgba(255,180,50,0.02);}
+.notif-item.unread::before{
+  content:'';position:absolute;left:8px;top:50%;transform:translateY(-50%);
+  width:4px;height:4px;border-radius:50%;background:var(--gold);
+}
+
+/* ICON */
+.notif-icon-wrap{
+  width:44px;height:44px;border-radius:14px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  position:relative;
+}
+.ni-red{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.15);}
+.ni-gold{background:rgba(255,180,50,0.08);border:1px solid rgba(255,180,50,0.12);}
+.ni-green{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.12);}
+.ni-blue{background:rgba(56,189,248,0.08);border:1px solid rgba(56,189,248,0.12);}
+.ni-purple{background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.12);}
+
+.notif-dot{
+  position:absolute;bottom:-2px;right:-2px;
+  width:12px;height:12px;border-radius:50%;
+  border:2px solid var(--dark);font-size:7px;
+  display:flex;align-items:center;justify-content:center;
+}
+.nd-red{background:var(--red);}
+.nd-gold{background:var(--gold);}
+.nd-green{background:var(--green);}
+.nd-blue{background:var(--blue);}
+.nd-purple{background:var(--purple);}
+
+/* CONTENT */
+.notif-content{flex:1;min-width:0;}
+.notif-title{font-size:13px;font-weight:600;color:#c0b870;line-height:1.3;margin-bottom:3px;}
+.notif-item.unread .notif-title{color:#e0d080;}
+.notif-desc{font-size:12px;color:var(--muted);line-height:1.4;}
+.notif-time{font-size:10px;color:#2a2a4a;white-space:nowrap;margin-left:6px;flex-shrink:0;margin-top:2px;}
+
+/* TAGS */
+.notif-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px;}
+.n-tag{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;}
+.nt-red{background:rgba(239,68,68,0.1);color:var(--red);}
+.nt-gold{background:rgba(255,180,50,0.1);color:var(--gold);}
+.nt-green{background:rgba(34,197,94,0.1);color:var(--green);}
+.nt-blue{background:rgba(56,189,248,0.1);color:var(--blue);}
+.nt-purple{background:rgba(168,85,247,0.1);color:var(--purple);}
+
+/* ACTION BTNS IN NOTIF */
+.notif-actions{display:flex;gap:6px;margin-top:8px;}
+.na-btn{
+  background:var(--dark3);border:1px solid var(--line);
+  border-radius:8px;padding:5px 12px;
+  font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;
+  color:var(--muted);cursor:pointer;transition:all 0.2s;letter-spacing:0.5px;
+}
+.na-btn:active{transform:scale(0.96);}
+.na-btn.red{color:var(--red);border-color:rgba(239,68,68,0.2);}
+.na-btn.gold{color:var(--gold);border-color:rgba(255,180,50,0.2);}
+.na-btn.green{color:var(--green);border-color:rgba(34,197,94,0.2);}
+
+/* EMPTY STATE */
+.empty-state{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:12px;padding:60px 40px;text-align:center;
+}
+.es-icon{font-size:48px;opacity:0.4;}
+.es-title{font-family:'Cinzel',serif;font-size:16px;color:#3a3a5a;}
+.es-sub{font-size:12px;color:#2a2a4a;line-height:1.5;}
+
+/* SETTINGS SCREEN */
+.setting-group{padding:0 20px;margin-bottom:20px;}
+.sg-title{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;}
+.setting-row{
+  display:flex;align-items:center;gap:12px;
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:12px;padding:14px;margin-bottom:8px;
+  transition:border-color 0.2s;
+}
+.sr-icon{font-size:20px;flex-shrink:0;}
+.sr-info{flex:1;}
+.sr-name{font-size:14px;font-weight:600;color:#c0b870;}
+.sr-desc{font-size:11px;color:var(--muted);margin-top:2px;}
+.sr-toggle{width:42px;height:24px;border-radius:12px;background:var(--line);cursor:pointer;display:flex;align-items:center;padding:3px;transition:background 0.3s;flex-shrink:0;}
+.sr-toggle.on{background:var(--gold);}
+.sr-knob{width:18px;height:18px;border-radius:50%;background:#fff;transition:transform 0.3s;}
+.sr-toggle.on .sr-knob{transform:translateX(18px);}
+
+/* PUSH PREVIEW */
+.push-preview{
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);
+  border-radius:16px;margin:0 20px 16px;padding:14px;
+}
+.pp-header{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.pp-app-icon{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--gold),var(--bronze));display:flex;align-items:center;justify-content:center;font-size:14px;}
+.pp-app-name{font-size:12px;font-weight:600;color:#6a6a8a;letter-spacing:1px;}
+.pp-time{font-size:11px;color:#3a3a5a;margin-left:auto;}
+.pp-title{font-size:14px;font-weight:600;color:#d0c8a0;margin-bottom:3px;}
+.pp-body{font-size:12px;color:#6a6a8a;line-height:1.4;}
+
+/* ALERT INCOMING */
+.alert-incoming{
+  position:absolute;top:0;left:0;right:0;z-index:150;
+  background:rgba(7,7,15,0.98);border-bottom:1px solid var(--line);
+  transform:translateY(-100%);transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  padding:54px 16px 14px;
+}
+.alert-incoming.show{transform:translateY(0);}
+.ai-inner{
+  background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);
+  border-radius:14px;padding:14px;display:flex;align-items:flex-start;gap:12px;
+}
+.ai-icon-wrap{width:40px;height:40px;border-radius:12px;background:rgba(239,68,68,0.15);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.ai-content-inner{flex:1;}
+.ai-app{font-size:10px;letter-spacing:2px;color:var(--muted);}
+.ai-title-inner{font-size:14px;font-weight:600;color:#fca5a5;margin:2px 0;}
+.ai-body{font-size:12px;color:var(--muted);line-height:1.4;}
+.ai-actions{display:flex;gap:8px;margin-top:10px;}
+.ai-act-btn{flex:1;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:8px;text-align:center;cursor:pointer;font-size:12px;font-weight:600;color:#fca5a5;transition:all 0.2s;}
+.ai-act-btn.dismiss{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.08);color:var(--muted);}
+
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+@keyframes slideIn{from{transform:translateX(30px);opacity:0;}to{transform:translateX(0);opacity:1;}}
+
+/* ── LANG TOGGLE ── */
+.lang-toggle{display:flex;align-items:center;background:rgba(255,255,255,0.04);border:1px solid var(--line);border-radius:20px;overflow:hidden;flex-shrink:0;}
+.lang-btn{padding:5px 11px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;color:var(--muted);border:none;background:transparent;transition:all 0.2s;}
+.lang-btn.active{background:linear-gradient(135deg,var(--gold),var(--bronze));color:#0a0a14;border-radius:18px;margin:2px;}
+.toast-lang{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(255,180,50,0.12);border:1px solid rgba(255,180,50,0.25);border-radius:20px;padding:7px 16px;font-size:12px;font-weight:600;color:var(--gold);white-space:nowrap;z-index:300;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+.toast-lang.show{opacity:1;}
+
+/* ── SEARCH BAR ── */
+.srch-wrap{padding:0 20px 10px;position:relative;}
+.srch-box{width:100%;background:var(--dark3);border:1px solid var(--line);border-radius:14px;padding:10px 38px 10px 40px;font-family:'Rajdhani',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color 0.2s;}
+.srch-box:focus{border-color:rgba(255,180,50,0.35);}
+.srch-box::placeholder{color:var(--muted);}
+.srch-ico{position:absolute;left:32px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;}
+.srch-clr{position:absolute;right:30px;top:50%;transform:translateY(-50%);font-size:13px;cursor:pointer;color:var(--muted);display:none;}
+.srch-clr.show{display:block;}
+.srch-drop{display:none;position:absolute;top:50px;left:20px;right:20px;background:var(--dark2);border:1px solid rgba(255,180,50,0.18);border-radius:14px;z-index:150;overflow:hidden;max-height:280px;overflow-y:auto;box-shadow:0 8px 30px rgba(0,0,0,0.6);}
+.srch-drop.show{display:block;animation:srFadeDown 0.2s ease;}
+.srch-drop::-webkit-scrollbar{display:none;}
+@keyframes srFadeDown{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.sr-sec{font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;padding:10px 14px 4px;}
+.sr-row{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;transition:background 0.15s;border-bottom:1px solid rgba(255,255,255,0.03);}
+.sr-row:last-child{border-bottom:none;}
+.sr-row:active{background:rgba(255,180,50,0.05);}
+.sr-ri{font-size:17px;flex-shrink:0;width:24px;text-align:center;}
+.sr-rtxt{flex:1;}
+.sr-rttl{font-size:13px;font-weight:600;color:#c0b870;}
+.sr-rsub{font-size:11px;color:var(--muted);margin-top:1px;}
+.sr-rcat{font-size:10px;color:var(--gold);background:rgba(255,180,50,0.08);border:1px solid rgba(255,180,50,0.1);border-radius:8px;padding:2px 6px;flex-shrink:0;}
+.sr-empty{padding:18px;text-align:center;font-size:12px;color:var(--muted);}
+
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="toast-lang" id="toastLang"></div>
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+
+  <!-- ALERT INCOMING (push preview) -->
+  <div class="alert-incoming" id="alertIncoming">
+    <div class="ai-inner">
+      <div class="ai-icon-wrap">🚨</div>
+      <div class="ai-content-inner">
+        <div class="ai-app">AMBERA AI · MAINTENANT</div>
+        <div class="ai-title-inner">Mouvement suspect détecté !</div>
+        <div class="ai-body">Honda CB 125 · Briqueterie · Votre moto bouge à 02:14</div>
+        <div class="ai-actions">
+          <div class="ai-act-btn" onclick="dismissAlert()">🗺️ Localiser</div>
+          <div class="ai-act-btn" onclick="dismissAlert()">🚨 Urgence</div>
+          <div class="ai-act-btn dismiss" onclick="dismissAlert()">Ignorer</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: TOUTES ══ -->
+  <div class="screen active" id="all">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Notifications</div>
+        <div class="page-sub">7 non lues</div>
+      </div>
+      <div class="header-actions">
+        <div class="hdr-btn" onclick="markAllRead()">Tout lire</div>
+        <div class="hdr-btn" onclick="goTo('settings')">⚙️</div>
+      </div>
+    </div>
+
+    <!-- Filter pills -->
+    <div class="filter-pills">
+      <div class="f-pill active" onclick="filterNotifs(this,'all')">Tout <span class="f-pill-count">7</span></div>
+      <div class="f-pill" onclick="filterNotifs(this,'alert')">🚨 Alertes <span class="f-pill-count" style="background:rgba(239,68,68,0.15);color:var(--red);">3</span></div>
+      <div class="f-pill" onclick="filterNotifs(this,'gps')">📡 GPS <span class="f-pill-count">2</span></div>
+      <div class="f-pill" onclick="filterNotifs(this,'abo')">💰 Abonnement <span class="f-pill-count">1</span></div>
+      <div class="f-pill" onclick="filterNotifs(this,'parr')">🤝 Parrainage <span class="f-pill-count">1</span></div>
+    </div>
+
+    <div class="scroll-area" id="notifList">
+
+      <!-- AUJOURD'HUI -->
+      <div class="date-divider">Aujourd'hui</div>
+
+      <div class="notif-item unread" data-cat="alert">
+        <div class="notif-icon-wrap ni-red">
+          🚨
+          <div class="notif-dot nd-red"></div>
+        </div>
+        <div class="notif-content">
+          <div class="notif-title">Mouvement suspect — Honda CB 125</div>
+          <div class="notif-desc">Votre moto a bougé en dehors de la zone sécurisée à 02h14. Briqueterie, Yaoundé.</div>
+          <div class="notif-tags">
+            <span class="n-tag nt-red">⚠ Urgent</span>
+            <span class="n-tag nt-blue">📡 GPS actif</span>
+          </div>
+          <div class="notif-actions">
+            <div class="na-btn red" onclick="triggerAlert()">🗺️ Localiser</div>
+            <div class="na-btn gold">🚨 Urgence</div>
+            <div class="na-btn">Ignorer</div>
+          </div>
+        </div>
+        <div class="notif-time">02:14</div>
+      </div>
+
+      <div class="notif-item unread" data-cat="alert">
+        <div class="notif-icon-wrap ni-red">
+          🧬
+          <div class="notif-dot nd-red"></div>
+        </div>
+        <div class="notif-content">
+          <div class="notif-title">Tentative d'effacement VIN détectée</div>
+          <div class="notif-desc">IA Vision a détecté une anomalie sur le châssis de votre Yamaha FZ 150. ADN intact.</div>
+          <div class="notif-tags">
+            <span class="n-tag nt-red">⚠ VIN altéré</span>
+            <span class="n-tag nt-purple">⛓️ Blockchain OK</span>
+          </div>
+          <div class="notif-actions">
+            <div class="na-btn red">Voir détails</div>
+            <div class="na-btn">Contacter police</div>
+          </div>
+        </div>
+        <div class="notif-time">01:47</div>
+      </div>
+
+      <div class="notif-item unread" data-cat="gps">
+        <div class="notif-icon-wrap ni-gold">
+          📡
+          <div class="notif-dot nd-gold"></div>
+        </div>
+        <div class="notif-content">
+          <div class="notif-title">Zone de sécurité franchie — Toyota Corolla</div>
+          <div class="notif-desc">Votre voiture a quitté la zone Bastos il y a 8 minutes. Position actuelle : Nlongkak.</div>
+          <div class="notif-tags">
+            <span class="n-tag nt-gold">📍 Hors zone</span>
+          </div>
+          <div class="notif-actions">
+            <div class="na-btn gold">🗺️ Voir GPS</div>
+            <div class="na-btn">C'est moi</div>
+          </div>
+        </div>
+        <div class="notif-time">00:03</div>
+      </div>
+
+      <!-- HIER -->
+      <div class="date-divider">Hier</div>
+
+      <div class="notif-item unread" data-cat="parr">
+        <div class="notif-icon-wrap ni-green">
+          🎁
+          <div class="notif-dot nd-green"></div>
+        </div>
+        <div class="notif-content">
+          <div class="notif-title">Nouveau filleul — 1 mois gratuit gagné !</div>
+          <div class="notif-desc">Jean-Pierre Mballa vient de s'inscrire avec votre code AMBERA7. Votre abonnement est prolongé d'1 mois.</div>
+          <div class="notif-tags">
+            <span class="n-tag nt-green">🎁 +1 mois</span>
+            <span class="n-tag nt-gold">Code AMBERA7</span>
+          </div>
+        </div>
+        <div class="notif-time">18:32</div>
+      </div>
+
+      <div class="notif-item unread" data-cat="alert">
+        <div class="notif-icon-wrap ni-red">
+          🔋
+          <div class="notif-dot nd-red"></div>
+        </div>
+        <div class="notif-content">
+          <div class="notif-title">Batterie tracker GPS faible — Yamaha</div>
+          <div class="notif-desc">Le tracker GPS de votre Yamaha FZ 150 est à 15% de batterie. Rechargez sous 48h.</div>
+          <div class="notif-tags">
+            <span class="n-tag nt-red">🔋 15%</span>
+          </div>
+          <div class="notif-actions">
+            <div class="na-btn">Commander batterie</div>
+          </div>
+        </div>
+        <div class="notif-time">16:10</div>
+      </div>
+
+      <div class="notif-item unread" data-cat="gps">
+        <div class="notif-icon-wrap ni-green">
+          ✅
+          <div class="notif-dot nd-green"></div>
+        </div>
+        <div class="notif-content">
+          <div class="notif-title">Véhicule de retour en zone sécurisée</div>
+          <div class="notif-desc">Toyota Corolla est de retour dans la zone Bastos. Tout est normal.</div>
+          <div class="notif-tags">
+            <span class="n-tag nt-green">✅ Zone OK</span>
+          </div>
+        </div>
+        <div class="notif-time">14:22</div>
+      </div>
+
+      <!-- CETTE SEMAINE -->
+      <div class="date-divider">Cette semaine</div>
+
+      <div class="notif-item" data-cat="abo">
+        <div class="notif-icon-wrap ni-purple">
+          💰
+          <div class="notif-dot nd-purple"></div>
+        </div>
+        <div class="notif-content">
+          <div class="notif-title">Abonnement Pro renouvelé avec succès</div>
+          <div class="notif-desc">5 000 FCFA débités via MTN MoMo. Prochaine échéance le 07 Avril 2026.</div>
+          <div class="notif-tags">
+            <span class="n-tag nt-purple">✓ Plan Pro actif</span>
+            <span class="n-tag nt-gold">5 000 FCFA</span>
+          </div>
+        </div>
+        <div class="notif-time">05/03</div>
+      </div>
+
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item active" onclick="goTo('all')">
+        <div class="nav-icon">🔔</div>
+        Toutes
+        <div class="nav-badge" id="unreadBadge">7</div>
+      </div>
+      <div class="nav-item" onclick="goTo('alerts')"><div class="nav-icon">🚨</div>Alertes</div>
+      <div class="nav-item" onclick="goTo('settings')"><div class="nav-icon">⚙️</div>Réglages</div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: ALERTES ONLY ══ -->
+  <div class="screen" id="alerts">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Alertes sécurité</div>
+        <div class="page-sub">3 alertes actives</div>
+      </div>
+      <div class="header-actions">
+        <div class="hdr-btn" onclick="triggerAlert()">🧪 Simuler</div>
+      </div>
+    </div>
+
+    <div class="scroll-area">
+      <div class="date-divider">En cours · Urgent</div>
+
+      <div class="notif-item unread" data-cat="alert" style="border-left:3px solid var(--red);">
+        <div class="notif-icon-wrap ni-red">🚨<div class="notif-dot nd-red"></div></div>
+        <div class="notif-content">
+          <div class="notif-title">Mouvement suspect — Honda CB 125</div>
+          <div class="notif-desc">Briqueterie · 02h14 · GPS actif · Blockchain vérifié</div>
+          <div class="notif-actions">
+            <div class="na-btn red">🗺️ GPS temps réel</div>
+            <div class="na-btn gold">📞 Police 117</div>
+          </div>
+        </div>
+        <div class="notif-time" style="color:var(--red);animation:blink 1.5s ease-in-out infinite;">EN COURS</div>
+      </div>
+
+      <div class="notif-item unread" data-cat="alert" style="border-left:3px solid var(--red);">
+        <div class="notif-icon-wrap ni-red">🧬<div class="notif-dot nd-red"></div></div>
+        <div class="notif-content">
+          <div class="notif-title">VIN altéré — Yamaha FZ 150</div>
+          <div class="notif-desc">Mvog-Ada · Hier 18h32 · ADN intact · Preuve Blockchain</div>
+          <div class="notif-actions">
+            <div class="na-btn red">Voir preuve</div>
+            <div class="na-btn">Signaler</div>
+          </div>
+        </div>
+        <div class="notif-time" style="color:var(--red);">URGENT</div>
+      </div>
+
+      <div class="notif-item unread" data-cat="alert" style="border-left:3px solid var(--gold);">
+        <div class="notif-icon-wrap ni-gold">🔋<div class="notif-dot nd-gold"></div></div>
+        <div class="notif-content">
+          <div class="notif-title">Batterie GPS faible — Yamaha FZ 150</div>
+          <div class="notif-desc">15% restant · Autonomie estimée : 3 jours</div>
+          <div class="notif-actions">
+            <div class="na-btn gold">Commander batterie</div>
+          </div>
+        </div>
+        <div class="notif-time" style="color:var(--gold);">MOYEN</div>
+      </div>
+
+      <div class="date-divider">Résolues cette semaine</div>
+
+      <div class="notif-item" style="opacity:0.6;">
+        <div class="notif-icon-wrap ni-green">✅</div>
+        <div class="notif-content">
+          <div class="notif-title">Zone sécurisée retrouvée — Toyota</div>
+          <div class="notif-desc">Alerte résolue · 06/03 à 14:22</div>
+        </div>
+        <div class="notif-time">06/03</div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo('all')"><div class="nav-icon">🔔</div>Toutes</div>
+      <div class="nav-item active" onclick="goTo('alerts')"><div class="nav-icon">🚨</div>Alertes</div>
+      <div class="nav-item" onclick="goTo('settings')"><div class="nav-icon">⚙️</div>Réglages</div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: SETTINGS ══ -->
+  <div class="screen" id="settings">
+    <div class="page-header">
+      <div>
+        <div class="back-btn" onclick="goTo('all')" style="display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer;margin-bottom:8px;">← Retour</div>
+    <div class="lang-toggle" style="margin-bottom:8px;"><button class="lang-btn active" id="lt-not-fr" onclick="switchLang('fr')">FR</button><button class="lang-btn" id="lt-not-en" onclick="switchLang('en')">EN</button></div>
+        <div class="page-title">Réglages</div>
+        <div class="page-sub">Personnalisez vos notifications</div>
+      </div>
+    </div>
+
+    <div class="scroll-area" style="height:calc(100% - 130px);">
+
+      <!-- Push preview -->
+      <div class="push-preview">
+        <div class="pp-header">
+          <div class="pp-app-icon">🛡️</div>
+          <div class="pp-app-name">AMBERA AI</div>
+          <div class="pp-time">maintenant</div>
+        </div>
+        <div class="pp-title">Aperçu notification</div>
+        <div class="pp-body">Voici comment apparaissent vos alertes sur l'écran de verrouillage.</div>
+      </div>
+
+      <div class="setting-group">
+        <div class="sg-title">🚨 Alertes sécurité</div>
+        <div class="setting-row">
+          <div class="sr-icon">🚨</div>
+          <div class="sr-info"><div class="sr-name">Mouvement suspect</div><div class="sr-desc">Alerte immédiate si votre véhicule bouge</div></div>
+          <div class="sr-toggle on" onclick="toggleSetting(this)"><div class="sr-knob"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon">🧬</div>
+          <div class="sr-info"><div class="sr-name">VIN altéré détecté</div><div class="sr-desc">Si quelqu'un tente d'effacer le numéro</div></div>
+          <div class="sr-toggle on" onclick="toggleSetting(this)"><div class="sr-knob"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon">📍</div>
+          <div class="sr-info"><div class="sr-name">Sortie de zone GPS</div><div class="sr-desc">Franchissement du périmètre sécurisé</div></div>
+          <div class="sr-toggle on" onclick="toggleSetting(this)"><div class="sr-knob"></div></div>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <div class="sg-title">📡 GPS & Système</div>
+        <div class="setting-row">
+          <div class="sr-icon">🔋</div>
+          <div class="sr-info"><div class="sr-name">Batterie tracker faible</div><div class="sr-desc">Alerte à 20% de batterie restante</div></div>
+          <div class="sr-toggle on" onclick="toggleSetting(this)"><div class="sr-knob"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon">📡</div>
+          <div class="sr-info"><div class="sr-name">Signal GPS perdu</div><div class="sr-desc">Si le tracker est déconnecté</div></div>
+          <div class="sr-toggle on" onclick="toggleSetting(this)"><div class="sr-knob"></div></div>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <div class="sg-title">💰 Abonnement & Parrainage</div>
+        <div class="setting-row">
+          <div class="sr-icon">💰</div>
+          <div class="sr-info"><div class="sr-name">Renouvellement abonnement</div><div class="sr-desc">Rappel 3 jours avant l'échéance</div></div>
+          <div class="sr-toggle on" onclick="toggleSetting(this)"><div class="sr-knob"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon">🤝</div>
+          <div class="sr-info"><div class="sr-name">Nouveau filleul</div><div class="sr-desc">Quand un ami utilise votre code</div></div>
+          <div class="sr-toggle on" onclick="toggleSetting(this)"><div class="sr-knob"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon">🎁</div>
+          <div class="sr-info"><div class="sr-name">Promotions & offres</div><div class="sr-desc">Nouvelles offres hardware et plans</div></div>
+          <div class="sr-toggle" onclick="toggleSetting(this)"><div class="sr-knob"></div></div>
+        </div>
+      </div>
+
+      <div class="setting-group">
+        <div class="sg-title">📱 Canal de notification</div>
+        <div class="setting-row">
+          <div class="sr-icon">📱</div>
+          <div class="sr-info"><div class="sr-name">Notification push</div><div class="sr-desc">Dans l'application Ambera AI</div></div>
+          <div class="sr-toggle on" onclick="toggleSetting(this)"><div class="sr-knob"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon">💬</div>
+          <div class="sr-info"><div class="sr-name">SMS (alertes critiques)</div><div class="sr-desc">Toujours envoyé même hors ligne</div></div>
+          <div class="sr-toggle on" onclick="toggleSetting(this)"><div class="sr-knob"></div></div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon">📲</div>
+          <div class="sr-info"><div class="sr-name">WhatsApp</div><div class="sr-desc">Résumé quotidien sur WhatsApp</div></div>
+          <div class="sr-toggle" onclick="toggleSetting(this)"><div class="sr-knob"></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+let current='all';
+let unread=7;
+
+function goTo(id){
+  if(id===current)return;
+  const prev=document.getElementById(current);
+  const next=document.getElementById(id);
+  prev.classList.add('exit');
+  setTimeout(()=>{prev.classList.remove('active','exit');next.classList.add('active');current=id;},280);
+}
+
+function filterNotifs(pill, cat){
+  document.querySelectorAll('.f-pill').forEach(p=>p.classList.remove('active'));
+  pill.classList.add('active');
+  const items=document.querySelectorAll('#notifList .notif-item');
+  items.forEach(item=>{
+    if(cat==='all') item.style.display='';
+    else item.style.display=item.dataset.cat===cat?'':'none';
+  });
+  document.querySelectorAll('#notifList .date-divider').forEach(d=>d.style.display='');
+}
+
+function markAllRead(){
+  document.querySelectorAll('.notif-item.unread').forEach(n=>n.classList.remove('unread'));
+  unread=0;
+  document.getElementById('unreadBadge').style.display='none';
+  document.querySelector('.page-sub').textContent='Tout lu';
+}
+
+function toggleSetting(toggle){
+  toggle.classList.toggle('on');
+}
+
+let alertShown=false;
+function triggerAlert(){
+  if(alertShown) return;
+  alertShown=true;
+  document.getElementById('alertIncoming').classList.add('show');
+}
+function dismissAlert(){
+  document.getElementById('alertIncoming').classList.remove('show');
+  alertShown=false;
+}
+
+// Auto trigger alert after 2.5s on load
+setTimeout(()=>{ triggerAlert(); }, 2500);
+
+
+// ── BILINGUAL ENGINE ──
+var _lang = 'fr';
+var _allLtFr = document.querySelectorAll('[id$="-fr"].lang-btn');
+var _allLtEn = document.querySelectorAll('[id$="-en"].lang-btn');
+function switchLang(l){
+  if(l===_lang) return;
+  _lang = l;
+  document.querySelectorAll('[data-fr]').forEach(function(el){
+    var v = el.getAttribute('data-'+l);
+    if(v==null) return;
+    if(el.tagName==='INPUT') el.placeholder = v;
+    else el.innerHTML = v;
+  });
+  _allLtFr = document.querySelectorAll('[id$="-fr"].lang-btn');
+  _allLtEn = document.querySelectorAll('[id$="-en"].lang-btn');
+  _allLtFr.forEach(function(b){b.classList.toggle('active', l==='fr');});
+  _allLtEn.forEach(function(b){b.classList.toggle('active', l==='en');});
+  var t = document.getElementById('toastLang');
+  if(t){ t.textContent = l==='fr'?'🇫🇷 Français activé':'🇬🇧 English activated'; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},2000); }
+}
+
+// ── SEARCH ENGINE ──
+var _srData = {"fr": [{"ic": "🚨", "t": "Alerte mouvement", "s": "Honda CB · Briqueterie · 02:14", "c": "Alerte"}, {"ic": "🧬", "t": "VIN altéré détecté", "s": "Yamaha FZ · Mvog-Ada", "c": "Alerte"}, {"ic": "📡", "t": "Zone GPS franchie", "s": "Toyota Corolla · hors Bastos", "c": "GPS"}, {"ic": "🎁", "t": "Filleul inscrit", "s": "Jean-Pierre avec code AMBERA7", "c": "Parrainage"}, {"ic": "🔋", "t": "Batterie faible", "s": "Tracker Yamaha FZ · 15%", "c": "Système"}, {"ic": "⚙️", "t": "Réglages notifications", "s": "Gérer alertes et canaux", "c": "Réglages"}], "en": [{"ic": "🚨", "t": "Movement alert", "s": "Honda CB · Briqueterie · 02:14", "c": "Alert"}, {"ic": "🧬", "t": "Altered VIN detected", "s": "Yamaha FZ · Mvog-Ada", "c": "Alert"}, {"ic": "📡", "t": "GPS zone breached", "s": "Toyota Corolla · outside Bastos", "c": "GPS"}, {"ic": "🎁", "t": "Referral signed up", "s": "Jean-Pierre with code AMBERA7", "c": "Referral"}, {"ic": "🔋", "t": "Low battery", "s": "Yamaha FZ tracker · 15%", "c": "System"}, {"ic": "⚙️", "t": "Notification settings", "s": "Manage alerts and channels", "c": "Settings"}]};
+var _srIdx = _srData['fr'];
+function _srBuild(){{ _srIdx = _srData[_lang]; }}
+function _srOpen(){{
+  var v = document.getElementById('srchBox').value;
+  if(v) _srDoSearch(v); else _srPopular();
+  document.getElementById('srchDrop').classList.add('show');
+}}
+function _srInput(v){{
+  document.getElementById('srchClr').classList.toggle('show', v.length>0);
+  if(v) _srDoSearch(v); else _srPopular();
+  document.getElementById('srchDrop').classList.add('show');
+}}
+function _srDoSearch(v){{
+  var drop = document.getElementById('srchDrop');
+  var q = v.toLowerCase();
+  var res = _srIdx.filter(function(d){{
+    return d.t.toLowerCase().indexOf(q)>-1 || d.s.toLowerCase().indexOf(q)>-1 || d.c.toLowerCase().indexOf(q)>-1;
+  }});
+  if(!res.length){{
+    drop.innerHTML = '<div class="sr-empty">'+(_lang==='fr'?'😕 Aucun résultat pour':'😕 No result for')+' "<b>'+v+'</b>"</div>';
+    return;
+  }}
+  drop.innerHTML = res.map(function(d){{
+    return '<div class="sr-row"><div class="sr-ri">'+d.ic+'</div><div class="sr-rtxt"><div class="sr-rttl">'+d.t+'</div><div class="sr-rsub">'+d.s+'</div></div><div class="sr-rcat">'+d.c+'</div></div>';
+  }}).join('');
+}}
+function _srPopular(){{
+  var drop = document.getElementById('srchDrop');
+  drop.innerHTML = '<div class="sr-sec">'+(_lang==='fr'?'Suggestions':'Suggestions')+'</div>'+
+    _srIdx.slice(0,5).map(function(d){{
+      return '<div class="sr-row"><div class="sr-ri">'+d.ic+'</div><div class="sr-rtxt"><div class="sr-rttl">'+d.t+'</div><div class="sr-rsub">'+d.s+'</div></div><div class="sr-rcat">'+d.c+'</div></div>';
+    }}).join('');
+}}
+function _srClear(){{
+  document.getElementById('srchBox').value='';
+  document.getElementById('srchClr').classList.remove('show');
+  document.getElementById('srchDrop').classList.remove('show');
+}}
+document.addEventListener('click', function(e){{
+  if(!e.target.closest('.srch-wrap')) document.getElementById('srchDrop').classList.remove('show');
+}});
+
+_srBuild();
+</script>
+</body>
+</html>

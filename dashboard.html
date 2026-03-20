@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ambera AI — Dashboard Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --gold:#ffb432;--gold2:#ffe08a;--bronze:#e8720a;
+  --dark:#07070f;--dark2:#0d0d1a;--dark3:#131328;
+  --line:#1e1e3a;--muted:#5a5a8a;--text:#d0cce0;
+  --green:#22c55e;--red:#ef4444;--blue:#38bdf8;--purple:#a855f7;
+}
+body{background:var(--dark);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;display:flex;overflow:hidden;}
+
+/* ══ SIDEBAR ══ */
+.sidebar{
+  width:220px;flex-shrink:0;
+  background:var(--dark2);border-right:1px solid var(--line);
+  display:flex;flex-direction:column;
+  height:100vh;overflow-y:auto;
+}
+.sidebar::-webkit-scrollbar{display:none;}
+.sb-logo{
+  padding:24px 20px 20px;
+  border-bottom:1px solid var(--line);
+}
+.sb-logo-name{
+  font-family:'Cinzel',serif;font-size:18px;font-weight:900;letter-spacing:3px;
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.sb-logo-sub{font-size:10px;letter-spacing:2px;color:var(--muted);margin-top:2px;}
+
+.sb-section{padding:16px 12px 8px;}
+.sb-section-label{font-size:9px;letter-spacing:3px;color:#2a2a4a;text-transform:uppercase;padding:0 8px;margin-bottom:6px;}
+.sb-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 10px;border-radius:10px;cursor:pointer;
+  font-size:13px;font-weight:500;color:var(--muted);
+  transition:all 0.2s;margin-bottom:2px;
+  text-decoration:none;
+}
+.sb-item:hover{background:rgba(255,255,255,0.03);color:var(--text);}
+.sb-item.active{background:rgba(255,180,50,0.08);color:var(--gold);border:1px solid rgba(255,180,50,0.1);}
+.sb-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.sb-badge{
+  margin-left:auto;background:var(--red);color:#fff;
+  font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;
+}
+.sb-badge.gold{background:rgba(255,180,50,0.15);color:var(--gold);}
+
+.sb-footer{
+  margin-top:auto;padding:16px;border-top:1px solid var(--line);
+}
+.sb-admin{display:flex;align-items:center;gap:10px;}
+.sb-admin-avatar{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--bronze));
+  display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;
+}
+.sb-admin-name{font-size:13px;font-weight:600;color:#c0b880;}
+.sb-admin-role{font-size:10px;color:var(--muted);letter-spacing:1px;}
+
+/* ══ MAIN ══ */
+.main{flex:1;height:100vh;overflow-y:auto;display:flex;flex-direction:column;}
+.main::-webkit-scrollbar{width:4px;}
+.main::-webkit-scrollbar-track{background:var(--dark);}
+.main::-webkit-scrollbar-thumb{background:var(--line);border-radius:2px;}
+
+/* ══ TOP BAR ══ */
+.topbar{
+  padding:18px 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--line);
+  background:rgba(7,7,15,0.8);backdrop-filter:blur(10px);
+  position:sticky;top:0;z-index:50;flex-shrink:0;
+}
+.topbar-left{}
+.topbar-title{font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:var(--gold);}
+.topbar-sub{font-size:12px;color:var(--muted);margin-top:1px;letter-spacing:1px;}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.topbar-btn{
+  background:var(--dark3);border:1px solid var(--line);
+  border-radius:10px;padding:8px 14px;
+  font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;
+  color:var(--muted);cursor:pointer;transition:all 0.2s;
+}
+.topbar-btn:hover{border-color:rgba(255,180,50,0.3);color:var(--gold);}
+.topbar-btn.primary{
+  background:linear-gradient(135deg,var(--gold),var(--bronze));
+  color:#0a0a14;border:none;
+}
+.topbar-alert-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--red);
+  animation:blink 1.2s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+
+/* ══ CONTENT ══ */
+.content{padding:24px 28px;flex:1;}
+
+/* ══ PAGES ══ */
+.page{display:none;}
+.page.active{display:block;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* ══ KPI ROW ══ */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.kpi-card{
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:16px;padding:18px 20px;
+  position:relative;overflow:hidden;transition:border-color 0.3s;
+}
+.kpi-card:hover{border-color:rgba(255,180,50,0.2);}
+.kpi-card::before{
+  content:'';position:absolute;top:-20px;right:-20px;
+  width:70px;height:70px;border-radius:50%;opacity:0.07;
+}
+.kpi-card:nth-child(1)::before{background:var(--gold);}
+.kpi-card:nth-child(2)::before{background:var(--green);}
+.kpi-card:nth-child(3)::before{background:var(--red);}
+.kpi-card:nth-child(4)::before{background:var(--blue);}
+
+.kpi-label{font-size:11px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+.kpi-num{font-family:'Cinzel',serif;font-size:32px;font-weight:900;line-height:1;}
+.kpi-num.gold{color:var(--gold);}
+.kpi-num.green{color:var(--green);}
+.kpi-num.red{color:var(--red);}
+.kpi-num.blue{color:var(--blue);}
+.kpi-change{font-size:12px;margin-top:6px;}
+.kpi-change.up{color:var(--green);}
+.kpi-change.down{color:var(--red);}
+
+/* ══ GRID 2COL ══ */
+.grid-2{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:24px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px;}
+
+/* ══ CARD ══ */
+.card{
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:16px;padding:20px;
+}
+.card-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.card-title{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:#c0b880;letter-spacing:1px;}
+.card-action{font-size:12px;color:var(--gold);cursor:pointer;letter-spacing:1px;}
+
+/* ══ CHART BAR ══ */
+.bar-chart{display:flex;align-items:flex-end;gap:8px;height:100px;}
+.bar-col{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.bar{
+  width:100%;border-radius:4px 4px 0 0;
+  background:linear-gradient(180deg,var(--gold),rgba(255,180,50,0.3));
+  transition:height 0.6s ease;min-height:4px;
+}
+.bar.alt{background:linear-gradient(180deg,var(--blue),rgba(56,189,248,0.3));}
+.bar-label{font-size:9px;color:var(--muted);letter-spacing:1px;}
+
+/* ══ DONUT CHART ══ */
+.donut-wrap{display:flex;align-items:center;gap:20px;}
+.donut-svg{flex-shrink:0;}
+.donut-legend{display:flex;flex-direction:column;gap:8px;}
+.legend-item{display:flex;align-items:center;gap:8px;font-size:12px;}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.legend-label{color:var(--muted);}
+.legend-val{margin-left:auto;color:#c0b870;font-weight:600;}
+
+/* ══ ALERT FEED ══ */
+.alert-feed{display:flex;flex-direction:column;gap:8px;}
+.alert-item{
+  display:flex;gap:10px;align-items:flex-start;
+  background:var(--dark3);border:1px solid var(--line);
+  border-radius:10px;padding:10px 12px;
+  border-left:3px solid transparent;
+  cursor:pointer;transition:border-color 0.2s;
+}
+.alert-item:hover{border-left-color:var(--gold);}
+.alert-item.high{border-left-color:var(--red);}
+.alert-item.med{border-left-color:var(--gold);}
+.alert-item.low{border-left-color:var(--green);}
+.ai-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.ai-dot.red{background:var(--red);animation:blink 1.2s ease-in-out infinite;}
+.ai-dot.gold{background:var(--gold);}
+.ai-dot.green{background:var(--green);}
+.ai-content{flex:1;}
+.ai-title{font-size:13px;font-weight:600;color:#c0c0d0;}
+.ai-desc{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.4;}
+.ai-time{font-size:10px;color:#2a2a4a;margin-left:auto;flex-shrink:0;}
+
+/* ══ USER TABLE ══ */
+.table-wrap{overflow-x:auto;}
+.data-table{width:100%;border-collapse:collapse;font-size:13px;}
+.data-table th{
+  text-align:left;padding:10px 12px;
+  font-size:10px;letter-spacing:2px;color:var(--muted);
+  text-transform:uppercase;border-bottom:1px solid var(--line);
+  font-weight:500;
+}
+.data-table td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,0.03);color:#a0a0b8;}
+.data-table tr:hover td{background:rgba(255,255,255,0.02);}
+.data-table tr:last-child td{border-bottom:none;}
+.td-name{color:#d0c8a0;font-weight:600;}
+.status-pill{
+  display:inline-block;font-size:10px;font-weight:600;
+  padding:3px 10px;border-radius:20px;letter-spacing:1px;
+}
+.pill-active{background:rgba(34,197,94,0.1);color:var(--green);}
+.pill-inactive{background:rgba(90,90,138,0.15);color:var(--muted);}
+.pill-alert{background:rgba(239,68,68,0.1);color:var(--red);}
+.td-action{color:var(--gold);cursor:pointer;font-size:12px;}
+.td-action:hover{text-decoration:underline;}
+
+/* ══ MAP SECTION ══ */
+.fake-map-admin{
+  width:100%;height:200px;border-radius:12px;
+  background:#0d1a0d;position:relative;overflow:hidden;
+}
+.fma-grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,180,50,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,180,50,0.04) 1px,transparent 1px);
+  background-size:30px 30px;
+}
+.fma-road{position:absolute;background:rgba(255,255,255,0.07);}
+.fma-pin{position:absolute;font-size:16px;transform:translate(-50%,-100%);filter:drop-shadow(0 2px 3px rgba(0,0,0,0.5));}
+.fma-pulse{
+  position:absolute;width:12px;height:12px;border-radius:50%;
+  background:var(--gold);transform:translate(-50%,-50%);
+  box-shadow:0 0 0 4px rgba(255,180,50,0.2);
+  animation:gpsPulse 2s ease-in-out infinite;
+}
+@keyframes gpsPulse{0%,100%{box-shadow:0 0 0 3px rgba(255,180,50,0.3);}50%{box-shadow:0 0 0 10px rgba(255,180,50,0);}}
+
+/* ══ REVENUE MINI ══ */
+.rev-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.rev-row:last-child{border-bottom:none;}
+.rev-source{font-size:13px;color:var(--muted);}
+.rev-bar-wrap{flex:1;height:4px;background:rgba(255,255,255,0.05);border-radius:2px;margin:0 12px;}
+.rev-bar-fill{height:100%;border-radius:2px;background:var(--gold);}
+.rev-amount{font-size:13px;font-weight:600;color:#c0b870;}
+
+/* ══ SECTION TITLE ══ */
+.section-head{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;
+}
+.section-title-sm{font-family:'Cinzel',serif;font-size:13px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+
+/* ══ SEARCH BAR ══ */
+.search-bar{
+  display:flex;gap:10px;margin-bottom:16px;
+}
+.search-input{
+  flex:1;background:var(--dark3);border:1px solid var(--line);
+  border-radius:10px;padding:9px 14px;
+  font-family:'Rajdhani',sans-serif;font-size:13px;color:var(--text);outline:none;
+  transition:border-color 0.2s;
+}
+.search-input:focus{border-color:rgba(255,180,50,0.3);}
+.search-input::placeholder{color:#3a3a5a;}
+.filter-btn{
+  background:var(--dark3);border:1px solid var(--line);border-radius:10px;
+  padding:9px 14px;font-family:'Rajdhani',sans-serif;font-size:13px;
+  color:var(--muted);cursor:pointer;transition:all 0.2s;
+}
+.filter-btn:hover{border-color:rgba(255,180,50,0.3);color:var(--gold);}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<div class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-name">AMBERA</div>
+    <div class="sb-logo-sub">Admin Dashboard</div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-label">Principal</div>
+    <div class="sb-item active" onclick="showPage('overview',this)">
+      <span class="sb-icon">📊</span> Vue d'ensemble
+    </div>
+    <div class="sb-item" onclick="showPage('alerts',this)">
+      <span class="sb-icon">🚨</span> Alertes
+      <span class="sb-badge">3</span>
+    </div>
+    <div class="sb-item" onclick="showPage('map',this)">
+      <span class="sb-icon">🗺️</span> Carte GPS
+    </div>
+    <div class="sb-item" onclick="showPage('scans',this)">
+      <span class="sb-icon">📷</span> Scans VIN
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-label">Gestion</div>
+    <div class="sb-item" onclick="showPage('users',this)">
+      <span class="sb-icon">👥</span> Utilisateurs
+      <span class="sb-badge gold">247</span>
+    </div>
+    <div class="sb-item" onclick="showPage('vehicles',this)">
+      <span class="sb-icon">🏍️</span> Véhicules
+    </div>
+    <div class="sb-item" onclick="showPage('revenue',this)">
+      <span class="sb-icon">💰</span> Revenus
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-label">Système</div>
+    <div class="sb-item" onclick="showPage('settings',this)">
+      <span class="sb-icon">⚙️</span> Paramètres
+    </div>
+  </div>
+
+  <div class="sb-footer">
+    <div class="sb-admin">
+      <div class="sb-admin-avatar">👤</div>
+      <div>
+        <div class="sb-admin-name">Ambera</div>
+        <div class="sb-admin-role">Super Admin</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title" id="pageTitle">Vue d'ensemble</div>
+      <div class="topbar-sub" id="pageDate">Samedi 07 Mars 2026 · Yaoundé, Cameroun</div>
+    </div>
+    <div class="topbar-right">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--red);">
+        <div class="topbar-alert-dot"></div>
+        3 alertes actives
+      </div>
+      <button class="topbar-btn" onclick="showPage('alerts',null)">🔔 Alertes</button>
+      <button class="topbar-btn primary" onclick="showPage('users',null)">+ Ajouter</button>
+      <div style="display:flex;align-items:center;gap:5px;margin-left:6px;position:relative;">
+        <input id="dbSrInput" placeholder="🔍 Chercher..." oninput="dbSrFilter()" onfocus="dbSrOpen()" onblur="setTimeout(dbSrClose,200)"
+          style="padding:4px 10px;border-radius:16px;border:1px solid #FFB432;background:rgba(255,180,50,.08);color:#FFE08A;font-size:11px;outline:none;width:130px;" />
+        <div id="dbSrDrop" style="position:absolute;top:30px;left:0;width:240px;background:#0D0D1A;border:1px solid #FFB432;border-radius:10px;overflow:hidden;display:none;z-index:9999;"></div>
+        <button onclick="dbLang('fr')" id="dbBtnFr" style="padding:4px 9px;border-radius:16px;border:2px solid #FFB432;background:#FFB432;color:#0D0D1A;font-weight:700;font-size:11px;cursor:pointer;">FR</button>
+        <button onclick="dbLang('en')" id="dbBtnEn" style="padding:4px 9px;border-radius:16px;border:2px solid #FFB432;background:transparent;color:#FFB432;font-weight:700;font-size:11px;cursor:pointer;">EN</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ══ PAGE: OVERVIEW ══ -->
+    <div class="page active" id="page-overview">
+
+      <!-- KPI -->
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-label">Utilisateurs actifs</div>
+          <div class="kpi-num gold">247</div>
+          <div class="kpi-change up">↑ +18 ce mois</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Véhicules protégés</div>
+          <div class="kpi-num green">612</div>
+          <div class="kpi-change up">↑ +43 ce mois</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Alertes actives</div>
+          <div class="kpi-num red">3</div>
+          <div class="kpi-change down">↑ +1 aujourd'hui</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Revenus du mois</div>
+          <div class="kpi-num blue">1.2M</div>
+          <div class="kpi-change up">↑ +22% vs mois passé</div>
+        </div>
+      </div>
+
+      <!-- Charts row -->
+      <div class="grid-2">
+        <!-- Bar chart -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Nouveaux utilisateurs / semaine</div>
+            <div class="card-action">Ce mois ▾</div>
+          </div>
+          <div class="bar-chart" id="barChart">
+            <div class="bar-col"><div class="bar" style="height:45px"></div><div class="bar-label">S1</div></div>
+            <div class="bar-col"><div class="bar" style="height:60px"></div><div class="bar-label">S2</div></div>
+            <div class="bar-col"><div class="bar" style="height:38px"></div><div class="bar-label">S3</div></div>
+            <div class="bar-col"><div class="bar" style="height:75px"></div><div class="bar-label">S4</div></div>
+            <div class="bar-col"><div class="bar alt" style="height:52px"></div><div class="bar-label">S5</div></div>
+            <div class="bar-col"><div class="bar alt" style="height:88px"></div><div class="bar-label">S6</div></div>
+            <div class="bar-col"><div class="bar" style="height:65px"></div><div class="bar-label">S7</div></div>
+            <div class="bar-col"><div class="bar" style="height:92px"></div><div class="bar-label">S8</div></div>
+          </div>
+        </div>
+
+        <!-- Donut -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Types de biens protégés</div>
+          </div>
+          <div class="donut-wrap">
+            <svg class="donut-svg" width="100" height="100" viewBox="0 0 100 100">
+              <!-- Moto 58% -->
+              <circle cx="50" cy="50" r="35" fill="none" stroke="#1e1e3a" stroke-width="18"/>
+              <circle cx="50" cy="50" r="35" fill="none" stroke="#ffb432" stroke-width="18"
+                stroke-dasharray="127 93" stroke-dashoffset="0" transform="rotate(-90 50 50)"/>
+              <circle cx="50" cy="50" r="35" fill="none" stroke="#38bdf8" stroke-width="18"
+                stroke-dasharray="55 165" stroke-dashoffset="-127" transform="rotate(-90 50 50)"/>
+              <circle cx="50" cy="50" r="35" fill="none" stroke="#a855f7" stroke-width="18"
+                stroke-dasharray="28 192" stroke-dashoffset="-182" transform="rotate(-90 50 50)"/>
+              <circle cx="50" cy="50" r="35" fill="none" stroke="#22c55e" stroke-width="18"
+                stroke-dasharray="10 210" stroke-dashoffset="-210" transform="rotate(-90 50 50)"/>
+              <text x="50" y="46" text-anchor="middle" fill="#c0b870" font-size="11" font-family="Cinzel" font-weight="700">612</text>
+              <text x="50" y="58" text-anchor="middle" fill="#5a5a8a" font-size="7">biens</text>
+            </svg>
+            <div class="donut-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:#ffb432"></div><span class="legend-label">Motos</span><span class="legend-val">358</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#38bdf8"></div><span class="legend-label">Voitures</span><span class="legend-val">154</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#a855f7"></div><span class="legend-label">Téléphones</span><span class="legend-val">78</span></div>
+              <div class="legend-item"><div class="legend-dot" style="background:#22c55e"></div><span class="legend-label">Autres</span><span class="legend-val">22</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerts + Revenue -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Alertes récentes</div>
+            <div class="card-action" onclick="showPage('alerts',null)">Tout voir →</div>
+          </div>
+          <div class="alert-feed">
+            <div class="alert-item high">
+              <div class="ai-dot red"></div>
+              <div class="ai-content">
+                <div class="ai-title">⚠ Mouvement suspect — Honda CB 125</div>
+                <div class="ai-desc">CE·4821·A · Briqueterie, Yaoundé · Prop: J.P. Mballa</div>
+              </div>
+              <div class="ai-time">02:14</div>
+            </div>
+            <div class="alert-item high">
+              <div class="ai-dot red"></div>
+              <div class="ai-content">
+                <div class="ai-title">🧬 Tentative effacement VIN</div>
+                <div class="ai-desc">Yamaha FZ 150 · LT·3312·B · Prop: Marie Biya</div>
+              </div>
+              <div class="ai-time">Hier 18:32</div>
+            </div>
+            <div class="alert-item med">
+              <div class="ai-dot gold"></div>
+              <div class="ai-content">
+                <div class="ai-title">📡 Tracker GPS déconnecté</div>
+                <div class="ai-desc">Toyota Corolla · SW·1123·Y · Prop: Alain Ngo</div>
+              </div>
+              <div class="ai-time">Hier 16:10</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Revenus par source</div>
+          </div>
+          <div>
+            <div class="rev-row">
+              <div class="rev-source">Abonnements B2C</div>
+              <div class="rev-bar-wrap"><div class="rev-bar-fill" style="width:72%"></div></div>
+              <div class="rev-amount">864K FCFA</div>
+            </div>
+            <div class="rev-row">
+              <div class="rev-source">Licences B2B</div>
+              <div class="rev-bar-wrap"><div class="rev-bar-fill" style="width:22%"></div></div>
+              <div class="rev-amount">265K FCFA</div>
+            </div>
+            <div class="rev-row">
+              <div class="rev-source">Hardware GPS</div>
+              <div class="rev-bar-wrap"><div class="rev-bar-fill" style="width:9%"></div></div>
+              <div class="rev-amount">108K FCFA</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /overview -->
+
+    <!-- ══ PAGE: ALERTS ══ -->
+    <div class="page" id="page-alerts">
+      <div class="kpi-row" style="grid-template-columns:repeat(3,1fr);">
+        <div class="kpi-card"><div class="kpi-label">Alertes actives</div><div class="kpi-num red">3</div></div>
+        <div class="kpi-card"><div class="kpi-label">Résolues ce mois</div><div class="kpi-num green">28</div></div>
+        <div class="kpi-card"><div class="kpi-label">Temps moyen résolution</div><div class="kpi-num gold">14min</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Toutes les alertes</div>
+          <div class="card-action">Exporter CSV</div>
+        </div>
+        <div class="alert-feed">
+          <div class="alert-item high"><div class="ai-dot red"></div><div class="ai-content"><div class="ai-title">⚠ Mouvement hors zone · Honda CB 125</div><div class="ai-desc">CE·4821·A · Briqueterie · 07/03 02:14 · GPS actif</div></div><div class="ai-time"><span class="status-pill pill-alert">URGENT</span></div></div>
+          <div class="alert-item high"><div class="ai-dot red"></div><div class="ai-content"><div class="ai-title">🧬 VIN altéré détecté · Yamaha FZ 150</div><div class="ai-desc">LT·3312·B · Mvog-Ada · 06/03 18:32 · ADN intact</div></div><div class="ai-time"><span class="status-pill pill-alert">URGENT</span></div></div>
+          <div class="alert-item med"><div class="ai-dot gold"></div><div class="ai-content"><div class="ai-title">📡 Signal GPS perdu · Toyota Corolla</div><div class="ai-desc">SW·1123·Y · Bastos · 06/03 16:10 · Reconnecté</div></div><div class="ai-time"><span class="status-pill pill-inactive">MOYEN</span></div></div>
+          <div class="alert-item low"><div class="ai-dot green"></div><div class="ai-content"><div class="ai-title">✅ Scan vérifié · Suzuki GS 150</div><div class="ai-desc">DL·8821·C · Douala · 05/03 11:20 · Non volé</div></div><div class="ai-time"><span class="status-pill pill-active">RÉSOLU</span></div></div>
+          <div class="alert-item low"><div class="ai-dot green"></div><div class="ai-content"><div class="ai-title">✅ Zone sécurisée retrouvée · Honda CG</div><div class="ai-desc">CE·6612·D · Ngousso · 05/03 08:45 · Normal</div></div><div class="ai-time"><span class="status-pill pill-active">RÉSOLU</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: MAP ══ -->
+    <div class="page" id="page-map">
+      <div class="kpi-row" style="grid-template-columns:repeat(4,1fr);">
+        <div class="kpi-card"><div class="kpi-label">En ligne</div><div class="kpi-num green">589</div></div>
+        <div class="kpi-card"><div class="kpi-label">Hors ligne</div><div class="kpi-num red">23</div></div>
+        <div class="kpi-card"><div class="kpi-label">En alerte</div><div class="kpi-num red">3</div></div>
+        <div class="kpi-card"><div class="kpi-label">Couverture réseau</div><div class="kpi-num gold">96%</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Carte GPS — Yaoundé temps réel</div>
+          <div class="card-action">Plein écran</div>
+        </div>
+        <div class="fake-map-admin">
+          <div class="fma-grid"></div>
+          <div class="fma-road" style="height:4px;top:35%;left:0;right:0;"></div>
+          <div class="fma-road" style="height:4px;top:55%;left:0;right:0;"></div>
+          <div class="fma-road" style="width:4px;left:30%;top:0;bottom:0;"></div>
+          <div class="fma-road" style="width:4px;left:60%;top:0;bottom:0;"></div>
+          <div class="fma-road" style="width:4px;left:75%;top:0;bottom:0;"></div>
+          <div class="fma-pulse" style="top:47%;left:53%"></div>
+          <div class="fma-pin" style="top:34%;left:31%">🏍️</div>
+          <div class="fma-pin" style="top:55%;left:62%">🚗</div>
+          <div class="fma-pin" style="top:70%;left:22%">📱</div>
+          <div class="fma-pin" style="top:28%;left:75%">🏍️</div>
+          <div class="fma-pin" style="top:60%;left:44%">🏍️</div>
+          <div style="position:absolute;bottom:10px;left:10px;font-size:10px;color:rgba(255,180,50,0.5);letter-spacing:2px;">YAOUNDÉ · CAMEROUN</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: USERS ══ -->
+    <div class="page" id="page-users">
+      <div class="search-bar">
+        <input class="search-input" placeholder="🔍 Rechercher un utilisateur..." oninput="filterTable(this)">
+        <button class="filter-btn">Filtre ▾</button>
+        <button class="filter-btn">Exporter</button>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Tous les utilisateurs (247)</div>
+          <div class="card-action">+ Ajouter</div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table" id="usersTable">
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Téléphone</th>
+                <th>Ville</th>
+                <th>Plan</th>
+                <th>Véhicules</th>
+                <th>Statut</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="td-name">Jean-Pierre Mballa</td><td>+237 677 123 456</td><td>Yaoundé</td><td>Pro</td><td>3</td><td><span class="status-pill pill-alert">⚠ Alerte</span></td><td class="td-action">Voir →</td></tr>
+              <tr><td class="td-name">Marie Biya</td><td>+237 691 234 567</td><td>Yaoundé</td><td>Pro</td><td>2</td><td><span class="status-pill pill-active">Actif</span></td><td class="td-action">Voir →</td></tr>
+              <tr><td class="td-name">Alain Ngo</td><td>+237 655 345 678</td><td>Douala</td><td>Essentiel</td><td>1</td><td><span class="status-pill pill-active">Actif</span></td><td class="td-action">Voir →</td></tr>
+              <tr><td class="td-name">Sylvie Tchamba</td><td>+237 699 456 789</td><td>Yaoundé</td><td>Pro</td><td>4</td><td><span class="status-pill pill-active">Actif</span></td><td class="td-action">Voir →</td></tr>
+              <tr><td class="td-name">Paul Essomba</td><td>+237 670 567 890</td><td>Bafoussam</td><td>Essentiel</td><td>1</td><td><span class="status-pill pill-inactive">Inactif</span></td><td class="td-action">Voir →</td></tr>
+              <tr><td class="td-name">Brigitte Mbassi</td><td>+237 694 678 901</td><td>Douala</td><td>Pro</td><td>3</td><td><span class="status-pill pill-active">Actif</span></td><td class="td-action">Voir →</td></tr>
+              <tr><td class="td-name">Emmanuel Kotto</td><td>+237 677 789 012</td><td>Yaoundé</td><td>Entreprise</td><td>12</td><td><span class="status-pill pill-active">Actif</span></td><td class="td-action">Voir →</td></tr>
+              <tr><td class="td-name">Carine Ngono</td><td>+237 651 890 123</td><td>Kribi</td><td>Essentiel</td><td>1</td><td><span class="status-pill pill-active">Actif</span></td><td class="td-action">Voir →</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: VEHICLES ══ -->
+    <div class="page" id="page-vehicles">
+      <div class="search-bar">
+        <input class="search-input" placeholder="🔍 Rechercher par plaque ou VIN...">
+        <button class="filter-btn">Type ▾</button>
+        <button class="filter-btn">Statut ▾</button>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Tous les véhicules (612)</div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>Type</th><th>Marque / Modèle</th><th>Plaque</th><th>Propriétaire</th><th>GPS</th><th>Blockchain</th><th>Statut</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>🏍️</td><td class="td-name">Honda CB 125F</td><td>CE·4821·A</td><td>J.P. Mballa</td><td><span class="status-pill pill-active">✓ Actif</span></td><td><span class="status-pill pill-active">✓ Ok</span></td><td><span class="status-pill pill-alert">⚠ Alerte</span></td></tr>
+              <tr><td>🏍️</td><td class="td-name">Yamaha FZ 150</td><td>LT·3312·B</td><td>M. Biya</td><td><span class="status-pill pill-active">✓ Actif</span></td><td><span class="status-pill pill-active">✓ Ok</span></td><td><span class="status-pill pill-alert">⚠ VIN</span></td></tr>
+              <tr><td>🚗</td><td class="td-name">Toyota Corolla 2019</td><td>SW·1123·Y</td><td>A. Ngo</td><td><span class="status-pill pill-inactive">Reconnect.</span></td><td><span class="status-pill pill-active">✓ Ok</span></td><td><span class="status-pill pill-active">Normal</span></td></tr>
+              <tr><td>🏍️</td><td class="td-name">Suzuki GS 150</td><td>DL·8821·C</td><td>S. Tchamba</td><td><span class="status-pill pill-active">✓ Actif</span></td><td><span class="status-pill pill-active">✓ Ok</span></td><td><span class="status-pill pill-active">Normal</span></td></tr>
+              <tr><td>📱</td><td class="td-name">iPhone 14 Pro</td><td>IMEI·3892</td><td>P. Essomba</td><td><span class="status-pill pill-active">✓ Actif</span></td><td><span class="status-pill pill-active">✓ Ok</span></td><td><span class="status-pill pill-active">Normal</span></td></tr>
+              <tr><td>🚗</td><td class="td-name">Mercedes C200</td><td>CE·9901·Z</td><td>E. Kotto</td><td><span class="status-pill pill-active">✓ Actif</span></td><td><span class="status-pill pill-active">✓ Ok</span></td><td><span class="status-pill pill-active">Normal</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: REVENUE ══ -->
+    <div class="page" id="page-revenue">
+      <div class="kpi-row">
+        <div class="kpi-card"><div class="kpi-label">Revenus Mars 2026</div><div class="kpi-num gold">1.24M</div><div class="kpi-change up">↑ +22% vs Fév.</div></div>
+        <div class="kpi-card"><div class="kpi-label">Abonnés payants</div><div class="kpi-num green">231</div><div class="kpi-change up">↑ +16 ce mois</div></div>
+        <div class="kpi-card"><div class="kpi-label">Revenu moyen/user</div><div class="kpi-num blue">5 390</div><div class="kpi-change up">↑ FCFA/mois</div></div>
+        <div class="kpi-card"><div class="kpi-label">Taux de rétention</div><div class="kpi-num gold">94%</div><div class="kpi-change up">↑ Excellent</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Revenus mensuels (FCFA)</div></div>
+          <div class="bar-chart">
+            <div class="bar-col"><div class="bar" style="height:30px"></div><div class="bar-label">Sep</div></div>
+            <div class="bar-col"><div class="bar" style="height:40px"></div><div class="bar-label">Oct</div></div>
+            <div class="bar-col"><div class="bar" style="height:48px"></div><div class="bar-label">Nov</div></div>
+            <div class="bar-col"><div class="bar" style="height:55px"></div><div class="bar-label">Déc</div></div>
+            <div class="bar-col"><div class="bar alt" style="height:62px"></div><div class="bar-label">Jan</div></div>
+            <div class="bar-col"><div class="bar alt" style="height:78px"></div><div class="bar-label">Fév</div></div>
+            <div class="bar-col"><div class="bar" style="height:95px"></div><div class="bar-label">Mar</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Répartition par plan</div></div>
+          <div>
+            <div class="rev-row"><div class="rev-source">Plan Pro (5 000 FCFA)</div><div class="rev-bar-wrap"><div class="rev-bar-fill" style="width:68%"></div></div><div class="rev-amount">844K</div></div>
+            <div class="rev-row"><div class="rev-source">Plan Essentiel (2 000 FCFA)</div><div class="rev-bar-wrap"><div class="rev-bar-fill" style="width:24%"></div></div><div class="rev-amount">298K</div></div>
+            <div class="rev-row"><div class="rev-source">Entreprise (sur devis)</div><div class="rev-bar-wrap"><div class="rev-bar-fill" style="width:8%"></div></div><div class="rev-amount">100K</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: SCANS ══ -->
+    <div class="page" id="page-scans">
+      <div class="kpi-row" style="grid-template-columns:repeat(3,1fr);">
+        <div class="kpi-card"><div class="kpi-label">Scans aujourd'hui</div><div class="kpi-num gold">47</div></div>
+        <div class="kpi-card"><div class="kpi-label">Véhicules volés détectés</div><div class="kpi-num red">2</div></div>
+        <div class="kpi-card"><div class="kpi-label">Taux de précision IA</div><div class="kpi-num green">99.2%</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Historique des scans</div><div class="card-action">Exporter</div></div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead><tr><th>Heure</th><th>VIN scanné</th><th>Véhicule</th><th>Scanné par</th><th>Résultat</th></tr></thead>
+            <tbody>
+              <tr><td>09:38</td><td class="td-name">JTDBF10K400157842</td><td>Honda CB 125</td><td>J.P. Mballa</td><td><span class="status-pill pill-active">✓ Non volé</span></td></tr>
+              <tr><td>09:12</td><td class="td-name">VF1BB1T0H12345678</td><td>Renault Clio</td><td>Police Ydé</td><td><span class="status-pill pill-alert">🚨 VOLÉ</span></td></tr>
+              <tr><td>08:55</td><td class="td-name">WVWZZZ1KZAW123456</td><td>VW Golf</td><td>Garagiste</td><td><span class="status-pill pill-active">✓ Non volé</span></td></tr>
+              <tr><td>08:31</td><td class="td-name">JH2RC5368FM200001</td><td>Yamaha FZ</td><td>M. Biya</td><td><span class="status-pill pill-inactive">⚠ VIN altéré</span></td></tr>
+              <tr><td>07:44</td><td class="td-name">LVGBC2184E2050001</td><td>Toyota Hilux</td><td>Douane DLA</td><td><span class="status-pill pill-alert">🚨 VOLÉ</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAGE: SETTINGS ══ -->
+    <div class="page" id="page-settings">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Paramètres généraux</div></div>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+              <div><div style="font-size:14px;color:#c0b880;">Alertes SMS automatiques</div><div style="font-size:11px;color:var(--muted);">Envoi SMS dès qu'une alerte est détectée</div></div>
+              <div style="width:40px;height:22px;border-radius:11px;background:var(--green);cursor:pointer;display:flex;align-items:center;padding:2px;"><div style="width:18px;height:18px;border-radius:50%;background:#fff;margin-left:auto;"></div></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
+              <div><div style="font-size:14px;color:#c0b880;">Mode urgence automatique</div><div style="font-size:11px;color:var(--muted);">Alerte police si véhicule hors zone 15min</div></div>
+              <div style="width:40px;height:22px;border-radius:11px;background:var(--green);cursor:pointer;display:flex;align-items:center;padding:2px;"><div style="width:18px;height:18px;border-radius:50%;background:#fff;margin-left:auto;"></div></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
+              <div><div style="font-size:14px;color:#c0b880;">Blockchain auto-sync</div><div style="font-size:11px;color:var(--muted);">Synchronisation toutes les 24h</div></div>
+              <div style="width:40px;height:22px;border-radius:11px;background:var(--line);cursor:pointer;display:flex;align-items:center;padding:2px;"><div style="width:18px;height:18px;border-radius:50%;background:#5a5a8a;"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-title">Informations Ambera AI</div></div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div class="rev-row"><div class="rev-source">Version app</div><div class="rev-amount">v1.0.0</div></div>
+            <div class="rev-row"><div class="rev-source">Serveurs</div><div class="rev-amount" style="color:var(--green);">✓ En ligne</div></div>
+            <div class="rev-row"><div class="rev-source">Blockchain</div><div class="rev-amount" style="color:var(--green);">✓ Synchronisée</div></div>
+            <div class="rev-row"><div class="rev-source">IA Vision</div><div class="rev-amount" style="color:var(--green);">✓ Active</div></div>
+            <div class="rev-row"><div class="rev-source">Fondateur</div><div class="rev-amount">Ambera · Yaoundé</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+const pageTitles = {
+  overview:'Vue d\'ensemble', alerts:'Alertes & Incidents',
+  map:'Carte GPS Temps Réel', users:'Gestion Utilisateurs',
+  vehicles:'Véhicules Protégés', revenue:'Revenus & Finances',
+  scans:'Historique Scans VIN', settings:'Paramètres'
+};
+
+function showPage(id, el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.getElementById('pageTitle').textContent = pageTitles[id] || id;
+  if(el){
+    document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+    el.classList.add('active');
+  }
+}
+
+function filterTable(input){
+  const val = input.value.toLowerCase();
+  const rows = document.querySelectorAll('#usersTable tbody tr');
+  rows.forEach(row=>{
+    row.style.display = row.textContent.toLowerCase().includes(val) ? '' : 'none';
+  });
+}
+</script>
+
+<script>
+var _dbLang = 'fr';
+var DB_SR = {
+  fr:[
+    {t:'Vue d\'ensemble — KPIs', k:'vue ensemble kpi utilisateurs revenus'},
+    {t:'Alertes — Véhicules suspects', k:'alertes vehicules suspects vols'},
+    {t:'Carte GPS — Localisation temps réel', k:'carte gps localisation temps réel'},
+    {t:'Scans VIN — Historique', k:'scans vin historique chassis'},
+    {t:'Utilisateurs — Liste clients', k:'utilisateurs liste clients abonnés'},
+    {t:'Véhicules — Inventaire protégé', k:'véhicules inventaire protégé parc'},
+    {t:'Revenus — Statistiques financières', k:'revenus statistiques financières fcfa'}
+  ],
+  en:[
+    {t:'Overview — KPIs', k:'overview kpi users revenue'},
+    {t:'Alerts — Suspicious vehicles', k:'alerts suspicious vehicles theft'},
+    {t:'GPS Map — Real-time location', k:'gps map real-time location'},
+    {t:'VIN Scans — History', k:'scans vin history chassis'},
+    {t:'Users — Customer list', k:'users customer list subscribers'},
+    {t:'Vehicles — Protected inventory', k:'vehicles inventory protected fleet'},
+    {t:'Revenue — Financial stats', k:'revenue financial stats fcfa'}
+  ]
+};
+var DB_LABELS = {
+  fr:{'Utilisateurs actifs':'Utilisateurs actifs','Véhicules protégés':'Véhicules protégés','Alertes actives':'Alertes actives','Revenus du mois':'Revenus du mois'},
+  en:{'Utilisateurs actifs':'Active users','Véhicules protégés':'Protected vehicles','Alertes actives':'Active alerts','Revenus du mois':'Monthly revenue'}
+};
+function dbLang(l){
+  _dbLang=l;
+  document.getElementById('dbBtnFr').style.background=l==='fr'?'#FFB432':'transparent';
+  document.getElementById('dbBtnFr').style.color=l==='fr'?'#0D0D1A':'#FFB432';
+  document.getElementById('dbBtnEn').style.background=l==='en'?'#FFB432':'transparent';
+  document.getElementById('dbBtnEn').style.color=l==='en'?'#0D0D1A':'#FFB432';
+  // translate KPI labels
+  document.querySelectorAll('.kpi-label').forEach(function(el){
+    var txt=el.textContent.trim();
+    var map=DB_LABELS[l];
+    if(map[txt])el.textContent=map[txt];
+    // reverse map for switching back
+    var revFr=DB_LABELS['fr']; var revEn=DB_LABELS['en'];
+    Object.keys(revEn).forEach(function(k){if(txt===revEn[k]&&l==='fr')el.textContent=k;});
+    Object.keys(revFr).forEach(function(k){if(txt===k&&l==='en')el.textContent=revEn[k]||txt;});
+  });
+}
+function dbSrOpen(){
+  var idx=DB_SR[_dbLang];
+  var drop=document.getElementById('dbSrDrop');
+  drop.innerHTML=idx.map(function(it,i){return'<div style="padding:9px 13px;color:#FFE08A;font-size:12px;cursor:pointer;border-bottom:1px solid #1e1e3a;" onmousedown="dbSrGo('+i+')">'+it.t+'</div>';}).join('');
+  drop.style.display='block';
+}
+function dbSrClose(){document.getElementById('dbSrDrop').style.display='none';}
+function dbSrFilter(){
+  var q=document.getElementById('dbSrInput').value.toLowerCase();
+  var idx=DB_SR[_dbLang];
+  var drop=document.getElementById('dbSrDrop');
+  var res=q?idx.filter(function(it){return it.k.indexOf(q)>-1||it.t.toLowerCase().indexOf(q)>-1;}):idx;
+  drop.innerHTML=res.length?res.map(function(it){
+    var gi=idx.indexOf(it);
+    return'<div style="padding:9px 13px;color:#FFE08A;font-size:12px;cursor:pointer;border-bottom:1px solid #1e1e3a;" onmousedown="dbSrGo('+gi+')">'+it.t+'</div>';
+  }).join(''):'<div style="padding:9px 13px;color:#6a6a8a;font-size:12px;">Aucun résultat</div>';
+  drop.style.display='block';
+}
+function dbSrGo(i){
+  var pages=['overview','alerts','map','scans','users','vehicles','analytics'];
+  if(pages[i])showPage(pages[i],null);
+  document.getElementById('dbSrInput').value='';
+  dbSrClose();
+}
+</script>
+</body>
+</html>

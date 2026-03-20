@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ambera AI — Paiement Mobile Money</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --gold:#ffb432;--gold2:#ffe08a;--bronze:#e8720a;
+  --dark:#07070f;--dark2:#0d0d1a;--dark3:#131328;
+  --line:#1e1e3a;--muted:#5a5a8a;--text:#d0cce0;
+  --green:#22c55e;--red:#ef4444;
+  --mtn:#ffcc00;--orange:#ff6600;
+}
+body{
+  background:#111;display:flex;align-items:center;
+  justify-content:center;min-height:100vh;
+  font-family:'Rajdhani',sans-serif;padding:20px;
+}
+.phone{
+  width:375px;height:812px;background:var(--dark);
+  border-radius:48px;border:2px solid #1a1a2e;
+  box-shadow:0 40px 120px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,255,255,0.05);
+  position:relative;overflow:hidden;flex-shrink:0;
+}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:34px;background:#000;border-radius:0 0 20px 20px;z-index:100;}
+.status-bar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 6px;z-index:99;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);}
+
+/* SCREENS */
+.screen{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 0.35s ease,transform 0.35s ease;transform:translateX(30px);overflow:hidden;}
+.screen.active{opacity:1;pointer-events:all;transform:translateX(0);}
+.screen.exit{opacity:0;transform:translateX(-30px);}
+
+/* HEADER */
+.page-header{padding:54px 24px 20px;background:linear-gradient(180deg,var(--dark) 0%,transparent 100%);}
+.back-btn{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer;margin-bottom:16px;transition:color 0.2s;}
+.back-btn:active{color:var(--gold);}
+.page-title{font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:var(--gold);}
+.page-sub{font-size:13px;color:var(--muted);margin-top:4px;}
+
+.scroll-area{padding:0 24px 40px;overflow-y:auto;height:calc(100% - 140px);}
+.scroll-area::-webkit-scrollbar{display:none;}
+
+/* PLAN SUMMARY */
+.plan-summary{
+  background:linear-gradient(135deg,rgba(255,180,50,0.08),rgba(232,114,10,0.05));
+  border:1px solid rgba(255,180,50,0.2);border-radius:16px;
+  padding:18px;margin-bottom:20px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.ps-left{}
+.ps-label{font-size:11px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
+.ps-plan{font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:var(--gold);margin-top:2px;}
+.ps-features{font-size:11px;color:#6a6a7a;margin-top:4px;}
+.ps-price{text-align:right;}
+.ps-amount{font-family:'Cinzel',serif;font-size:28px;font-weight:900;color:var(--gold);}
+.ps-period{font-size:11px;color:var(--muted);}
+
+/* SECTION TITLE */
+.s-title{font-size:11px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin:20px 0 12px;}
+
+/* OPERATOR CARDS */
+.operator-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px;}
+.op-card{
+  background:var(--dark3);border:2px solid var(--line);
+  border-radius:16px;padding:16px 12px;text-align:center;
+  cursor:pointer;transition:all 0.2s;position:relative;
+}
+.op-card.selected{border-color:var(--gold);background:rgba(255,180,50,0.06);}
+.op-card:active{transform:scale(0.97);}
+.op-check{
+  position:absolute;top:8px;right:8px;width:18px;height:18px;
+  border-radius:50%;background:var(--gold);display:none;
+  align-items:center;justify-content:center;font-size:10px;color:#0a0a14;font-weight:700;
+}
+.op-card.selected .op-check{display:flex;}
+.op-logo{font-size:32px;margin-bottom:6px;}
+.op-name{font-size:13px;font-weight:700;}
+.op-mtn{color:var(--mtn);}
+.op-orange{color:var(--orange);}
+.op-desc{font-size:10px;color:var(--muted);margin-top:2px;}
+
+/* PHONE INPUT */
+.phone-input-wrap{
+  background:var(--dark3);border:1px solid var(--line);
+  border-radius:14px;display:flex;align-items:center;
+  overflow:hidden;margin-bottom:14px;
+  transition:border-color 0.2s;
+}
+.phone-input-wrap:focus-within{border-color:rgba(255,180,50,0.4);}
+.phone-prefix{
+  padding:14px 14px;font-size:15px;font-weight:600;color:var(--gold);
+  border-right:1px solid var(--line);white-space:nowrap;background:rgba(255,180,50,0.04);
+}
+.phone-input{
+  flex:1;background:transparent;border:none;outline:none;
+  padding:14px 14px;font-family:'Rajdhani',sans-serif;
+  font-size:16px;font-weight:600;color:var(--text);letter-spacing:2px;
+}
+.phone-input::placeholder{color:#3a3a5a;letter-spacing:1px;font-weight:400;}
+
+/* AMOUNT DISPLAY */
+.amount-display{
+  background:var(--dark3);border:1px solid rgba(255,180,50,0.15);
+  border-radius:14px;padding:16px;margin-bottom:20px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.ad-label{font-size:12px;color:var(--muted);}
+.ad-amount{font-family:'Cinzel',serif;font-size:22px;font-weight:900;color:var(--gold);}
+
+/* PAY BUTTON */
+.pay-btn{
+  width:100%;background:linear-gradient(135deg,var(--gold),var(--bronze));
+  border:none;border-radius:16px;padding:18px;
+  font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;
+  letter-spacing:2px;color:#0a0a14;cursor:pointer;
+  text-transform:uppercase;
+  box-shadow:0 6px 24px rgba(255,180,50,0.3);
+  transition:all 0.2s;margin-bottom:14px;
+}
+.pay-btn:active{transform:scale(0.97);}
+.pay-btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+.secure-note{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  font-size:11px;color:#3a3a5a;letter-spacing:1px;
+}
+
+/* ════════════
+   SCREEN: CONFIRM
+════════════ */
+.confirm-card{
+  background:var(--dark3);border:1px solid var(--line);
+  border-radius:18px;padding:20px;margin-bottom:16px;
+}
+.confirm-row{
+  display:flex;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);
+  font-size:14px;
+}
+.confirm-row:last-child{border-bottom:none;}
+.cr-key{color:var(--muted);}
+.cr-val{color:var(--text);font-weight:600;}
+.cr-val.gold{color:var(--gold);}
+
+.total-row{
+  background:rgba(255,180,50,0.06);border:1px solid rgba(255,180,50,0.15);
+  border-radius:12px;padding:14px 16px;margin-bottom:20px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.tr-label{font-size:13px;font-weight:600;color:var(--muted);}
+.tr-amount{font-family:'Cinzel',serif;font-size:26px;font-weight:900;color:var(--gold);}
+
+.ussd-info{
+  background:rgba(56,189,248,0.05);border:1px solid rgba(56,189,248,0.15);
+  border-radius:12px;padding:14px;margin-bottom:20px;
+  font-size:12px;color:#7ab8d0;line-height:1.6;
+}
+.ussd-code{
+  font-family:'Cinzel',serif;font-size:16px;color:#38bdf8;font-weight:700;
+  letter-spacing:2px;margin-top:6px;display:block;
+}
+
+/* ════════════
+   SCREEN: PROCESSING
+════════════ */
+#processing{
+  background:var(--dark);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:20px;padding:40px;text-align:center;
+}
+#processing::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 50% at 50% 45%,rgba(255,180,50,0.06) 0%,transparent 70%);
+}
+.proc-spinner{
+  width:80px;height:80px;border-radius:50%;
+  border:3px solid rgba(255,180,50,0.1);border-top-color:var(--gold);
+  animation:spin 0.8s linear infinite;position:relative;z-index:2;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.proc-title{font-family:'Cinzel',serif;font-size:22px;color:var(--gold);font-weight:700;position:relative;z-index:2;}
+.proc-steps{display:flex;flex-direction:column;gap:10px;width:100%;position:relative;z-index:2;}
+.proc-step{
+  display:flex;align-items:center;gap:12px;
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:10px;padding:12px 14px;font-size:13px;color:var(--muted);
+}
+.proc-step.done{color:var(--green);border-color:rgba(34,197,94,0.2);}
+.proc-step.active{color:var(--gold);border-color:rgba(255,180,50,0.2);}
+.proc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.proc-step.done .proc-dot{background:var(--green);}
+.proc-step.active .proc-dot{background:var(--gold);animation:blink 1s ease-in-out infinite;}
+.proc-step:not(.done):not(.active) .proc-dot{background:var(--line);}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+
+/* ════════════
+   SCREEN: SUCCESS
+════════════ */
+#success{
+  background:var(--dark);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:14px;
+  padding:40px 28px;text-align:center;
+}
+#success::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 60% 50% at 50% 45%,rgba(34,197,94,0.06) 0%,transparent 70%);
+}
+.success-ring{
+  width:100px;height:100px;border-radius:50%;
+  background:rgba(34,197,94,0.1);border:2px solid rgba(34,197,94,0.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:46px;position:relative;z-index:2;
+  animation:successPop 0.5s ease;
+}
+@keyframes successPop{0%{transform:scale(0);}60%{transform:scale(1.15);}100%{transform:scale(1);}}
+.success-title{font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:var(--green);position:relative;z-index:2;}
+.success-amount{font-family:'Cinzel',serif;font-size:36px;font-weight:900;color:var(--gold);position:relative;z-index:2;}
+.success-desc{font-size:14px;color:var(--muted);line-height:1.6;max-width:280px;position:relative;z-index:2;}
+
+.receipt-card{
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:16px;padding:16px;width:100%;
+  position:relative;z-index:2;margin:4px 0;
+}
+.receipt-row{
+  display:flex;justify-content:space-between;
+  font-size:12px;padding:6px 0;
+  border-bottom:1px solid rgba(255,255,255,0.03);
+}
+.receipt-row:last-child{border-bottom:none;}
+.rr-key{color:var(--muted);}
+.rr-val{color:#c0b880;font-weight:600;}
+
+.success-tags{
+  display:flex;gap:8px;flex-wrap:wrap;justify-content:center;
+  position:relative;z-index:2;
+}
+.s-tag{
+  background:rgba(255,180,50,0.08);border:1px solid rgba(255,180,50,0.15);
+  border-radius:20px;padding:6px 14px;font-size:11px;color:var(--gold);
+  letter-spacing:1px;
+}
+
+.btn-success{
+  width:100%;background:linear-gradient(135deg,var(--gold),var(--bronze));
+  border:none;border-radius:16px;padding:16px;
+  font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;
+  letter-spacing:2px;color:#0a0a14;cursor:pointer;
+  text-transform:uppercase;position:relative;z-index:2;
+  transition:all 0.2s;
+}
+.btn-success:active{transform:scale(0.97);}
+
+/* ERROR */
+.error-banner{
+  background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);
+  border-radius:10px;padding:12px 14px;margin-bottom:14px;
+  font-size:13px;color:#fca5a5;display:none;
+}
+.error-banner.show{display:block;animation:fadeUp 0.3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.btn-loading{
+  display:inline-block;width:16px;height:16px;
+  border:2px solid rgba(0,0,0,0.3);border-top-color:#0a0a14;
+  border-radius:50%;animation:spin 0.6s linear infinite;
+  vertical-align:middle;margin-right:6px;
+}
+
+/* ── LANG TOGGLE ── */
+.lang-toggle{display:flex;align-items:center;background:rgba(255,255,255,0.04);border:1px solid var(--line);border-radius:20px;overflow:hidden;flex-shrink:0;}
+.lang-btn{padding:5px 11px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;color:var(--muted);border:none;background:transparent;transition:all 0.2s;}
+.lang-btn.active{background:linear-gradient(135deg,var(--gold),var(--bronze));color:#0a0a14;border-radius:18px;margin:2px;}
+.toast-lang{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(255,180,50,0.12);border:1px solid rgba(255,180,50,0.25);border-radius:20px;padding:7px 16px;font-size:12px;font-weight:600;color:var(--gold);white-space:nowrap;z-index:300;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+.toast-lang.show{opacity:1;}
+
+/* ── SEARCH BAR ── */
+.srch-wrap{padding:0 20px 10px;position:relative;}
+.srch-box{width:100%;background:var(--dark3);border:1px solid var(--line);border-radius:14px;padding:10px 38px 10px 40px;font-family:'Rajdhani',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color 0.2s;}
+.srch-box:focus{border-color:rgba(255,180,50,0.35);}
+.srch-box::placeholder{color:var(--muted);}
+.srch-ico{position:absolute;left:32px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;}
+.srch-clr{position:absolute;right:30px;top:50%;transform:translateY(-50%);font-size:13px;cursor:pointer;color:var(--muted);display:none;}
+.srch-clr.show{display:block;}
+.srch-drop{display:none;position:absolute;top:50px;left:20px;right:20px;background:var(--dark2);border:1px solid rgba(255,180,50,0.18);border-radius:14px;z-index:150;overflow:hidden;max-height:280px;overflow-y:auto;box-shadow:0 8px 30px rgba(0,0,0,0.6);}
+.srch-drop.show{display:block;animation:srFadeDown 0.2s ease;}
+.srch-drop::-webkit-scrollbar{display:none;}
+@keyframes srFadeDown{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.sr-sec{font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;padding:10px 14px 4px;}
+.sr-row{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;transition:background 0.15s;border-bottom:1px solid rgba(255,255,255,0.03);}
+.sr-row:last-child{border-bottom:none;}
+.sr-row:active{background:rgba(255,180,50,0.05);}
+.sr-ri{font-size:17px;flex-shrink:0;width:24px;text-align:center;}
+.sr-rtxt{flex:1;}
+.sr-rttl{font-size:13px;font-weight:600;color:#c0b870;}
+.sr-rsub{font-size:11px;color:var(--muted);margin-top:1px;}
+.sr-rcat{font-size:10px;color:var(--gold);background:rgba(255,180,50,0.08);border:1px solid rgba(255,180,50,0.1);border-radius:8px;padding:2px 6px;flex-shrink:0;}
+.sr-empty{padding:18px;text-align:center;font-size:12px;color:var(--muted);}
+
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="toast-lang" id="toastLang"></div>
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+
+  <!-- ══ SCREEN 1: CHOIX OPÉRATEUR ══ -->
+  <div class="screen active" id="choose">
+    <div class="page-header">
+      <div class="back-btn" onclick="history.back()">← Retour</div>
+    <div class="lang-toggle" style="margin-bottom:8px;"><button class="lang-btn active" id="lt-pay-fr" onclick="switchLang('fr')">FR</button><button class="lang-btn" id="lt-pay-en" onclick="switchLang('en')">EN</button></div>
+    <div class="lang-toggle" style="margin-bottom:8px;"><button class="lang-btn active" id="lt-pay-fr" onclick="switchLang('fr')">FR</button><button class="lang-btn" id="lt-pay-en" onclick="switchLang('en')">EN</button></div>
+      <div class="page-title">Abonnement</div>
+      <div class="page-sub">Paiement sécurisé Mobile Money</div>
+    </div>
+    <div class="scroll-area">
+
+      <!-- Plan résumé -->
+      <div class="plan-summary">
+        <div class="ps-left">
+          <div class="ps-label">Plan sélectionné</div>
+          <div class="ps-plan">Pro</div>
+          <div class="ps-features">4 véhicules · GPS · Blockchain · ADN</div>
+        </div>
+        <div class="ps-price">
+          <div class="ps-amount">5 000</div>
+          <div class="ps-period">FCFA/mois</div>
+        </div>
+      </div>
+
+      <!-- Opérateur -->
+      <div class="s-title">Choisir votre opérateur</div>
+      <div class="operator-cards">
+        <div class="op-card selected" id="mtnCard" onclick="selectOp('mtn')">
+          <div class="op-check">✓</div>
+          <div class="op-logo">🟡</div>
+          <div class="op-name op-mtn">MTN MoMo</div>
+          <div class="op-desc">Mobile Money</div>
+        </div>
+        <div class="op-card" id="orangeCard" onclick="selectOp('orange')">
+          <div class="op-check">✓</div>
+          <div class="op-logo">🟠</div>
+          <div class="op-name op-orange">Orange Money</div>
+          <div class="op-desc">Mobile Money</div>
+        </div>
+      </div>
+
+      <!-- Numéro -->
+      <div class="s-title">Votre numéro Mobile Money</div>
+      <div class="phone-input-wrap">
+        <div class="phone-prefix" id="phonePrefix">🇨🇲 +237</div>
+        <input class="phone-input" type="tel" placeholder="6XX XXX XXX" id="phoneNumber" maxlength="9" oninput="updatePhone()">
+      </div>
+
+      <div class="error-banner" id="phoneError">⚠ Entrez un numéro valide (9 chiffres)</div>
+
+      <!-- Montant -->
+      <div class="amount-display">
+        <div class="ad-label">Montant à payer</div>
+        <div class="ad-amount">5 000 FCFA</div>
+      </div>
+
+      <button class="pay-btn" id="continueBtn" onclick="goToConfirm()">
+        Continuer →
+      </button>
+      <div class="secure-note">🔒 &nbsp; Paiement 100% sécurisé · Crypté</div>
+
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 2: CONFIRMATION ══ -->
+  <div class="screen" id="confirm">
+    <div class="page-header">
+      <div class="back-btn" onclick="goTo('choose')">← Modifier</div>
+      <div class="page-title">Confirmer</div>
+      <div class="page-sub">Vérifiez avant de payer</div>
+    </div>
+    <div class="scroll-area">
+
+      <div class="confirm-card">
+        <div class="confirm-row">
+          <span class="cr-key">Plan</span>
+          <span class="cr-val">Ambera AI Pro</span>
+        </div>
+        <div class="confirm-row">
+          <span class="cr-key">Durée</span>
+          <span class="cr-val">1 mois (renouvelable)</span>
+        </div>
+        <div class="confirm-row">
+          <span class="cr-key">Opérateur</span>
+          <span class="cr-val" id="confirmOp">MTN MoMo</span>
+        </div>
+        <div class="confirm-row">
+          <span class="cr-key">Numéro</span>
+          <span class="cr-val" id="confirmPhone">+237 6XX XXX XXX</span>
+        </div>
+        <div class="confirm-row">
+          <span class="cr-key">Véhicules protégés</span>
+          <span class="cr-val">4 maximum</span>
+        </div>
+        <div class="confirm-row">
+          <span class="cr-key">Activation</span>
+          <span class="cr-val gold">Immédiate</span>
+        </div>
+      </div>
+
+      <div class="total-row">
+        <div class="tr-label">Total à payer</div>
+        <div class="tr-amount">5 000 FCFA</div>
+      </div>
+
+      <div class="ussd-info">
+        📲 Vous allez recevoir une notification <strong id="opNotif">MTN MoMo</strong> sur votre téléphone pour valider le paiement.
+        <span class="ussd-code" id="ussdCode">*126# → Confirmer</span>
+      </div>
+
+      <button class="pay-btn" id="payBtn" onclick="doPay()">
+        💳 Payer 5 000 FCFA
+      </button>
+      <div class="secure-note">🔒 &nbsp; Transaction sécurisée · Remboursement sous 24h</div>
+
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 3: PROCESSING ══ -->
+  <div class="screen" id="processing">
+    <div class="proc-spinner"></div>
+    <div class="proc-title">Traitement en cours...</div>
+    <div class="proc-steps">
+      <div class="proc-step done" id="step1">
+        <div class="proc-dot"></div>
+        Connexion à Mobile Money
+      </div>
+      <div class="proc-step active" id="step2">
+        <div class="proc-dot"></div>
+        Validation du paiement
+      </div>
+      <div class="proc-step" id="step3">
+        <div class="proc-dot"></div>
+        Activation de votre abonnement
+      </div>
+      <div class="proc-step" id="step4">
+        <div class="proc-dot"></div>
+        Enregistrement Blockchain
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN 4: SUCCESS ══ -->
+  <div class="screen" id="success">
+    <div class="success-ring">✅</div>
+    <div class="success-title">Paiement réussi !</div>
+    <div class="success-amount">5 000 FCFA</div>
+    <div class="success-desc">Votre abonnement Ambera AI Pro est actif. Vos 4 couches de protection sont opérationnelles.</div>
+
+    <div class="receipt-card">
+      <div class="receipt-row">
+        <span class="rr-key">Référence</span>
+        <span class="rr-val" id="receiptRef">AMB-2026-7741</span>
+      </div>
+      <div class="receipt-row">
+        <span class="rr-key">Date</span>
+        <span class="rr-val">07 Mars 2026 · 09:41</span>
+      </div>
+      <div class="receipt-row">
+        <span class="rr-key">Opérateur</span>
+        <span class="rr-val" id="receiptOp">MTN MoMo</span>
+      </div>
+      <div class="receipt-row">
+        <span class="rr-key">Prochain paiement</span>
+        <span class="rr-val">07 Avril 2026</span>
+      </div>
+    </div>
+
+    <div class="success-tags">
+      <span class="s-tag">👁️ IA Vision</span>
+      <span class="s-tag">📡 GPS Actif</span>
+      <span class="s-tag">⛓️ Blockchain</span>
+      <span class="s-tag">🧬 ADN</span>
+    </div>
+
+    <button class="btn-success" onclick="goTo('choose')">Aller sur l'application →</button>
+  </div>
+
+</div>
+
+<script>
+let current = 'choose';
+let selectedOp = 'mtn';
+
+function goTo(id){
+  if(id===current) return;
+  const prev = document.getElementById(current);
+  const next = document.getElementById(id);
+  prev.classList.add('exit');
+  setTimeout(()=>{
+    prev.classList.remove('active','exit');
+    next.classList.add('active');
+    current = id;
+  }, 250);
+}
+
+function selectOp(op){
+  selectedOp = op;
+  document.getElementById('mtnCard').classList.toggle('selected', op==='mtn');
+  document.getElementById('orangeCard').classList.toggle('selected', op==='orange');
+}
+
+function updatePhone(){
+  const val = document.getElementById('phoneNumber').value;
+  document.getElementById('phoneError').classList.remove('show');
+}
+
+function goToConfirm(){
+  const phone = document.getElementById('phoneNumber').value;
+  if(phone.length < 9){
+    document.getElementById('phoneError').classList.add('show');
+    return;
+  }
+  const opName = selectedOp === 'mtn' ? 'MTN MoMo' : 'Orange Money';
+  const ussd   = selectedOp === 'mtn' ? '*126# → Confirmer' : '#150# → Valider';
+  document.getElementById('confirmOp').textContent  = opName;
+  document.getElementById('confirmPhone').textContent = '+237 ' + phone;
+  document.getElementById('opNotif').textContent    = opName;
+  document.getElementById('ussdCode').textContent   = ussd;
+  goTo('confirm');
+}
+
+function doPay(){
+  const btn = document.getElementById('payBtn');
+  btn.innerHTML = '<span class="btn-loading"></span> Envoi en cours...';
+  btn.disabled = true;
+  goTo('processing');
+
+  // Simulate processing steps
+  const steps = ['step2','step3','step4'];
+  let i = 0;
+  const interval = setInterval(()=>{
+    if(i < steps.length){
+      document.getElementById(steps[i]).classList.remove('active');
+      document.getElementById(steps[i]).classList.add('done');
+      if(i+1 < steps.length){
+        document.getElementById(steps[i+1]).classList.add('active');
+      }
+      i++;
+    } else {
+      clearInterval(interval);
+      // Generate receipt ref
+      const ref = 'AMB-2026-' + Math.floor(1000+Math.random()*9000);
+      document.getElementById('receiptRef').textContent = ref;
+      document.getElementById('receiptOp').textContent = selectedOp==='mtn' ? 'MTN MoMo' : 'Orange Money';
+      setTimeout(()=>{ goTo('success'); }, 600);
+    }
+  }, 900);
+}
+
+
+// ── BILINGUAL ENGINE ──
+var _lang = 'fr';
+var _allLtFr = document.querySelectorAll('[id$="-fr"].lang-btn');
+var _allLtEn = document.querySelectorAll('[id$="-en"].lang-btn');
+function switchLang(l){
+  if(l===_lang) return;
+  _lang = l;
+  document.querySelectorAll('[data-fr]').forEach(function(el){
+    var v = el.getAttribute('data-'+l);
+    if(v==null) return;
+    if(el.tagName==='INPUT') el.placeholder = v;
+    else el.innerHTML = v;
+  });
+  _allLtFr = document.querySelectorAll('[id$="-fr"].lang-btn');
+  _allLtEn = document.querySelectorAll('[id$="-en"].lang-btn');
+  _allLtFr.forEach(function(b){b.classList.toggle('active', l==='fr');});
+  _allLtEn.forEach(function(b){b.classList.toggle('active', l==='en');});
+  var t = document.getElementById('toastLang');
+  if(t){ t.textContent = l==='fr'?'🇫🇷 Français activé':'🇬🇧 English activated'; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},2000); }
+}
+
+// ── SEARCH ENGINE ──
+var _srData = {"fr": [{"ic": "📱", "t": "MTN Mobile Money", "s": "Paiement MTN MoMo +237", "c": "Paiement"}, {"ic": "🟠", "t": "Orange Money", "s": "Paiement Orange Money +237", "c": "Paiement"}, {"ic": "💰", "t": "Plan Essentiel", "s": "2 000 FCFA/mois", "c": "Abonnement"}, {"ic": "💎", "t": "Plan Pro", "s": "5 000 FCFA/mois", "c": "Abonnement"}, {"ic": "📜", "t": "Reçu de paiement", "s": "Référence blockchain", "c": "Reçu"}], "en": [{"ic": "📱", "t": "MTN Mobile Money", "s": "MTN MoMo payment +237", "c": "Payment"}, {"ic": "🟠", "t": "Orange Money", "s": "Orange Money payment +237", "c": "Payment"}, {"ic": "💰", "t": "Essential Plan", "s": "2,000 FCFA/month", "c": "Subscription"}, {"ic": "💎", "t": "Pro Plan", "s": "5,000 FCFA/month", "c": "Subscription"}, {"ic": "📜", "t": "Payment receipt", "s": "Blockchain reference", "c": "Receipt"}]};
+var _srIdx = _srData['fr'];
+function _srBuild(){{ _srIdx = _srData[_lang]; }}
+function _srOpen(){{
+  var v = document.getElementById('srchBox').value;
+  if(v) _srDoSearch(v); else _srPopular();
+  document.getElementById('srchDrop').classList.add('show');
+}}
+function _srInput(v){{
+  document.getElementById('srchClr').classList.toggle('show', v.length>0);
+  if(v) _srDoSearch(v); else _srPopular();
+  document.getElementById('srchDrop').classList.add('show');
+}}
+function _srDoSearch(v){{
+  var drop = document.getElementById('srchDrop');
+  var q = v.toLowerCase();
+  var res = _srIdx.filter(function(d){{
+    return d.t.toLowerCase().indexOf(q)>-1 || d.s.toLowerCase().indexOf(q)>-1 || d.c.toLowerCase().indexOf(q)>-1;
+  }});
+  if(!res.length){{
+    drop.innerHTML = '<div class="sr-empty">'+(_lang==='fr'?'😕 Aucun résultat pour':'😕 No result for')+' "<b>'+v+'</b>"</div>';
+    return;
+  }}
+  drop.innerHTML = res.map(function(d){{
+    return '<div class="sr-row"><div class="sr-ri">'+d.ic+'</div><div class="sr-rtxt"><div class="sr-rttl">'+d.t+'</div><div class="sr-rsub">'+d.s+'</div></div><div class="sr-rcat">'+d.c+'</div></div>';
+  }}).join('');
+}}
+function _srPopular(){{
+  var drop = document.getElementById('srchDrop');
+  drop.innerHTML = '<div class="sr-sec">'+(_lang==='fr'?'Suggestions':'Suggestions')+'</div>'+
+    _srIdx.slice(0,5).map(function(d){{
+      return '<div class="sr-row"><div class="sr-ri">'+d.ic+'</div><div class="sr-rtxt"><div class="sr-rttl">'+d.t+'</div><div class="sr-rsub">'+d.s+'</div></div><div class="sr-rcat">'+d.c+'</div></div>';
+    }}).join('');
+}}
+function _srClear(){{
+  document.getElementById('srchBox').value='';
+  document.getElementById('srchClr').classList.remove('show');
+  document.getElementById('srchDrop').classList.remove('show');
+}}
+document.addEventListener('click', function(e){{
+  if(!e.target.closest('.srch-wrap')) document.getElementById('srchDrop').classList.remove('show');
+}});
+
+_srBuild();
+</script>
+</body>
+</html>

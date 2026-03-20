@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ambera AI — Parrainage</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --gold:#ffb432;--gold2:#ffe08a;--bronze:#e8720a;
+  --dark:#07070f;--dark2:#0d0d1a;--dark3:#131328;
+  --line:#1e1e3a;--muted:#5a5a8a;--text:#d0cce0;
+  --green:#22c55e;--red:#ef4444;--purple:#a855f7;
+}
+body{background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Rajdhani',sans-serif;padding:20px;}
+.phone{width:375px;height:812px;background:var(--dark);border-radius:48px;border:2px solid #1a1a2e;box-shadow:0 40px 120px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,255,255,0.05);position:relative;overflow:hidden;flex-shrink:0;}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:34px;background:#000;border-radius:0 0 20px 20px;z-index:100;}
+.status-bar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 6px;z-index:99;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);}
+
+.screen{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 0.3s ease,transform 0.3s ease;transform:translateX(30px);overflow:hidden;}
+.screen.active{opacity:1;pointer-events:all;transform:translateX(0);}
+.screen.exit{opacity:0;transform:translateX(-30px);}
+
+.scroll-area{padding:8px 20px 100px;overflow-y:auto;height:calc(100% - 116px);}
+.scroll-area::-webkit-scrollbar{display:none;}
+
+/* HEADER */
+.page-header{padding:54px 20px 14px;background:linear-gradient(180deg,var(--dark) 0%,transparent 100%);}
+.back-btn{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer;margin-bottom:10px;}
+.back-btn:active{color:var(--gold);}
+.page-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--gold);}
+.page-sub{font-size:11px;color:var(--muted);margin-top:3px;letter-spacing:0.5px;}
+
+/* BOTTOM NAV */
+.bottom-nav{position:absolute;bottom:0;left:0;right:0;height:82px;background:rgba(7,7,15,0.97);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-around;padding:0 10px 20px;backdrop-filter:blur(20px);z-index:90;}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:8px 12px;border-radius:12px;font-size:10px;letter-spacing:1px;color:var(--muted);transition:all 0.2s;}
+.nav-item.active{color:var(--gold);}
+.nav-item:active{transform:scale(0.9);}
+.nav-icon{font-size:20px;}
+
+/* HERO CARD */
+.hero-card{
+  background:linear-gradient(135deg,rgba(255,180,50,0.1),rgba(232,114,10,0.06));
+  border:1px solid rgba(255,180,50,0.2);border-radius:20px;
+  padding:24px 20px;text-align:center;margin-bottom:18px;
+  position:relative;overflow:hidden;
+}
+.hero-card::before{
+  content:'';position:absolute;top:-40px;right:-40px;
+  width:120px;height:120px;border-radius:50%;
+  background:rgba(255,180,50,0.06);
+}
+.hero-card::after{
+  content:'';position:absolute;bottom:-30px;left:-30px;
+  width:90px;height:90px;border-radius:50%;
+  background:rgba(232,114,10,0.05);
+}
+.hero-emoji{font-size:48px;margin-bottom:10px;position:relative;z-index:2;}
+.hero-title{font-family:'Cinzel',serif;font-size:20px;font-weight:900;color:var(--gold);position:relative;z-index:2;margin-bottom:6px;}
+.hero-desc{font-size:13px;color:#8a7848;line-height:1.6;position:relative;z-index:2;}
+
+/* CODE PARRAINAGE */
+.code-box{
+  background:var(--dark2);border:1px solid rgba(255,180,50,0.2);
+  border-radius:16px;padding:18px;margin-bottom:18px;text-align:center;
+}
+.code-label{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:10px;}
+.code-value{
+  font-family:'Cinzel',serif;font-size:28px;font-weight:900;
+  letter-spacing:6px;color:var(--gold);
+  background:rgba(255,180,50,0.06);
+  border:1px dashed rgba(255,180,50,0.2);
+  border-radius:12px;padding:12px 20px;
+  display:inline-block;margin-bottom:12px;
+  cursor:pointer;transition:all 0.2s;
+  position:relative;
+}
+.code-value:active{transform:scale(0.97);}
+.copy-hint{font-size:11px;color:var(--muted);letter-spacing:1px;}
+.copy-hint.copied{color:var(--green);}
+
+.share-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px;}
+.share-btn{
+  background:var(--dark3);border:1px solid var(--line);
+  border-radius:12px;padding:12px;text-align:center;cursor:pointer;
+  transition:all 0.2s;font-size:12px;font-weight:600;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+}
+.share-btn:active{border-color:rgba(255,180,50,0.3);background:rgba(255,180,50,0.05);}
+.share-btn.whatsapp{color:#25d366;border-color:rgba(37,211,102,0.2);}
+.share-btn.sms{color:var(--gold);}
+.share-btn.facebook{color:#4267B2;border-color:rgba(66,103,178,0.2);}
+.share-btn.copy{color:var(--muted);}
+
+/* HOW IT WORKS */
+.steps-row{display:flex;gap:8px;margin-bottom:18px;}
+.step-box{
+  flex:1;background:var(--dark2);border:1px solid var(--line);
+  border-radius:14px;padding:14px 10px;text-align:center;
+}
+.step-num{
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(255,180,50,0.1);border:1px solid rgba(255,180,50,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cinzel',serif;font-size:12px;font-weight:700;color:var(--gold);
+  margin:0 auto 8px;
+}
+.step-icon{font-size:22px;margin-bottom:6px;}
+.step-text{font-size:11px;color:var(--muted);line-height:1.4;}
+
+/* REWARDS */
+.s-title{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin:0 0 12px;}
+.rewards-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+.reward-card{
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:14px;padding:14px;text-align:center;
+  transition:border-color 0.2s;
+}
+.reward-card:hover{border-color:rgba(255,180,50,0.2);}
+.rc-icon{font-size:28px;margin-bottom:6px;}
+.rc-reward{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:var(--gold);}
+.rc-desc{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4;}
+.rc-for{font-size:10px;color:#3a3a5a;margin-top:6px;letter-spacing:1px;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;}
+.stat-mini{
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:12px;padding:12px 8px;text-align:center;
+}
+.sm-num{font-family:'Cinzel',serif;font-size:22px;font-weight:900;color:var(--gold);}
+.sm-label{font-size:9px;color:var(--muted);margin-top:2px;letter-spacing:1px;}
+
+/* PROGRESS BAR */
+.progress-card{
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:16px;padding:16px;margin-bottom:18px;
+}
+.pc-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.pc-title{font-size:13px;font-weight:600;color:#c0b870;}
+.pc-badge{
+  font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;
+  background:rgba(168,85,247,0.1);color:var(--purple);
+  border:1px solid rgba(168,85,247,0.2);
+}
+.progress-bar-wrap{height:8px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;margin-bottom:8px;}
+.progress-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--bronze));transition:width 1s ease;}
+.pc-sub{font-size:11px;color:var(--muted);display:flex;justify-content:space-between;}
+
+/* FILLEULS LIST */
+.filleuls-list{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+.filleul-item{
+  display:flex;align-items:center;gap:12px;
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:12px;padding:12px;
+}
+.filleul-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--dark3),#1a1a30);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+  border:1px solid var(--line);
+}
+.filleul-info{flex:1;}
+.filleul-name{font-size:13px;font-weight:600;color:#c0b870;}
+.filleul-date{font-size:11px;color:var(--muted);margin-top:1px;}
+.filleul-reward{
+  font-family:'Cinzel',serif;font-size:13px;font-weight:700;
+  color:var(--green);flex-shrink:0;
+}
+
+/* REWARD CLAIM */
+.claim-card{
+  background:linear-gradient(135deg,rgba(34,197,94,0.08),rgba(34,197,94,0.03));
+  border:1px solid rgba(34,197,94,0.2);
+  border-radius:16px;padding:16px;margin-bottom:18px;
+  display:flex;align-items:center;gap:14px;
+}
+.claim-icon{font-size:36px;flex-shrink:0;}
+.claim-info{flex:1;}
+.claim-title{font-family:'Cinzel',serif;font-size:15px;font-weight:700;color:var(--green);}
+.claim-desc{font-size:12px;color:#6ada9a;margin-top:3px;line-height:1.4;}
+.claim-btn{
+  background:var(--green);border:none;border-radius:10px;padding:10px 14px;
+  font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;
+  color:#fff;cursor:pointer;letter-spacing:1px;flex-shrink:0;
+  transition:all 0.2s;
+}
+.claim-btn:active{transform:scale(0.95);}
+
+/* SUCCESS OVERLAY */
+.claim-overlay{
+  display:none;position:absolute;inset:0;
+  background:rgba(7,7,15,0.9);backdrop-filter:blur(8px);z-index:200;
+  flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  padding:40px;text-align:center;
+}
+.co-ring{width:90px;height:90px;border-radius:50%;background:rgba(34,197,94,0.1);border:2px solid rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;font-size:40px;animation:pop 0.5s ease;}
+@keyframes pop{0%{transform:scale(0);}60%{transform:scale(1.15);}100%{transform:scale(1);}}
+.co-title{font-family:'Cinzel',serif;font-size:22px;font-weight:700;color:var(--green);}
+.co-reward{font-family:'Cinzel',serif;font-size:32px;font-weight:900;color:var(--gold);}
+.co-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+.co-close{width:100%;background:linear-gradient(135deg,var(--gold),var(--bronze));border:none;border-radius:14px;padding:16px;font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;color:#0a0a14;cursor:pointer;text-transform:uppercase;}
+
+/* LEADERBOARD */
+.leaderboard{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+.lb-item{
+  display:flex;align-items:center;gap:12px;
+  background:var(--dark2);border:1px solid var(--line);
+  border-radius:12px;padding:12px;
+}
+.lb-rank{font-family:'Cinzel',serif;font-size:18px;font-weight:900;width:28px;text-align:center;flex-shrink:0;}
+.lb-rank.r1{color:#ffd700;}
+.lb-rank.r2{color:#c0c0c0;}
+.lb-rank.r3{color:#cd7f32;}
+.lb-rank.me{color:var(--gold);}
+.lb-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:1px solid var(--line);}
+.lb-name{flex:1;font-size:13px;font-weight:600;color:#c0b870;}
+.lb-count{font-size:12px;color:var(--muted);margin-top:1px;}
+.lb-score{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:var(--gold);flex-shrink:0;}
+.lb-item.me-row{border-color:rgba(255,180,50,0.25);background:rgba(255,180,50,0.04);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* ── LANG TOGGLE ── */
+.lang-toggle{display:flex;align-items:center;background:rgba(255,255,255,0.04);border:1px solid var(--line);border-radius:20px;overflow:hidden;flex-shrink:0;}
+.lang-btn{padding:5px 11px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;color:var(--muted);border:none;background:transparent;transition:all 0.2s;}
+.lang-btn.active{background:linear-gradient(135deg,var(--gold),var(--bronze));color:#0a0a14;border-radius:18px;margin:2px;}
+.toast-lang{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(255,180,50,0.12);border:1px solid rgba(255,180,50,0.25);border-radius:20px;padding:7px 16px;font-size:12px;font-weight:600;color:var(--gold);white-space:nowrap;z-index:300;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+.toast-lang.show{opacity:1;}
+
+/* ── SEARCH BAR ── */
+.srch-wrap{padding:0 20px 10px;position:relative;}
+.srch-box{width:100%;background:var(--dark3);border:1px solid var(--line);border-radius:14px;padding:10px 38px 10px 40px;font-family:'Rajdhani',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color 0.2s;}
+.srch-box:focus{border-color:rgba(255,180,50,0.35);}
+.srch-box::placeholder{color:var(--muted);}
+.srch-ico{position:absolute;left:32px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;}
+.srch-clr{position:absolute;right:30px;top:50%;transform:translateY(-50%);font-size:13px;cursor:pointer;color:var(--muted);display:none;}
+.srch-clr.show{display:block;}
+.srch-drop{display:none;position:absolute;top:50px;left:20px;right:20px;background:var(--dark2);border:1px solid rgba(255,180,50,0.18);border-radius:14px;z-index:150;overflow:hidden;max-height:280px;overflow-y:auto;box-shadow:0 8px 30px rgba(0,0,0,0.6);}
+.srch-drop.show{display:block;animation:srFadeDown 0.2s ease;}
+.srch-drop::-webkit-scrollbar{display:none;}
+@keyframes srFadeDown{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
+.sr-sec{font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;padding:10px 14px 4px;}
+.sr-row{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;transition:background 0.15s;border-bottom:1px solid rgba(255,255,255,0.03);}
+.sr-row:last-child{border-bottom:none;}
+.sr-row:active{background:rgba(255,180,50,0.05);}
+.sr-ri{font-size:17px;flex-shrink:0;width:24px;text-align:center;}
+.sr-rtxt{flex:1;}
+.sr-rttl{font-size:13px;font-weight:600;color:#c0b870;}
+.sr-rsub{font-size:11px;color:var(--muted);margin-top:1px;}
+.sr-rcat{font-size:10px;color:var(--gold);background:rgba(255,180,50,0.08);border:1px solid rgba(255,180,50,0.1);border-radius:8px;padding:2px 6px;flex-shrink:0;}
+.sr-empty{padding:18px;text-align:center;font-size:12px;color:var(--muted);}
+
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="toast-lang" id="toastLang"></div>
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
+
+  <!-- ══ SCREEN: PARRAINAGE ══ -->
+  <div class="screen active" id="main">
+    <div class="page-header">
+      <div class="back-btn" onclick="history.back()">← Retour</div>
+    <div class="lang-toggle" style="margin-bottom:8px;"><button class="lang-btn active" id="lt-par-fr" onclick="switchLang('fr')">FR</button><button class="lang-btn" id="lt-par-en" onclick="switchLang('en')">EN</button></div>
+    <div class="lang-toggle" style="margin-bottom:8px;"><button class="lang-btn active" id="lt-par-fr" onclick="switchLang('fr')">FR</button><button class="lang-btn" id="lt-par-en" onclick="switchLang('en')">EN</button></div>
+      <div class="page-title">Parrainage</div>
+      <div class="page-sub">Invite tes amis · Gagne des récompenses</div>
+    </div>
+    <div class="scroll-area">
+
+      <!-- Hero -->
+      <div class="hero-card">
+        <div class="hero-emoji">🤝</div>
+        <div class="hero-title">Invite un ami = 1 mois offert</div>
+        <div class="hero-desc">Pour chaque ami qui s'abonne, toi ET lui recevez 1 mois gratuit. Sans limite.</div>
+      </div>
+
+      <!-- Code -->
+      <div class="code-box">
+        <div class="code-label">Ton code de parrainage</div>
+        <div class="code-value" onclick="copyCode(this)">AMBERA7</div>
+        <div class="copy-hint" id="copyHint">👆 Appuyer pour copier</div>
+        <div class="share-btns">
+          <div class="share-btn whatsapp" onclick="doShare('whatsapp')">💬 WhatsApp</div>
+          <div class="share-btn sms" onclick="doShare('sms')">📱 SMS</div>
+          <div class="share-btn facebook" onclick="doShare('facebook')">📘 Facebook</div>
+          <div class="share-btn copy" onclick="doShare('copy')">📋 Copier lien</div>
+        </div>
+      </div>
+
+      <!-- How it works -->
+      <div class="s-title">Comment ça marche</div>
+      <div class="steps-row">
+        <div class="step-box">
+          <div class="step-num">1</div>
+          <div class="step-icon">📤</div>
+          <div class="step-text">Partage ton code à un ami</div>
+        </div>
+        <div class="step-box">
+          <div class="step-num">2</div>
+          <div class="step-icon">📱</div>
+          <div class="step-text">Il s'inscrit avec ton code</div>
+        </div>
+        <div class="step-box">
+          <div class="step-num">3</div>
+          <div class="step-icon">🎁</div>
+          <div class="step-text">Vous recevez 1 mois chacun</div>
+        </div>
+      </div>
+
+      <!-- Rewards -->
+      <div class="s-title">Tes récompenses</div>
+      <div class="rewards-row">
+        <div class="reward-card">
+          <div class="rc-icon">🎁</div>
+          <div class="rc-reward">1 mois gratuit</div>
+          <div class="rc-desc">Pour toi dès le 1er ami abonné</div>
+          <div class="rc-for">PAR FILLEUL</div>
+        </div>
+        <div class="reward-card">
+          <div class="rc-icon">🏆</div>
+          <div class="rc-reward">3 mois offerts</div>
+          <div class="rc-desc">Bonus si 3 amis s'abonnent en même temps</div>
+          <div class="rc-for">BONUS X3</div>
+        </div>
+        <div class="reward-card">
+          <div class="rc-icon">💎</div>
+          <div class="rc-reward">Plan Pro gratuit</div>
+          <div class="rc-desc">1 an offert si tu parraines 10 amis</div>
+          <div class="rc-for">STATUT GOLD</div>
+        </div>
+        <div class="reward-card">
+          <div class="rc-icon">🛡️</div>
+          <div class="rc-reward">Kit ADN offert</div>
+          <div class="rc-desc">Valeur 15 000 FCFA à partir de 5 filleuls</div>
+          <div class="rc-for">BONUS HARDWARE</div>
+        </div>
+      </div>
+
+      <!-- Claim reward -->
+      <div class="claim-card">
+        <div class="claim-icon">🎁</div>
+        <div class="claim-info">
+          <div class="claim-title">1 mois disponible !</div>
+          <div class="claim-desc">Jean-Pierre Mballa vient de s'abonner avec ton code.</div>
+        </div>
+        <button class="claim-btn" onclick="claimReward()">Réclamer</button>
+      </div>
+
+      <!-- Stats -->
+      <div class="s-title">Tes statistiques</div>
+      <div class="stats-grid">
+        <div class="stat-mini"><div class="sm-num">3</div><div class="sm-label">Filleuls</div></div>
+        <div class="stat-mini"><div class="sm-num" style="color:var(--green);">3</div><div class="sm-label">Mois gagnés</div></div>
+        <div class="stat-mini"><div class="sm-num" style="color:var(--purple);">#4</div><div class="sm-label">Classement</div></div>
+      </div>
+
+      <!-- Progress vers Gold -->
+      <div class="progress-card">
+        <div class="pc-header">
+          <div class="pc-title">Progression vers Statut Gold 💎</div>
+          <div class="pc-badge">3 / 10</div>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" style="width:30%"></div>
+        </div>
+        <div class="pc-sub">
+          <span>3 filleuls</span>
+          <span style="color:var(--gold);">7 restants pour 1 an gratuit</span>
+        </div>
+      </div>
+
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item active" onclick="goTo('main')"><div class="nav-icon">🤝</div>Parrainage</div>
+      <div class="nav-item" onclick="goTo('filleuls')"><div class="nav-icon">👥</div>Filleuls</div>
+      <div class="nav-item" onclick="goTo('classement')"><div class="nav-icon">🏆</div>Classement</div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: FILLEULS ══ -->
+  <div class="screen" id="filleuls">
+    <div class="page-header">
+      <div class="page-title">Mes filleuls</div>
+      <div class="page-sub">3 amis parrainés · 3 mois gagnés</div>
+    </div>
+    <div class="scroll-area">
+
+      <div class="claim-card" style="margin-bottom:18px;">
+        <div class="claim-icon">🎁</div>
+        <div class="claim-info">
+          <div class="claim-title">1 mois disponible !</div>
+          <div class="claim-desc">Nouveau filleul actif hier</div>
+        </div>
+        <button class="claim-btn" onclick="claimReward()">Réclamer</button>
+      </div>
+
+      <div class="s-title">Filleuls actifs (3)</div>
+      <div class="filleuls-list">
+        <div class="filleul-item">
+          <div class="filleul-avatar">🧑🏿</div>
+          <div class="filleul-info">
+            <div class="filleul-name">Jean-Pierre Mballa</div>
+            <div class="filleul-date">Inscrit le 06/03/2026 · Plan Pro</div>
+          </div>
+          <div class="filleul-reward">+1 mois</div>
+        </div>
+        <div class="filleul-item">
+          <div class="filleul-avatar">👩🏿</div>
+          <div class="filleul-info">
+            <div class="filleul-name">Marie Biya</div>
+            <div class="filleul-date">Inscrit le 02/03/2026 · Plan Essentiel</div>
+          </div>
+          <div class="filleul-reward">+1 mois</div>
+        </div>
+        <div class="filleul-item">
+          <div class="filleul-avatar">👨🏿</div>
+          <div class="filleul-info">
+            <div class="filleul-name">Alain Ngo</div>
+            <div class="filleul-date">Inscrit le 28/02/2026 · Plan Pro</div>
+          </div>
+          <div class="filleul-reward">+1 mois</div>
+        </div>
+      </div>
+
+      <div class="s-title">En attente (2 invitations)</div>
+      <div class="filleuls-list">
+        <div class="filleul-item" style="opacity:0.5;">
+          <div class="filleul-avatar">❓</div>
+          <div class="filleul-info">
+            <div class="filleul-name">+237 677 *** ***</div>
+            <div class="filleul-date">Invitation envoyée · 04/03/2026</div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);">En attente</div>
+        </div>
+        <div class="filleul-item" style="opacity:0.5;">
+          <div class="filleul-avatar">❓</div>
+          <div class="filleul-info">
+            <div class="filleul-name">+237 691 *** ***</div>
+            <div class="filleul-date">Invitation envoyée · 01/03/2026</div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);">En attente</div>
+        </div>
+      </div>
+
+      <div class="progress-card">
+        <div class="pc-header">
+          <div class="pc-title">Prochain palier 🎯</div>
+          <div class="pc-badge">3 / 5</div>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" style="width:60%"></div>
+        </div>
+        <div class="pc-sub">
+          <span>3 filleuls</span>
+          <span style="color:var(--purple);">2 de plus → Kit ADN offert 🧬</span>
+        </div>
+      </div>
+
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo('main')"><div class="nav-icon">🤝</div>Parrainage</div>
+      <div class="nav-item active" onclick="goTo('filleuls')"><div class="nav-icon">👥</div>Filleuls</div>
+      <div class="nav-item" onclick="goTo('classement')"><div class="nav-icon">🏆</div>Classement</div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: CLASSEMENT ══ -->
+  <div class="screen" id="classement">
+    <div class="page-header">
+      <div class="page-title">Classement</div>
+      <div class="page-sub">Top parrains Ambera AI · Mars 2026</div>
+    </div>
+    <div class="scroll-area">
+
+      <div class="s-title">Top parrains ce mois</div>
+      <div class="leaderboard">
+        <div class="lb-item">
+          <div class="lb-rank r1">🥇</div>
+          <div class="lb-avatar">🧑🏿</div>
+          <div>
+            <div class="lb-name">Emmanuel K.</div>
+            <div class="lb-count">12 filleuls</div>
+          </div>
+          <div class="lb-score">12 mois</div>
+        </div>
+        <div class="lb-item">
+          <div class="lb-rank r2">🥈</div>
+          <div class="lb-avatar">👩🏿</div>
+          <div>
+            <div class="lb-name">Brigitte M.</div>
+            <div class="lb-count">8 filleuls</div>
+          </div>
+          <div class="lb-score">8 mois</div>
+        </div>
+        <div class="lb-item">
+          <div class="lb-rank r3">🥉</div>
+          <div class="lb-avatar">👨🏿</div>
+          <div>
+            <div class="lb-name">Paul E.</div>
+            <div class="lb-count">6 filleuls</div>
+          </div>
+          <div class="lb-score">6 mois</div>
+        </div>
+        <div class="lb-item">
+          <div class="lb-rank" style="color:var(--muted);">4</div>
+          <div class="lb-avatar">👩🏿</div>
+          <div>
+            <div class="lb-name">Carine N.</div>
+            <div class="lb-count">5 filleuls</div>
+          </div>
+          <div class="lb-score">5 mois</div>
+        </div>
+        <!-- Toi -->
+        <div class="lb-item me-row">
+          <div class="lb-rank me">5</div>
+          <div class="lb-avatar" style="border-color:rgba(255,180,50,0.3);">😊</div>
+          <div>
+            <div class="lb-name" style="color:var(--gold);">Toi · AMBERA7</div>
+            <div class="lb-count">3 filleuls · 2 en attente</div>
+          </div>
+          <div class="lb-score">3 mois</div>
+        </div>
+        <div class="lb-item">
+          <div class="lb-rank" style="color:var(--muted);">6</div>
+          <div class="lb-avatar">🧑🏿</div>
+          <div>
+            <div class="lb-name">Didier T.</div>
+            <div class="lb-count">2 filleuls</div>
+          </div>
+          <div class="lb-score">2 mois</div>
+        </div>
+      </div>
+
+      <div style="background:rgba(168,85,247,0.05);border:1px solid rgba(168,85,247,0.15);border-radius:14px;padding:14px;text-align:center;">
+        <div style="font-size:22px;margin-bottom:6px;">💎</div>
+        <div style="font-family:'Cinzel',serif;font-size:14px;color:var(--purple);font-weight:700;margin-bottom:4px;">Statut Gold</div>
+        <div style="font-size:12px;color:#6a6a9a;line-height:1.5;">Le top 3 chaque mois reçoit un bonus surprise d'Ambera AI. Invite plus d'amis pour grimper !</div>
+      </div>
+
+    </div>
+    <div class="bottom-nav">
+      <div class="nav-item" onclick="goTo('main')"><div class="nav-icon">🤝</div>Parrainage</div>
+      <div class="nav-item" onclick="goTo('filleuls')"><div class="nav-icon">👥</div>Filleuls</div>
+      <div class="nav-item active" onclick="goTo('classement')"><div class="nav-icon">🏆</div>Classement</div>
+    </div>
+  </div>
+
+  <!-- CLAIM OVERLAY -->
+  <div class="claim-overlay" id="claimOverlay">
+    <div class="co-ring">🎁</div>
+    <div class="co-title">Récompense reçue !</div>
+    <div class="co-reward">1 mois gratuit</div>
+    <div class="co-desc">Votre abonnement Pro a été prolongé d'1 mois gratuitement. Merci de faire grandir Ambera AI !</div>
+    <button class="co-close" onclick="closeOverlay()">Super, merci ! 🙌</button>
+  </div>
+
+  <!-- SHARE OVERLAY -->
+  <div class="claim-overlay" id="shareOverlay" style="gap:10px;">
+    <div style="font-size:44px;">📤</div>
+    <div style="font-family:'Cinzel',serif;font-size:18px;color:var(--gold);font-weight:700;text-align:center;" id="shareTitle">Lien copié !</div>
+    <div style="font-size:13px;color:var(--muted);text-align:center;line-height:1.6;max-width:280px;" id="shareDesc">Envoyez ce lien à vos amis. Quand ils s'inscrivent avec votre code, vous gagnez tous les deux 1 mois gratuit !</div>
+    <div style="background:rgba(255,180,50,0.08);border:1px solid rgba(255,180,50,0.15);border-radius:10px;padding:10px 16px;font-family:'Cinzel',serif;font-size:14px;color:var(--gold);letter-spacing:2px;">AMBERA7</div>
+    <button class="co-close" onclick="closeShare()">Fermer</button>
+  </div>
+
+</div>
+
+<script>
+let current='main';
+
+function goTo(id){
+  if(id===current) return;
+  const prev=document.getElementById(current);
+  const next=document.getElementById(id);
+  prev.classList.add('exit');
+  setTimeout(()=>{prev.classList.remove('active','exit');next.classList.add('active');current=id;},280);
+}
+
+function copyCode(el){
+  const hint=document.getElementById('copyHint');
+  hint.textContent='✓ Code copié !';
+  hint.classList.add('copied');
+  el.style.borderColor='rgba(34,197,94,0.4)';
+  el.style.color='var(--green)';
+  setTimeout(()=>{
+    hint.textContent='👆 Appuyer pour copier';
+    hint.classList.remove('copied');
+    el.style.borderColor='';el.style.color='';
+  },2000);
+}
+
+function doShare(type){
+  const overlay=document.getElementById('shareOverlay');
+  const title=document.getElementById('shareTitle');
+  const desc=document.getElementById('shareDesc');
+  const msgs={
+    whatsapp:{t:'Partagé sur WhatsApp !',d:'Votre ami recevra un message WhatsApp avec votre lien de parrainage.'},
+    sms:{t:'SMS prêt à envoyer !',d:'Votre téléphone va ouvrir l\'application SMS avec le message pré-rempli.'},
+    facebook:{t:'Partagé sur Facebook !',d:'Votre publication Facebook contient votre code et le lien d\'inscription.'},
+    copy:{t:'Lien copié !',d:'Envoyez ce lien à vos amis. Quand ils s\'inscrivent avec votre code, vous gagnez tous les deux 1 mois gratuit !'}
+  };
+  title.textContent=msgs[type].t;
+  desc.textContent=msgs[type].d;
+  overlay.style.display='flex';
+}
+function closeShare(){document.getElementById('shareOverlay').style.display='none';}
+
+function claimReward(){document.getElementById('claimOverlay').style.display='flex';}
+function closeOverlay(){document.getElementById('claimOverlay').style.display='none';}
+
+
+// ── BILINGUAL ENGINE ──
+var _lang = 'fr';
+var _allLtFr = document.querySelectorAll('[id$="-fr"].lang-btn');
+var _allLtEn = document.querySelectorAll('[id$="-en"].lang-btn');
+function switchLang(l){
+  if(l===_lang) return;
+  _lang = l;
+  document.querySelectorAll('[data-fr]').forEach(function(el){
+    var v = el.getAttribute('data-'+l);
+    if(v==null) return;
+    if(el.tagName==='INPUT') el.placeholder = v;
+    else el.innerHTML = v;
+  });
+  _allLtFr = document.querySelectorAll('[id$="-fr"].lang-btn');
+  _allLtEn = document.querySelectorAll('[id$="-en"].lang-btn');
+  _allLtFr.forEach(function(b){b.classList.toggle('active', l==='fr');});
+  _allLtEn.forEach(function(b){b.classList.toggle('active', l==='en');});
+  var t = document.getElementById('toastLang');
+  if(t){ t.textContent = l==='fr'?'🇫🇷 Français activé':'🇬🇧 English activated'; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},2000); }
+}
+
+// ── SEARCH ENGINE ──
+var _srData = {"fr": [{"ic": "🤝", "t": "Mon code parrainage", "s": "Code AMBERA7 · Partager", "c": "Parrainage"}, {"ic": "🎁", "t": "Récompenses", "s": "1 mois gratuit par filleul", "c": "Avantages"}, {"ic": "👥", "t": "Mes filleuls", "s": "3 amis inscrits", "c": "Filleuls"}, {"ic": "🏆", "t": "Classement", "s": "Top parrains du mois", "c": "Classement"}, {"ic": "💎", "t": "Statut Gold", "s": "10 filleuls = 1 an gratuit", "c": "Statut"}, {"ic": "💬", "t": "Partager WhatsApp", "s": "Envoyer lien invitation", "c": "Partage"}], "en": [{"ic": "🤝", "t": "My referral code", "s": "Code AMBERA7 · Share", "c": "Referral"}, {"ic": "🎁", "t": "Rewards", "s": "1 free month per referral", "c": "Benefits"}, {"ic": "👥", "t": "My referrals", "s": "3 friends signed up", "c": "Referrals"}, {"ic": "🏆", "t": "Leaderboard", "s": "Top referrers this month", "c": "Ranking"}, {"ic": "💎", "t": "Gold Status", "s": "10 referrals = 1 year free", "c": "Status"}, {"ic": "💬", "t": "Share on WhatsApp", "s": "Send invitation link", "c": "Share"}]};
+var _srIdx = _srData['fr'];
+function _srBuild(){{ _srIdx = _srData[_lang]; }}
+function _srOpen(){{
+  var v = document.getElementById('srchBox').value;
+  if(v) _srDoSearch(v); else _srPopular();
+  document.getElementById('srchDrop').classList.add('show');
+}}
+function _srInput(v){{
+  document.getElementById('srchClr').classList.toggle('show', v.length>0);
+  if(v) _srDoSearch(v); else _srPopular();
+  document.getElementById('srchDrop').classList.add('show');
+}}
+function _srDoSearch(v){{
+  var drop = document.getElementById('srchDrop');
+  var q = v.toLowerCase();
+  var res = _srIdx.filter(function(d){{
+    return d.t.toLowerCase().indexOf(q)>-1 || d.s.toLowerCase().indexOf(q)>-1 || d.c.toLowerCase().indexOf(q)>-1;
+  }});
+  if(!res.length){{
+    drop.innerHTML = '<div class="sr-empty">'+(_lang==='fr'?'😕 Aucun résultat pour':'😕 No result for')+' "<b>'+v+'</b>"</div>';
+    return;
+  }}
+  drop.innerHTML = res.map(function(d){{
+    return '<div class="sr-row"><div class="sr-ri">'+d.ic+'</div><div class="sr-rtxt"><div class="sr-rttl">'+d.t+'</div><div class="sr-rsub">'+d.s+'</div></div><div class="sr-rcat">'+d.c+'</div></div>';
+  }}).join('');
+}}
+function _srPopular(){{
+  var drop = document.getElementById('srchDrop');
+  drop.innerHTML = '<div class="sr-sec">'+(_lang==='fr'?'Suggestions':'Suggestions')+'</div>'+
+    _srIdx.slice(0,5).map(function(d){{
+      return '<div class="sr-row"><div class="sr-ri">'+d.ic+'</div><div class="sr-rtxt"><div class="sr-rttl">'+d.t+'</div><div class="sr-rsub">'+d.s+'</div></div><div class="sr-rcat">'+d.c+'</div></div>';
+    }}).join('');
+}}
+function _srClear(){{
+  document.getElementById('srchBox').value='';
+  document.getElementById('srchClr').classList.remove('show');
+  document.getElementById('srchDrop').classList.remove('show');
+}}
+document.addEventListener('click', function(e){{
+  if(!e.target.closest('.srch-wrap')) document.getElementById('srchDrop').classList.remove('show');
+}});
+
+_srBuild();
+</script>
+</body>
+</html>

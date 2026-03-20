@@ -514,6 +514,19 @@ footer{
 .lang-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--gold);color:var(--dark);padding:9px 22px;border-radius:25px;font-size:13px;font-weight:700;letter-spacing:1px;z-index:9999;transition:transform 0.35s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
 .lang-toast.show{transform:translateX(-50%) translateY(0);}
 </style>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#ffb432">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ambera AI">
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/sw.js');
+  });
+}
+</script>
 </head>
 <body>
 

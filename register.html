@@ -530,7 +530,30 @@ body{background:#111;display:flex;align-items:center;justify-content:center;min-
 
 </div>
 
-<script>
+<script type="module">
+// ══ FIREBASE CONFIG ══
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyATWUfF5OFw860JXw76Uo9G_0jAI6hF6WE",
+  authDomain: "ambera-ai.firebaseapp.com",
+  projectId: "ambera-ai",
+  storageBucket: "ambera-ai.firebasestorage.app",
+  messagingSenderId: "581529826084",
+  appId: "1:581529826084:web:144a6ce179e0d8286979b1"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+onAuthStateChanged(auth, (user) => {
+  if (!user) { window.location.href = '/auth'; }
+  else { currentUser = user; }
+});
+
 let current = 'step1';
 let selectedTypeName = 'Moto';
 
@@ -580,22 +603,49 @@ function doRegister(){
   btn.innerHTML = '<span class="btn-loading"></span> Enregistrement...';
   btn.disabled = true;
 
-  // simulate blockchain steps
-  setTimeout(()=>{
-    const brand = document.getElementById('brand').value || 'Honda';
-    const model = document.getElementById('model').value || 'CB 125F';
-    const vehicleName = `${brand} ${model}`;
-    document.getElementById('successVehicle').textContent = vehicleName || 'Votre bien';
+  const brand = document.getElementById('brand').value || 'Honda';
+  const model = document.getElementById('model').value || 'CB 125F';
+  const vin = document.getElementById('vinInput').value || '';
+  const vehicleName = `${brand} ${model}`;
 
-    // random blockchain hash
+  if(!currentUser){
+    alert('Vous devez être connecté pour enregistrer un bien.');
+    btn.innerHTML = '🛡️ Enregistrer & Protéger';
+    btn.disabled = false;
+    return;
+  }
+
+  // Sauvegarder dans Firebase Firestore
+  addDoc(collection(db, 'biens'), {
+    userId: currentUser.uid,
+    userName: currentUser.displayName || '',
+    type: selectedTypeName,
+    marque: brand,
+    modele: model,
+    vin: vin,
+    nom: vehicleName,
+    statut: 'Actif',
+    dateEnregistrement: serverTimestamp(),
+    couches: {
+      iaVision: true,
+      gps: true,
+      blockchain: true,
+      adn: false
+    }
+  }).then((docRef) => {
     const hash = '0x' + Math.random().toString(16).substr(2,4) + '...' + Math.random().toString(16).substr(2,4);
     const bloc = Math.floor(800000 + Math.random()*99999);
-    document.getElementById('bcHash').textContent = `${hash} · Bloc #${bloc}\nJTDBF10K400157842 · 07/03/2026 09:41`;
-
+    document.getElementById('successVehicle').textContent = vehicleName;
+    document.getElementById('bcHash').textContent = `${hash} · Bloc #${bloc}\n${vin} · ${new Date().toLocaleDateString('fr-FR')}`;
     btn.innerHTML = '🛡️ Enregistrer & Protéger';
     btn.disabled = false;
     goTo('success');
-  }, 2200);
+  }).catch((error) => {
+    console.error('Erreur:', error);
+    alert('Erreur lors de l\'enregistrement. Réessayez.');
+    btn.innerHTML = '🛡️ Enregistrer & Protéger';
+    btn.disabled = false;
+  });
 }
 </script>
 
@@ -665,6 +715,15 @@ function rgSrGo(i){
   document.getElementById('rgSrInput').value='';
   rgSrClose();
 }
+
+// Rendre les fonctions accessibles globalement
+window.goTo = goTo;
+window.goToStep = goToStep;
+window.selectType = selectType;
+window.doVinScan = doVinScan;
+window.toggleLayer = toggleLayer;
+window.doRegister = doRegister;
+window.rgLang = rgLang;
 </script>
 </body>
 </html>

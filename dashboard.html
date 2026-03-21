@@ -613,6 +613,7 @@ body{background:var(--dark);color:var(--text);font-family:'Rajdhani',sans-serif;
               <tr><td>📱</td><td class="td-name">iPhone 14 Pro</td><td>IMEI·3892</td><td>P. Essomba</td><td><span class="status-pill pill-active">✓ Actif</span></td><td><span class="status-pill pill-active">✓ Ok</span></td><td><span class="status-pill pill-active">Normal</span></td></tr>
               <tr><td>🚗</td><td class="td-name">Mercedes C200</td><td>CE·9901·Z</td><td>E. Kotto</td><td><span class="status-pill pill-active">✓ Actif</span></td><td><span class="status-pill pill-active">✓ Ok</span></td><td><span class="status-pill pill-active">Normal</span></td></tr>
             </tbody>
+            <tbody id="mesBiensTbody"></tbody>
           </table>
         </div>
       </div>
@@ -714,6 +715,7 @@ body{background:var(--dark);color:var(--text);font-family:'Rajdhani',sans-serif;
 // ══ FIREBASE AUTH CHECK ══
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyATWUfF5OFw860JXw76Uo9G_0jAI6hF6WE",
@@ -726,14 +728,42 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+const db = getFirestore(app);
+const typeIcons = { 'Moto':'🏍️', 'Voiture':'🚗', 'Camion':'🚚', 'Téléphone':'📱', 'Ordinateur':'💻', 'Autre':'📦' };
+
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    // Utilisateur connecté — afficher son nom
     const name = user.displayName || user.email.split('@')[0];
     const adminNameEl = document.querySelector('.sb-admin-name');
     if(adminNameEl) adminNameEl.textContent = name;
+
+    const q = query(collection(db, 'biens'), where('userId', '==', user.uid));
+    getDocs(q).then((snapshot) => {
+      const tbody = document.getElementById('mesBiensTbody');
+      if(!tbody) return;
+      if(snapshot.empty){
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#5a5a8a;padding:20px;">Aucun bien enregistré — <a href="/register" style="color:#ffb432;">Enregistrer un bien →</a></td></tr>';
+        return;
+      }
+      let html = '';
+      snapshot.forEach((doc) => {
+        const b = doc.data();
+        const icon = typeIcons[b.type] || '📦';
+        html += `<tr style="background:rgba(255,180,50,0.03);">
+          <td>${icon}</td>
+          <td class="td-name">${b.marque} ${b.modele}</td>
+          <td>${b.vin || '—'}</td>
+          <td>${b.userName || '—'}</td>
+          <td><span class="status-pill pill-active">✓ Actif</span></td>
+          <td><span class="status-pill pill-active">✓ Ok</span></td>
+          <td><span class="status-pill pill-active">Normal</span></td>
+        </tr>`;
+      });
+      tbody.innerHTML = html;
+      const title = document.querySelector('#page-vehicles .card-title');
+      if(title) title.textContent = `Mes biens (${snapshot.size})`;
+    });
   } else {
-    // Non connecté — rediriger vers auth
     window.location.href = '/auth';
   }
 });

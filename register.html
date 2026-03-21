@@ -647,6 +647,14 @@ function doRegister(){
     btn.disabled = false;
   });
 }
+
+// Rendre toutes les fonctions accessibles depuis les onclick HTML
+window.goTo = goTo;
+window.goToStep = goToStep;
+window.selectType = selectType;
+window.doVinScan = doVinScan;
+window.toggleLayer = toggleLayer;
+window.doRegister = doRegister;
 </script>
 
 <script>
@@ -715,15 +723,6 @@ function rgSrGo(i){
   document.getElementById('rgSrInput').value='';
   rgSrClose();
 }
-
-// Rendre les fonctions accessibles globalement
-window.goTo = goTo;
-window.goToStep = goToStep;
-window.selectType = selectType;
-window.doVinScan = doVinScan;
-window.toggleLayer = toggleLayer;
-window.doRegister = doRegister;
-window.rgLang = rgLang;
 </script>
 </body>
 </html>

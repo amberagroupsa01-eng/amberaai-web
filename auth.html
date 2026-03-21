@@ -473,7 +473,7 @@ body{
 
 </div>
 
-<script>
+<script type="module">
 let current = 'welcome';
 
 function goTo(id){
@@ -499,8 +499,24 @@ function selectPlan(card){
   card.classList.add('selected');
 }
 
+// ══ FIREBASE CONFIG ══
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyATWUfF5OFw860JXw76Uo9G_0jAI6hF6WE",
+  authDomain: "ambera-ai.firebaseapp.com",
+  projectId: "ambera-ai",
+  storageBucket: "ambera-ai.firebasestorage.app",
+  messagingSenderId: "581529826084",
+  appId: "1:581529826084:web:144a6ce179e0d8286979b1",
+  measurementId: "G-CG8T9KST7L"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
 function doLogin(){
-  const phone = document.getElementById('loginPhone').value;
+  const phone = document.getElementById('loginPhone').value.trim();
   const pass  = document.getElementById('loginPass').value;
   const btn   = document.getElementById('loginBtn');
   const err   = document.getElementById('loginError');
@@ -511,27 +527,35 @@ function doLogin(){
     err.classList.add('visible'); return;
   }
 
-  // Simulate loading
+  // Convertir le numéro de téléphone en email fictif pour Firebase
+  const email = phone.replace(/\s/g,'') + '@amberaai.app';
+
   btn.innerHTML = '<span class="btn-loading"></span> Vérification...';
   btn.disabled = true;
 
-  setTimeout(()=>{
-    btn.innerHTML = 'Se connecter';
-    btn.disabled = false;
-    // Demo: wrong pass simulation
-    if(pass.length < 4){
-      err.textContent = '❌ Mot de passe incorrect. Réessayez.';
+  signInWithEmailAndPassword(auth, email, pass)
+    .then((userCredential) => {
+      btn.innerHTML = '✅ Connecté !';
+      setTimeout(() => { window.location.href = '/dashboard'; }, 1000);
+    })
+    .catch((error) => {
+      btn.innerHTML = 'Se connecter';
+      btn.disabled = false;
+      if(error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential'){
+        err.textContent = '⚠ Numéro ou mot de passe incorrect.';
+      } else if(error.code === 'auth/wrong-password'){
+        err.textContent = '⚠ Mot de passe incorrect.';
+      } else {
+        err.textContent = '⚠ Erreur de connexion. Réessayez.';
+      }
       err.classList.add('visible');
-    } else {
-      document.getElementById('successName').textContent = 'Ambera';
-      goTo('success');
-    }
-  }, 1800);
+    });
+
 }
 
 function doSignup(){
-  const name  = document.getElementById('signupName').value;
-  const phone = document.getElementById('signupPhone').value;
+  const name  = document.getElementById('signupName').value.trim();
+  const phone = document.getElementById('signupPhone').value.trim();
   const pass  = document.getElementById('signupPass').value;
   const btn   = document.getElementById('signupBtn');
 
@@ -547,13 +571,29 @@ function doSignup(){
   btn.innerHTML = '<span class="btn-loading"></span> Création en cours...';
   btn.disabled = true;
 
-  setTimeout(()=>{
-    btn.innerHTML = 'Créer mon compte';
-    btn.disabled = false;
-    const firstName = name.split(' ')[0];
-    document.getElementById('successName').textContent = firstName + ' !';
-    goTo('success');
-  }, 2000);
+  // Convertir le numéro de téléphone en email fictif pour Firebase
+  const email = phone.replace(/\s/g,'') + '@amberaai.app';
+
+  createUserWithEmailAndPassword(auth, email, pass)
+    .then((userCredential) => {
+      return updateProfile(userCredential.user, { displayName: name });
+    })
+    .then(() => {
+      const firstName = name.split(' ')[0];
+      document.getElementById('successName').textContent = firstName + ' !';
+      goTo('success');
+    })
+    .catch((error) => {
+      btn.innerHTML = 'Créer mon compte';
+      btn.disabled = false;
+      if(error.code === 'auth/email-already-in-use'){
+        alert('Ce numéro est déjà enregistré. Connectez-vous.');
+      } else if(error.code === 'auth/weak-password'){
+        alert('Mot de passe trop faible. Minimum 8 caractères.');
+      } else {
+        alert('Erreur lors de la création du compte. Réessayez.');
+      }
+    });
 }
 
 function doSocialLogin(){

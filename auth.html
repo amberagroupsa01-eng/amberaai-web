@@ -675,6 +675,15 @@ document.addEventListener('click', function(e){{
 }});
 
 _srBuild();
+
+// Rendre les fonctions accessibles globalement
+window.goTo = goTo;
+window.togglePass = togglePass;
+window.selectPlan = selectPlan;
+window.doLogin = doLogin;
+window.doSignup = doSignup;
+window.doSocialLogin = doSocialLogin;
+window.switchLang = switchLang;
 </script>
 </body>
 </html>

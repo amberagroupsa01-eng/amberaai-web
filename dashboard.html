@@ -798,6 +798,11 @@ function filterTable(input){
     row.style.display = row.textContent.toLowerCase().includes(val) ? '' : 'none';
   });
 }
+
+// Rendre les fonctions accessibles depuis les onclick HTML
+window.showPage = showPage;
+window.dbLang = dbLang;
+window.doLogout = doLogout;
 </script>
 
 <script>
@@ -868,9 +873,6 @@ function dbSrGo(i){
   dbSrClose();
 }
 
-// Rendre les fonctions accessibles globalement
-window.showPage = showPage;
-window.dbLang = dbLang;
 </script>
 </body>
 </html>

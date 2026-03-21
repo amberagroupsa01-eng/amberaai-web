@@ -487,20 +487,39 @@ body{
 
 </div>
 
-<script>
+<script type="module">
+// ══ FIREBASE CONFIG ══
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyATWUfF5OFw860JXw76Uo9G_0jAI6hF6WE",
+  authDomain: "ambera-ai.firebaseapp.com",
+  projectId: "ambera-ai",
+  storageBucket: "ambera-ai.firebasestorage.app",
+  messagingSenderId: "581529826084",
+  appId: "1:581529826084:web:144a6ce179e0d8286979b1"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+onAuthStateChanged(auth, (user) => {
+  if(!user){ window.location.href = '/auth'; }
+  else { currentUser = user; }
+});
+
 let current = 'choose';
 let selectedOp = 'mtn';
 
 function goTo(id){
-  if(id===current) return;
   const prev = document.getElementById(current);
   const next = document.getElementById(id);
-  prev.classList.add('exit');
-  setTimeout(()=>{
-    prev.classList.remove('active','exit');
-    next.classList.add('active');
-    current = id;
-  }, 250);
+  if(prev) prev.style.display = 'none';
+  if(next) next.style.display = 'flex';
+  current = id;
 }
 
 function selectOp(op){
@@ -509,23 +528,12 @@ function selectOp(op){
   document.getElementById('orangeCard').classList.toggle('selected', op==='orange');
 }
 
-function updatePhone(){
-  const val = document.getElementById('phoneNumber').value;
-  document.getElementById('phoneError').classList.remove('show');
-}
-
 function goToConfirm(){
-  const phone = document.getElementById('phoneNumber').value;
-  if(phone.length < 9){
-    document.getElementById('phoneError').classList.add('show');
-    return;
-  }
-  const opName = selectedOp === 'mtn' ? 'MTN MoMo' : 'Orange Money';
-  const ussd   = selectedOp === 'mtn' ? '*126# → Confirmer' : '#150# → Valider';
-  document.getElementById('confirmOp').textContent  = opName;
-  document.getElementById('confirmPhone').textContent = '+237 ' + phone;
-  document.getElementById('opNotif').textContent    = opName;
-  document.getElementById('ussdCode').textContent   = ussd;
+  const phone = document.getElementById('phoneInput') ? document.getElementById('phoneInput').value.trim() : '';
+  if(!phone){ alert('Veuillez entrer votre numéro de téléphone.'); return; }
+  if(document.getElementById('confirmPhone')) document.getElementById('confirmPhone').textContent = '+237 ' + phone;
+  if(document.getElementById('confirmOp')) document.getElementById('confirmOp').textContent = selectedOp==='mtn' ? 'MTN MoMo' : 'Orange Money';
+  if(document.getElementById('opNotif')) document.getElementById('opNotif').textContent = selectedOp==='mtn' ? 'MTN MoMo' : 'Orange Money';
   goTo('confirm');
 }
 
@@ -535,95 +543,54 @@ function doPay(){
   btn.disabled = true;
   goTo('processing');
 
-  // Simulate processing steps
   const steps = ['step2','step3','step4'];
   let i = 0;
   const interval = setInterval(()=>{
     if(i < steps.length){
-      document.getElementById(steps[i]).classList.remove('active');
-      document.getElementById(steps[i]).classList.add('done');
+      const el = document.getElementById(steps[i]);
+      if(el){ el.classList.remove('active'); el.classList.add('done'); }
       if(i+1 < steps.length){
-        document.getElementById(steps[i+1]).classList.add('active');
+        const next = document.getElementById(steps[i+1]);
+        if(next) next.classList.add('active');
       }
       i++;
     } else {
       clearInterval(interval);
-      // Generate receipt ref
       const ref = 'AMB-2026-' + Math.floor(1000+Math.random()*9000);
-      document.getElementById('receiptRef').textContent = ref;
-      document.getElementById('receiptOp').textContent = selectedOp==='mtn' ? 'MTN MoMo' : 'Orange Money';
+      if(document.getElementById('receiptRef')) document.getElementById('receiptRef').textContent = ref;
+      if(document.getElementById('receiptOp')) document.getElementById('receiptOp').textContent = selectedOp==='mtn' ? 'MTN MoMo' : 'Orange Money';
+
+      if(currentUser){
+        addDoc(collection(db, 'paiements'), {
+          userId: currentUser.uid,
+          userName: currentUser.displayName || '',
+          operateur: selectedOp==='mtn' ? 'MTN MoMo' : 'Orange Money',
+          montant: 5000,
+          devise: 'FCFA',
+          reference: ref,
+          statut: 'TEST - Succès',
+          plan: 'Pro',
+          date: serverTimestamp()
+        });
+      }
       setTimeout(()=>{ goTo('success'); }, 600);
     }
   }, 900);
 }
 
-
-// ── BILINGUAL ENGINE ──
-var _lang = 'fr';
-var _allLtFr = document.querySelectorAll('[id$="-fr"].lang-btn');
-var _allLtEn = document.querySelectorAll('[id$="-en"].lang-btn');
 function switchLang(l){
-  if(l===_lang) return;
   _lang = l;
   document.querySelectorAll('[data-fr]').forEach(function(el){
-    var v = el.getAttribute('data-'+l);
-    if(v==null) return;
-    if(el.tagName==='INPUT') el.placeholder = v;
-    else el.innerHTML = v;
+    el.textContent = l==='fr' ? el.dataset.fr : (el.dataset.en||el.dataset.fr);
   });
-  _allLtFr = document.querySelectorAll('[id$="-fr"].lang-btn');
-  _allLtEn = document.querySelectorAll('[id$="-en"].lang-btn');
-  _allLtFr.forEach(function(b){b.classList.toggle('active', l==='fr');});
-  _allLtEn.forEach(function(b){b.classList.toggle('active', l==='en');});
-  var t = document.getElementById('toastLang');
-  if(t){ t.textContent = l==='fr'?'🇫🇷 Français activé':'🇬🇧 English activated'; t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},2000); }
 }
 
-// ── SEARCH ENGINE ──
-var _srData = {"fr": [{"ic": "📱", "t": "MTN Mobile Money", "s": "Paiement MTN MoMo +237", "c": "Paiement"}, {"ic": "🟠", "t": "Orange Money", "s": "Paiement Orange Money +237", "c": "Paiement"}, {"ic": "💰", "t": "Plan Essentiel", "s": "2 000 FCFA/mois", "c": "Abonnement"}, {"ic": "💎", "t": "Plan Pro", "s": "5 000 FCFA/mois", "c": "Abonnement"}, {"ic": "📜", "t": "Reçu de paiement", "s": "Référence blockchain", "c": "Reçu"}], "en": [{"ic": "📱", "t": "MTN Mobile Money", "s": "MTN MoMo payment +237", "c": "Payment"}, {"ic": "🟠", "t": "Orange Money", "s": "Orange Money payment +237", "c": "Payment"}, {"ic": "💰", "t": "Essential Plan", "s": "2,000 FCFA/month", "c": "Subscription"}, {"ic": "💎", "t": "Pro Plan", "s": "5,000 FCFA/month", "c": "Subscription"}, {"ic": "📜", "t": "Payment receipt", "s": "Blockchain reference", "c": "Receipt"}]};
-var _srIdx = _srData['fr'];
-function _srBuild(){{ _srIdx = _srData[_lang]; }}
-function _srOpen(){{
-  var v = document.getElementById('srchBox').value;
-  if(v) _srDoSearch(v); else _srPopular();
-  document.getElementById('srchDrop').classList.add('show');
-}}
-function _srInput(v){{
-  document.getElementById('srchClr').classList.toggle('show', v.length>0);
-  if(v) _srDoSearch(v); else _srPopular();
-  document.getElementById('srchDrop').classList.add('show');
-}}
-function _srDoSearch(v){{
-  var drop = document.getElementById('srchDrop');
-  var q = v.toLowerCase();
-  var res = _srIdx.filter(function(d){{
-    return d.t.toLowerCase().indexOf(q)>-1 || d.s.toLowerCase().indexOf(q)>-1 || d.c.toLowerCase().indexOf(q)>-1;
-  }});
-  if(!res.length){{
-    drop.innerHTML = '<div class="sr-empty">'+(_lang==='fr'?'😕 Aucun résultat pour':'😕 No result for')+' "<b>'+v+'</b>"</div>';
-    return;
-  }}
-  drop.innerHTML = res.map(function(d){{
-    return '<div class="sr-row"><div class="sr-ri">'+d.ic+'</div><div class="sr-rtxt"><div class="sr-rttl">'+d.t+'</div><div class="sr-rsub">'+d.s+'</div></div><div class="sr-rcat">'+d.c+'</div></div>';
-  }}).join('');
-}}
-function _srPopular(){{
-  var drop = document.getElementById('srchDrop');
-  drop.innerHTML = '<div class="sr-sec">'+(_lang==='fr'?'Suggestions':'Suggestions')+'</div>'+
-    _srIdx.slice(0,5).map(function(d){{
-      return '<div class="sr-row"><div class="sr-ri">'+d.ic+'</div><div class="sr-rtxt"><div class="sr-rttl">'+d.t+'</div><div class="sr-rsub">'+d.s+'</div></div><div class="sr-rcat">'+d.c+'</div></div>';
-    }}).join('');
-}}
-function _srClear(){{
-  document.getElementById('srchBox').value='';
-  document.getElementById('srchClr').classList.remove('show');
-  document.getElementById('srchDrop').classList.remove('show');
-}}
-document.addEventListener('click', function(e){{
-  if(!e.target.closest('.srch-wrap')) document.getElementById('srchDrop').classList.remove('show');
-}});
-
-_srBuild();
+// Rendre les fonctions accessibles depuis les onclick HTML
+window.goTo = goTo;
+window.selectOp = selectOp;
+window.goToConfirm = goToConfirm;
+window.doPay = doPay;
+window.switchLang = switchLang;
 </script>
 </body>
 </html>

@@ -1,18 +1,15 @@
 {
   "version": 2,
   "routes": [
+    { "src": "/manifest.json", "dest": "/manifest.json" },
+    { "src": "/sw.js", "dest": "/sw.js" },
     { "src": "/", "dest": "/index.html" },
     { "src": "/app", "dest": "/app.html" },
     { "src": "/auth", "dest": "/auth.html" },
-    { "src": "/login", "dest": "/auth.html" },
-    { "src": "/inscription", "dest": "/auth.html" },
     { "src": "/dashboard", "dest": "/dashboard.html" },
     { "src": "/register", "dest": "/register.html" },
-    { "src": "/enregistrer", "dest": "/register.html" },
     { "src": "/payment", "dest": "/payment.html" },
-    { "src": "/paiement", "dest": "/payment.html" },
     { "src": "/shop", "dest": "/shop.html" },
-    { "src": "/boutique", "dest": "/shop.html" },
     { "src": "/parrainage", "dest": "/parrainage.html" },
     { "src": "/notifications", "dest": "/notifications.html" },
     { "src": "/blocage", "dest": "/blocage.html" },
@@ -22,15 +19,5 @@
     { "src": "/pitch", "dest": "/pitchdeck.html" },
     { "src": "/puce-fantome", "dest": "/puce-fantome.html" },
     { "src": "/(.*)", "dest": "/index.html" }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "Cache-Control", "value": "public, max-age=3600" }
-      ]
-    }
   ]
 }

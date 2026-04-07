@@ -1,4 +1,4 @@
-# Ambera AI 🛡️
+# Tracium 🛡️
 
 **L'infrastructure de traçabilité et de protection des biens en Afrique**
 
@@ -32,10 +32,10 @@
 
 ## 📞 Contact
 
-- **Fondatrice** : Ambera
-- **Email** : contact@amberaai.com
+- **Fondatrice** : Tracium
+- **Email** : contact@tracium.com
 - **Localisation** : Yaoundé, Cameroun
 
 ---
 
-*Ambera AI — Protéger chaque châssis, chaque vie* 🌍
+*Tracium — Protéger chaque châssis, chaque vie* 🌍

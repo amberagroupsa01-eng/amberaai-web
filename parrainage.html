@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ambera AI — Parrainage</title>
+<title>Tracium — Parrainage</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -282,7 +282,7 @@ body{background:#111;display:flex;align-items:center;justify-content:center;min-
       <!-- Code -->
       <div class="code-box">
         <div class="code-label">Ton code de parrainage</div>
-        <div class="code-value" onclick="copyCode(this)">AMBERA7</div>
+        <div class="code-value" onclick="copyCode(this)">TRACIUM7</div>
         <div class="copy-hint" id="copyHint">👆 Appuyer pour copier</div>
         <div class="share-btns">
           <div class="share-btn whatsapp" onclick="doShare('whatsapp')">💬 WhatsApp</div>
@@ -473,7 +473,7 @@ body{background:#111;display:flex;align-items:center;justify-content:center;min-
   <div class="screen" id="classement">
     <div class="page-header">
       <div class="page-title">Classement</div>
-      <div class="page-sub">Top parrains Ambera AI · Mars 2026</div>
+      <div class="page-sub">Top parrains Tracium · Mars 2026</div>
     </div>
     <div class="scroll-area">
 
@@ -520,7 +520,7 @@ body{background:#111;display:flex;align-items:center;justify-content:center;min-
           <div class="lb-rank me">5</div>
           <div class="lb-avatar" style="border-color:rgba(255,180,50,0.3);">😊</div>
           <div>
-            <div class="lb-name" style="color:var(--gold);">Toi · AMBERA7</div>
+            <div class="lb-name" style="color:var(--gold);">Toi · TRACIUM7</div>
             <div class="lb-count">3 filleuls · 2 en attente</div>
           </div>
           <div class="lb-score">3 mois</div>
@@ -539,7 +539,7 @@ body{background:#111;display:flex;align-items:center;justify-content:center;min-
       <div style="background:rgba(168,85,247,0.05);border:1px solid rgba(168,85,247,0.15);border-radius:14px;padding:14px;text-align:center;">
         <div style="font-size:22px;margin-bottom:6px;">💎</div>
         <div style="font-family:'Cinzel',serif;font-size:14px;color:var(--purple);font-weight:700;margin-bottom:4px;">Statut Gold</div>
-        <div style="font-size:12px;color:#6a6a9a;line-height:1.5;">Le top 3 chaque mois reçoit un bonus surprise d'Ambera AI. Invite plus d'amis pour grimper !</div>
+        <div style="font-size:12px;color:#6a6a9a;line-height:1.5;">Le top 3 chaque mois reçoit un bonus surprise d'Tracium. Invite plus d'amis pour grimper !</div>
       </div>
 
     </div>
@@ -555,7 +555,7 @@ body{background:#111;display:flex;align-items:center;justify-content:center;min-
     <div class="co-ring">🎁</div>
     <div class="co-title">Récompense reçue !</div>
     <div class="co-reward">1 mois gratuit</div>
-    <div class="co-desc">Votre abonnement Pro a été prolongé d'1 mois gratuitement. Merci de faire grandir Ambera AI !</div>
+    <div class="co-desc">Votre abonnement Pro a été prolongé d'1 mois gratuitement. Merci de faire grandir Tracium !</div>
     <button class="co-close" onclick="closeOverlay()">Super, merci ! 🙌</button>
   </div>
 
@@ -564,7 +564,7 @@ body{background:#111;display:flex;align-items:center;justify-content:center;min-
     <div style="font-size:44px;">📤</div>
     <div style="font-family:'Cinzel',serif;font-size:18px;color:var(--gold);font-weight:700;text-align:center;" id="shareTitle">Lien copié !</div>
     <div style="font-size:13px;color:var(--muted);text-align:center;line-height:1.6;max-width:280px;" id="shareDesc">Envoyez ce lien à vos amis. Quand ils s'inscrivent avec votre code, vous gagnez tous les deux 1 mois gratuit !</div>
-    <div style="background:rgba(255,180,50,0.08);border:1px solid rgba(255,180,50,0.15);border-radius:10px;padding:10px 16px;font-family:'Cinzel',serif;font-size:14px;color:var(--gold);letter-spacing:2px;">AMBERA7</div>
+    <div style="background:rgba(255,180,50,0.08);border:1px solid rgba(255,180,50,0.15);border-radius:10px;padding:10px 16px;font-family:'Cinzel',serif;font-size:14px;color:var(--gold);letter-spacing:2px;">TRACIUM7</div>
     <button class="co-close" onclick="closeShare()">Fermer</button>
   </div>
 
@@ -636,7 +636,7 @@ function switchLang(l){
 }
 
 // ── SEARCH ENGINE ──
-var _srData = {"fr": [{"ic": "🤝", "t": "Mon code parrainage", "s": "Code AMBERA7 · Partager", "c": "Parrainage"}, {"ic": "🎁", "t": "Récompenses", "s": "1 mois gratuit par filleul", "c": "Avantages"}, {"ic": "👥", "t": "Mes filleuls", "s": "3 amis inscrits", "c": "Filleuls"}, {"ic": "🏆", "t": "Classement", "s": "Top parrains du mois", "c": "Classement"}, {"ic": "💎", "t": "Statut Gold", "s": "10 filleuls = 1 an gratuit", "c": "Statut"}, {"ic": "💬", "t": "Partager WhatsApp", "s": "Envoyer lien invitation", "c": "Partage"}], "en": [{"ic": "🤝", "t": "My referral code", "s": "Code AMBERA7 · Share", "c": "Referral"}, {"ic": "🎁", "t": "Rewards", "s": "1 free month per referral", "c": "Benefits"}, {"ic": "👥", "t": "My referrals", "s": "3 friends signed up", "c": "Referrals"}, {"ic": "🏆", "t": "Leaderboard", "s": "Top referrers this month", "c": "Ranking"}, {"ic": "💎", "t": "Gold Status", "s": "10 referrals = 1 year free", "c": "Status"}, {"ic": "💬", "t": "Share on WhatsApp", "s": "Send invitation link", "c": "Share"}]};
+var _srData = {"fr": [{"ic": "🤝", "t": "Mon code parrainage", "s": "Code TRACIUM7 · Partager", "c": "Parrainage"}, {"ic": "🎁", "t": "Récompenses", "s": "1 mois gratuit par filleul", "c": "Avantages"}, {"ic": "👥", "t": "Mes filleuls", "s": "3 amis inscrits", "c": "Filleuls"}, {"ic": "🏆", "t": "Classement", "s": "Top parrains du mois", "c": "Classement"}, {"ic": "💎", "t": "Statut Gold", "s": "10 filleuls = 1 an gratuit", "c": "Statut"}, {"ic": "💬", "t": "Partager WhatsApp", "s": "Envoyer lien invitation", "c": "Partage"}], "en": [{"ic": "🤝", "t": "My referral code", "s": "Code TRACIUM7 · Share", "c": "Referral"}, {"ic": "🎁", "t": "Rewards", "s": "1 free month per referral", "c": "Benefits"}, {"ic": "👥", "t": "My referrals", "s": "3 friends signed up", "c": "Referrals"}, {"ic": "🏆", "t": "Leaderboard", "s": "Top referrers this month", "c": "Ranking"}, {"ic": "💎", "t": "Gold Status", "s": "10 referrals = 1 year free", "c": "Status"}, {"ic": "💬", "t": "Share on WhatsApp", "s": "Send invitation link", "c": "Share"}]};
 var _srIdx = _srData['fr'];
 function _srBuild(){{ _srIdx = _srData[_lang]; }}
 function _srOpen(){{

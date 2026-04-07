@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ambera AI — Enregistrer un bien</title>
+<title>Tracium — Enregistrer un bien</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -380,7 +380,7 @@ body{background:#111;display:flex;align-items:center;justify-content:center;min-
         <div class="layer-toggle on" id="lt1">
           <div class="lt-icon">👁️</div>
           <div class="lt-info">
-            <div class="lt-name">IA Vision</div>
+            <div class="lt-name">Tracium Scan</div>
             <div class="lt-desc">Scan VIN + détection altération</div>
           </div>
           <div class="lt-toggle on" onclick="toggleLayer('lt1',this)"><div class="lt-knob"></div></div>
@@ -507,7 +507,7 @@ body{background:#111;display:flex;align-items:center;justify-content:center;min-
     <div class="success-ring">🛡️</div>
     <div class="success-title">Bien enregistré !</div>
     <div class="success-vehicle" id="successVehicle">Honda CB 125F</div>
-    <div class="success-desc">Votre bien est maintenant protégé et enregistré sur la Blockchain Ambera AI.</div>
+    <div class="success-desc">Votre bien est maintenant protégé et enregistré sur la Blockchain Tracium.</div>
 
     <div class="blockchain-card">
       <div class="bc-title">⛓️ Blockchain — Identité enregistrée</div>
@@ -515,7 +515,7 @@ body{background:#111;display:flex;align-items:center;justify-content:center;min-
     </div>
 
     <div class="layers-active" id="layersActive">
-      <span class="la-tag">👁️ IA Vision</span>
+      <span class="la-tag">👁️ Tracium Scan</span>
       <span class="la-tag">📡 GPS Actif</span>
       <span class="la-tag">⛓️ Blockchain</span>
     </div>
@@ -538,9 +538,9 @@ import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.g
 
 const firebaseConfig = {
   apiKey: "AIzaSyATWUfF5OFw860JXw76Uo9G_0jAI6hF6WE",
-  authDomain: "ambera-ai.firebaseapp.com",
-  projectId: "ambera-ai",
-  storageBucket: "ambera-ai.firebasestorage.app",
+  authDomain: "tracium.firebaseapp.com",
+  projectId: "tracium",
+  storageBucket: "tracium.firebasestorage.app",
   messagingSenderId: "581529826084",
   appId: "1:581529826084:web:144a6ce179e0d8286979b1"
 };

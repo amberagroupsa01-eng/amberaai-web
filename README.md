@@ -17,7 +17,7 @@
 | `/shop` | Boutique hardware |
 | `/parrainage` | Programme de parrainage |
 | `/notifications` | Centre de notifications |
-| `/blocage` | Blocage à distance |
+| `/blocage` | Blocage à distance | 
 | `/police` | Interface Police/Gendarmerie |
 | `/assureurs` | Interface Assureurs |
 | `/chat` | Assistant IA |

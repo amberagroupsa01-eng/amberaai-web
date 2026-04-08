@@ -1,7 +1,8 @@
+
 {
   "name": "Tracium",
   "short_name": "Tracium",
-  "description": "One-Click Security — Protégez vos véhicules en Afrique",
+  "description": "One-Click Security",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#07070f",
@@ -10,16 +11,19 @@
   "lang": "fr",
   "icons": [
     {
-      "src": "https://via.placeholder.com/192x192/ffb432/07070f?text=T",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "src": "https://raw.githubusercontent.com/google/material-design-icons/master/png/action/lock/materialicons/48dp/2x/baseline_lock_black_48dp.png",
+      "sizes": "96x96",
+      "type": "image/png"
     },
     {
-      "src": "https://via.placeholder.com/512x512/ffb432/07070f?text=T",
+      "src": "https://raw.githubusercontent.com/google/material-design-icons/master/png/action/lock/materialicons/48dp/2x/baseline_lock_black_48dp.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/google/material-design-icons/master/png/action/lock/materialicons/48dp/2x/baseline_lock_black_48dp.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ]
 }

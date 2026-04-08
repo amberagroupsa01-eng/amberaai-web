@@ -3,501 +3,372 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tracium — Paiement Mobile Money</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>Tracium — Paiement</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+*{margin:0;padding:0;box-sizing:border-box;}
 :root{
-  --gold:#ffb432;--gold2:#ffe08a;--bronze:#e8720a;
-  --dark:#07070f;--dark2:#0d0d1a;--dark3:#131328;
-  --line:#1e1e3a;--muted:#5a5a8a;--text:#d0cce0;
-  --green:#22c55e;--red:#ef4444;
-  --mtn:#ffcc00;--orange:#ff6600;
+  --blue:#0047CC;--blue-dark:#003399;--blue-light:#EEF3FF;
+  --orange:#FF6B00;--green:#00A550;--red:#E8001C;
+  --text:#0D1117;--text2:#4A5568;--text3:#718096;
+  --bg:#F7F9FC;--border:#E2E8F0;
 }
-body{
-  background:#111;display:flex;align-items:center;
-  justify-content:center;min-height:100vh;
-  font-family:'Rajdhani',sans-serif;padding:20px;
+body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;}
+
+/* NAV */
+nav{
+  background:white;border-bottom:1px solid var(--border);
+  padding:16px 5%;display:flex;align-items:center;justify-content:space-between;
 }
-.phone{
-  width:375px;height:812px;background:var(--dark);
-  border-radius:48px;border:2px solid #1a1a2e;
-  box-shadow:0 40px 120px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,255,255,0.05);
-  position:relative;overflow:hidden;flex-shrink:0;
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo-icon{width:32px;height:32px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:white;}
+.nav-logo-name{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--text);}
+.nav-back{font-size:14px;color:var(--text2);text-decoration:none;display:flex;align-items:center;gap:6px;}
+.nav-back:hover{color:var(--blue);}
+
+/* CONTAINER */
+.container{max-width:480px;margin:0 auto;padding:32px 16px;}
+
+/* CARD */
+.card{background:white;border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:20px;}
+.card-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:20px;}
+
+/* PLAN SELECTOR */
+.plan-tabs{display:flex;gap:8px;margin-bottom:24px;}
+.plan-tab{
+  flex:1;padding:12px;border:2px solid var(--border);border-radius:10px;
+  background:white;cursor:pointer;text-align:center;transition:all 0.2s;
 }
-.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:34px;background:#000;border-radius:0 0 20px 20px;z-index:100;}
-.status-bar{position:absolute;top:0;left:0;right:0;height:44px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 24px 6px;z-index:99;font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);}
+.plan-tab.active{border-color:var(--blue);background:var(--blue-light);}
+.plan-tab-name{font-size:13px;font-weight:700;color:var(--text);}
+.plan-tab.active .plan-tab-name{color:var(--blue);}
+.plan-tab-price{font-size:12px;color:var(--text3);margin-top:2px;}
+.plan-tab.active .plan-tab-price{color:var(--blue);}
 
-/* SCREENS */
-.screen{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity 0.35s ease,transform 0.35s ease;transform:translateX(30px);overflow:hidden;}
-.screen.active{opacity:1;pointer-events:all;transform:translateX(0);}
-.screen.exit{opacity:0;transform:translateX(-30px);}
+/* ORDER SUMMARY */
+.order-summary{background:var(--blue-light);border-radius:12px;padding:20px;margin-bottom:24px;}
+.order-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.order-row:last-child{margin-bottom:0;border-top:1px solid rgba(0,71,204,0.15);padding-top:8px;margin-top:8px;}
+.order-label{font-size:14px;color:var(--text2);}
+.order-value{font-size:14px;font-weight:600;color:var(--text);}
+.order-total{font-size:18px;font-weight:800;color:var(--blue);}
 
-/* HEADER */
-.page-header{padding:54px 24px 20px;background:linear-gradient(180deg,var(--dark) 0%,transparent 100%);}
-.back-btn{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer;margin-bottom:16px;transition:color 0.2s;}
-.back-btn:active{color:var(--gold);}
-.page-title{font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:var(--gold);}
-.page-sub{font-size:13px;color:var(--muted);margin-top:4px;}
-
-.scroll-area{padding:0 24px 40px;overflow-y:auto;height:calc(100% - 140px);}
-.scroll-area::-webkit-scrollbar{display:none;}
-
-/* PLAN SUMMARY */
-.plan-summary{
-  background:linear-gradient(135deg,rgba(255,180,50,0.08),rgba(232,114,10,0.05));
-  border:1px solid rgba(255,180,50,0.2);border-radius:16px;
-  padding:18px;margin-bottom:20px;
-  display:flex;justify-content:space-between;align-items:center;
-}
-.ps-left{}
-.ps-label{font-size:11px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;}
-.ps-plan{font-family:'Cinzel',serif;font-size:18px;font-weight:700;color:var(--gold);margin-top:2px;}
-.ps-features{font-size:11px;color:#6a6a7a;margin-top:4px;}
-.ps-price{text-align:right;}
-.ps-amount{font-family:'Cinzel',serif;font-size:28px;font-weight:900;color:var(--gold);}
-.ps-period{font-size:11px;color:var(--muted);}
-
-/* SECTION TITLE */
-.s-title{font-size:11px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin:20px 0 12px;}
-
-/* OPERATOR CARDS */
-.operator-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px;}
+/* OPÉRATEUR */
+.op-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;}
 .op-card{
-  background:var(--dark3);border:2px solid var(--line);
-  border-radius:16px;padding:16px 12px;text-align:center;
-  cursor:pointer;transition:all 0.2s;position:relative;
+  border:2px solid var(--border);border-radius:12px;padding:16px;
+  cursor:pointer;text-align:center;transition:all 0.2s;background:white;
 }
-.op-card.selected{border-color:var(--gold);background:rgba(255,180,50,0.06);}
-.op-card:active{transform:scale(0.97);}
-.op-check{
-  position:absolute;top:8px;right:8px;width:18px;height:18px;
-  border-radius:50%;background:var(--gold);display:none;
-  align-items:center;justify-content:center;font-size:10px;color:#0a0a14;font-weight:700;
-}
-.op-card.selected .op-check{display:flex;}
-.op-logo{font-size:32px;margin-bottom:6px;}
-.op-name{font-size:13px;font-weight:700;}
-.op-mtn{color:var(--mtn);}
-.op-orange{color:var(--orange);}
-.op-desc{font-size:10px;color:var(--muted);margin-top:2px;}
+.op-card:hover{border-color:var(--blue);}
+.op-card.selected{border-color:var(--blue);background:var(--blue-light);}
+.op-icon{font-size:28px;margin-bottom:8px;}
+.op-name{font-size:14px;font-weight:700;color:var(--text);}
+.op-card.selected .op-name{color:var(--blue);}
 
-/* PHONE INPUT */
-.phone-input-wrap{
-  background:var(--dark3);border:1px solid var(--line);
-  border-radius:14px;display:flex;align-items:center;
-  overflow:hidden;margin-bottom:14px;
-  transition:border-color 0.2s;
+/* INPUT */
+.form-group{margin-bottom:20px;}
+.form-label{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px;display:block;}
+.form-input{
+  width:100%;padding:14px 16px;
+  border:2px solid var(--border);border-radius:10px;
+  font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;
+  color:var(--text);background:white;
+  transition:border-color 0.2s;outline:none;
 }
-.phone-input-wrap:focus-within{border-color:rgba(255,180,50,0.4);}
-.phone-prefix{
-  padding:14px 14px;font-size:15px;font-weight:600;color:var(--gold);
-  border-right:1px solid var(--line);white-space:nowrap;background:rgba(255,180,50,0.04);
+.form-input:focus{border-color:var(--blue);}
+.phone-prefix{display:flex;gap:8px;}
+.prefix-badge{
+  padding:14px 16px;background:var(--bg);
+  border:2px solid var(--border);border-radius:10px;
+  font-size:14px;font-weight:600;color:var(--text2);white-space:nowrap;
 }
-.phone-input{
-  flex:1;background:transparent;border:none;outline:none;
-  padding:14px 14px;font-family:'Rajdhani',sans-serif;
-  font-size:16px;font-weight:600;color:var(--text);letter-spacing:2px;
-}
-.phone-input::placeholder{color:#3a3a5a;letter-spacing:1px;font-weight:400;}
 
-/* AMOUNT DISPLAY */
-.amount-display{
-  background:var(--dark3);border:1px solid rgba(255,180,50,0.15);
-  border-radius:14px;padding:16px;margin-bottom:20px;
-  display:flex;justify-content:space-between;align-items:center;
-}
-.ad-label{font-size:12px;color:var(--muted);}
-.ad-amount{font-family:'Cinzel',serif;font-size:22px;font-weight:900;color:var(--gold);}
-
-/* PAY BUTTON */
+/* BOUTON PAYER */
 .pay-btn{
-  width:100%;background:linear-gradient(135deg,var(--gold),var(--bronze));
-  border:none;border-radius:16px;padding:18px;
-  font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;
-  letter-spacing:2px;color:#0a0a14;cursor:pointer;
-  text-transform:uppercase;
-  box-shadow:0 6px 24px rgba(255,180,50,0.3);
-  transition:all 0.2s;margin-bottom:14px;
+  width:100%;padding:16px;border:none;border-radius:12px;
+  background:var(--blue);color:white;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:16px;font-weight:700;cursor:pointer;
+  transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;
 }
-.pay-btn:active{transform:scale(0.97);}
-.pay-btn:disabled{opacity:0.5;cursor:not-allowed;}
+.pay-btn:hover{background:var(--blue-dark);transform:translateY(-1px);}
+.pay-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+.pay-btn.mtn{background:#FFCC00;color:#1A1A1A;}
+.pay-btn.mtn:hover{background:#E6B800;}
+.pay-btn.orange{background:#FF6600;color:white;}
+.pay-btn.orange:hover{background:#E55C00;}
 
-.secure-note{
-  display:flex;align-items:center;justify-content:center;gap:6px;
-  font-size:11px;color:#3a3a5a;letter-spacing:1px;
-}
+/* SÉCURITÉ */
+.security-badges{display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap;}
+.security-badge{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:4px;}
 
-/* ════════════
-   SCREEN: CONFIRM
-════════════ */
-.confirm-card{
-  background:var(--dark3);border:1px solid var(--line);
-  border-radius:18px;padding:20px;margin-bottom:16px;
+/* PROCESSING */
+.processing-steps{margin:24px 0;}
+.step{
+  display:flex;align-items:center;gap:14px;
+  padding:14px;border-radius:10px;margin-bottom:8px;
+  background:var(--bg);transition:all 0.3s;
 }
-.confirm-row{
-  display:flex;justify-content:space-between;
-  padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.04);
-  font-size:14px;
+.step.active{background:var(--blue-light);border:1px solid rgba(0,71,204,0.2);}
+.step.done{background:#F0FFF6;border:1px solid rgba(0,165,80,0.2);}
+.step-icon{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;background:white;border:2px solid var(--border);flex-shrink:0;
 }
-.confirm-row:last-child{border-bottom:none;}
-.cr-key{color:var(--muted);}
-.cr-val{color:var(--text);font-weight:600;}
-.cr-val.gold{color:var(--gold);}
-
-.total-row{
-  background:rgba(255,180,50,0.06);border:1px solid rgba(255,180,50,0.15);
-  border-radius:12px;padding:14px 16px;margin-bottom:20px;
-  display:flex;justify-content:space-between;align-items:center;
-}
-.tr-label{font-size:13px;font-weight:600;color:var(--muted);}
-.tr-amount{font-family:'Cinzel',serif;font-size:26px;font-weight:900;color:var(--gold);}
-
-.ussd-info{
-  background:rgba(56,189,248,0.05);border:1px solid rgba(56,189,248,0.15);
-  border-radius:12px;padding:14px;margin-bottom:20px;
-  font-size:12px;color:#7ab8d0;line-height:1.6;
-}
-.ussd-code{
-  font-family:'Cinzel',serif;font-size:16px;color:#38bdf8;font-weight:700;
-  letter-spacing:2px;margin-top:6px;display:block;
-}
-
-/* ════════════
-   SCREEN: PROCESSING
-════════════ */
-#processing{
-  background:var(--dark);display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:20px;padding:40px;text-align:center;
-}
-#processing::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 60% 50% at 50% 45%,rgba(255,180,50,0.06) 0%,transparent 70%);
-}
-.proc-spinner{
-  width:80px;height:80px;border-radius:50%;
-  border:3px solid rgba(255,180,50,0.1);border-top-color:var(--gold);
-  animation:spin 0.8s linear infinite;position:relative;z-index:2;
+.step.active .step-icon{border-color:var(--blue);background:var(--blue-light);}
+.step.done .step-icon{border-color:var(--green);background:#F0FFF6;}
+.step-text{font-size:14px;font-weight:600;color:var(--text2);}
+.step.active .step-text{color:var(--blue);}
+.step.done .step-text{color:var(--green);}
+.spinner{
+  width:18px;height:18px;border:2px solid var(--blue-light);
+  border-top:2px solid var(--blue);border-radius:50%;
+  animation:spin 0.8s linear infinite;
 }
 @keyframes spin{to{transform:rotate(360deg);}}
-.proc-title{font-family:'Cinzel',serif;font-size:22px;color:var(--gold);font-weight:700;position:relative;z-index:2;}
-.proc-steps{display:flex;flex-direction:column;gap:10px;width:100%;position:relative;z-index:2;}
-.proc-step{
-  display:flex;align-items:center;gap:12px;
-  background:var(--dark2);border:1px solid var(--line);
-  border-radius:10px;padding:12px 14px;font-size:13px;color:var(--muted);
-}
-.proc-step.done{color:var(--green);border-color:rgba(34,197,94,0.2);}
-.proc-step.active{color:var(--gold);border-color:rgba(255,180,50,0.2);}
-.proc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.proc-step.done .proc-dot{background:var(--green);}
-.proc-step.active .proc-dot{background:var(--gold);animation:blink 1s ease-in-out infinite;}
-.proc-step:not(.done):not(.active) .proc-dot{background:var(--line);}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
 
-/* ════════════
-   SCREEN: SUCCESS
-════════════ */
-#success{
-  background:var(--dark);display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:14px;
-  padding:40px 28px;text-align:center;
-}
-#success::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 60% 50% at 50% 45%,rgba(34,197,94,0.06) 0%,transparent 70%);
-}
-.success-ring{
-  width:100px;height:100px;border-radius:50%;
-  background:rgba(34,197,94,0.1);border:2px solid rgba(34,197,94,0.3);
+/* SUCCESS */
+.success-icon{
+  width:80px;height:80px;background:#F0FFF6;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-size:46px;position:relative;z-index:2;
-  animation:successPop 0.5s ease;
+  font-size:40px;margin:0 auto 20px;
+  border:3px solid var(--green);
 }
-@keyframes successPop{0%{transform:scale(0);}60%{transform:scale(1.15);}100%{transform:scale(1);}}
-.success-title{font-family:'Cinzel',serif;font-size:26px;font-weight:700;color:var(--green);position:relative;z-index:2;}
-.success-amount{font-family:'Cinzel',serif;font-size:36px;font-weight:900;color:var(--gold);position:relative;z-index:2;}
-.success-desc{font-size:14px;color:var(--muted);line-height:1.6;max-width:280px;position:relative;z-index:2;}
-
-.receipt-card{
-  background:var(--dark2);border:1px solid var(--line);
-  border-radius:16px;padding:16px;width:100%;
-  position:relative;z-index:2;margin:4px 0;
-}
-.receipt-row{
-  display:flex;justify-content:space-between;
-  font-size:12px;padding:6px 0;
-  border-bottom:1px solid rgba(255,255,255,0.03);
-}
+.success-title{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--text);text-align:center;margin-bottom:8px;}
+.success-sub{font-size:15px;color:var(--text2);text-align:center;margin-bottom:28px;}
+.receipt{background:var(--bg);border-radius:12px;padding:20px;margin-bottom:24px;}
+.receipt-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;}
 .receipt-row:last-child{border-bottom:none;}
-.rr-key{color:var(--muted);}
-.rr-val{color:#c0b880;font-weight:600;}
+.receipt-label{color:var(--text3);}
+.receipt-value{font-weight:600;color:var(--text);}
 
-.success-tags{
-  display:flex;gap:8px;flex-wrap:wrap;justify-content:center;
-  position:relative;z-index:2;
+/* STATUT ABONNEMENT */
+.sub-status{
+  background:white;border:1px solid var(--border);
+  border-radius:12px;padding:20px;margin-bottom:16px;
 }
-.s-tag{
-  background:rgba(255,180,50,0.08);border:1px solid rgba(255,180,50,0.15);
-  border-radius:20px;padding:6px 14px;font-size:11px;color:var(--gold);
-  letter-spacing:1px;
+.sub-status-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sub-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 12px;border-radius:50px;font-size:12px;font-weight:700;
 }
+.sub-badge.active{background:#F0FFF6;color:var(--green);}
+.sub-badge.expiring{background:#FFF7F0;color:var(--orange);}
+.sub-badge.expired{background:#FFF0F0;color:var(--red);}
+.sub-days{font-size:13px;color:var(--text3);}
+.sub-progress{height:6px;background:var(--bg);border-radius:3px;margin-top:8px;}
+.sub-progress-bar{height:100%;border-radius:3px;background:var(--green);transition:width 0.3s;}
+.sub-progress-bar.expiring{background:var(--orange);}
+.sub-progress-bar.expired{background:var(--red);}
 
-.btn-success{
-  width:100%;background:linear-gradient(135deg,var(--gold),var(--bronze));
-  border:none;border-radius:16px;padding:16px;
-  font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;
-  letter-spacing:2px;color:#0a0a14;cursor:pointer;
-  text-transform:uppercase;position:relative;z-index:2;
-  transition:all 0.2s;
+/* PAGES */
+.page{display:none;}
+.page.active{display:block;}
+
+/* ALERT */
+.alert{
+  padding:14px 16px;border-radius:10px;
+  font-size:14px;margin-bottom:16px;display:none;
 }
-.btn-success:active{transform:scale(0.97);}
-
-/* ERROR */
-.error-banner{
-  background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);
-  border-radius:10px;padding:12px 14px;margin-bottom:14px;
-  font-size:13px;color:#fca5a5;display:none;
-}
-.error-banner.show{display:block;animation:fadeUp 0.3s ease;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-
-.btn-loading{
-  display:inline-block;width:16px;height:16px;
-  border:2px solid rgba(0,0,0,0.3);border-top-color:#0a0a14;
-  border-radius:50%;animation:spin 0.6s linear infinite;
-  vertical-align:middle;margin-right:6px;
-}
-
-/* ── LANG TOGGLE ── */
-.lang-toggle{display:flex;align-items:center;background:rgba(255,255,255,0.04);border:1px solid var(--line);border-radius:20px;overflow:hidden;flex-shrink:0;}
-.lang-btn{padding:5px 11px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;color:var(--muted);border:none;background:transparent;transition:all 0.2s;}
-.lang-btn.active{background:linear-gradient(135deg,var(--gold),var(--bronze));color:#0a0a14;border-radius:18px;margin:2px;}
-.toast-lang{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(255,180,50,0.12);border:1px solid rgba(255,180,50,0.25);border-radius:20px;padding:7px 16px;font-size:12px;font-weight:600;color:var(--gold);white-space:nowrap;z-index:300;opacity:0;transition:opacity 0.3s;pointer-events:none;}
-.toast-lang.show{opacity:1;}
-
-/* ── SEARCH BAR ── */
-.srch-wrap{padding:0 20px 10px;position:relative;}
-.srch-box{width:100%;background:var(--dark3);border:1px solid var(--line);border-radius:14px;padding:10px 38px 10px 40px;font-family:'Rajdhani',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color 0.2s;}
-.srch-box:focus{border-color:rgba(255,180,50,0.35);}
-.srch-box::placeholder{color:var(--muted);}
-.srch-ico{position:absolute;left:32px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;}
-.srch-clr{position:absolute;right:30px;top:50%;transform:translateY(-50%);font-size:13px;cursor:pointer;color:var(--muted);display:none;}
-.srch-clr.show{display:block;}
-.srch-drop{display:none;position:absolute;top:50px;left:20px;right:20px;background:var(--dark2);border:1px solid rgba(255,180,50,0.18);border-radius:14px;z-index:150;overflow:hidden;max-height:280px;overflow-y:auto;box-shadow:0 8px 30px rgba(0,0,0,0.6);}
-.srch-drop.show{display:block;animation:srFadeDown 0.2s ease;}
-.srch-drop::-webkit-scrollbar{display:none;}
-@keyframes srFadeDown{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:translateY(0);}}
-.sr-sec{font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;padding:10px 14px 4px;}
-.sr-row{display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer;transition:background 0.15s;border-bottom:1px solid rgba(255,255,255,0.03);}
-.sr-row:last-child{border-bottom:none;}
-.sr-row:active{background:rgba(255,180,50,0.05);}
-.sr-ri{font-size:17px;flex-shrink:0;width:24px;text-align:center;}
-.sr-rtxt{flex:1;}
-.sr-rttl{font-size:13px;font-weight:600;color:#c0b870;}
-.sr-rsub{font-size:11px;color:var(--muted);margin-top:1px;}
-.sr-rcat{font-size:10px;color:var(--gold);background:rgba(255,180,50,0.08);border:1px solid rgba(255,180,50,0.1);border-radius:8px;padding:2px 6px;flex-shrink:0;}
-.sr-empty{padding:18px;text-align:center;font-size:12px;color:var(--muted);}
-
+.alert.error{background:#FFF0F0;border:1px solid rgba(232,0,28,0.2);color:var(--red);}
+.alert.success{background:#F0FFF6;border:1px solid rgba(0,165,80,0.2);color:var(--green);}
+.alert.show{display:block;}
 </style>
 </head>
 <body>
-<div class="phone">
-  <div class="toast-lang" id="toastLang"></div>
-  <div class="notch"></div>
-  <div class="status-bar"><span>9:41</span><span>📶 🔋</span></div>
 
-  <!-- ══ SCREEN 1: CHOIX OPÉRATEUR ══ -->
-  <div class="screen active" id="choose">
-    <div class="page-header">
-      <div class="back-btn" onclick="history.back()">← Retour</div>
-    <div class="lang-toggle" style="margin-bottom:8px;"><button class="lang-btn active" id="lt-pay-fr" onclick="switchLang('fr')">FR</button><button class="lang-btn" id="lt-pay-en" onclick="switchLang('en')">EN</button></div>
-    <div class="lang-toggle" style="margin-bottom:8px;"><button class="lang-btn active" id="lt-pay-fr" onclick="switchLang('fr')">FR</button><button class="lang-btn" id="lt-pay-en" onclick="switchLang('en')">EN</button></div>
-      <div class="page-title">Abonnement</div>
-      <div class="page-sub">Paiement sécurisé Mobile Money</div>
-    </div>
-    <div class="scroll-area">
+<nav>
+  <a href="/" class="nav-logo">
+    <div class="nav-logo-icon">T</div>
+    <span class="nav-logo-name">Tracium</span>
+  </a>
+  <a href="/dashboard" class="nav-back">← Retour</a>
+</nav>
 
-      <!-- Plan résumé -->
-      <div class="plan-summary">
-        <div class="ps-left">
-          <div class="ps-label">Plan sélectionné</div>
-          <div class="ps-plan">Pro</div>
-          <div class="ps-features">4 véhicules · GPS · Blockchain · ADN</div>
-        </div>
-        <div class="ps-price">
-          <div class="ps-amount">5 000</div>
-          <div class="ps-period">FCFA/mois</div>
-        </div>
-      </div>
+<div class="container">
 
-      <!-- Opérateur -->
-      <div class="s-title">Choisir votre opérateur</div>
-      <div class="operator-cards">
-        <div class="op-card selected" id="mtnCard" onclick="selectOp('mtn')">
-          <div class="op-check">✓</div>
-          <div class="op-logo">🟡</div>
-          <div class="op-name op-mtn">MTN MoMo</div>
-          <div class="op-desc">Mobile Money</div>
+  <!-- PAGE: CHOOSE -->
+  <div class="page active" id="page-choose">
+    <div class="card">
+      <div class="card-title">💳 Choisir un plan</div>
+
+      <!-- Statut abonnement actuel -->
+      <div class="sub-status" id="subStatus" style="display:none;">
+        <div class="sub-status-header">
+          <div>
+            <div style="font-size:14px;font-weight:700;">Abonnement actuel</div>
+            <div class="sub-days" id="subDays">—</div>
+          </div>
+          <span class="sub-badge active" id="subBadge">● Actif</span>
         </div>
-        <div class="op-card" id="orangeCard" onclick="selectOp('orange')">
-          <div class="op-check">✓</div>
-          <div class="op-logo">🟠</div>
-          <div class="op-name op-orange">Orange Money</div>
-          <div class="op-desc">Mobile Money</div>
+        <div class="sub-progress">
+          <div class="sub-progress-bar" id="subProgressBar" style="width:80%;"></div>
         </div>
       </div>
 
-      <!-- Numéro -->
-      <div class="s-title">Votre numéro Mobile Money</div>
-      <div class="phone-input-wrap">
-        <div class="phone-prefix" id="phonePrefix">🇨🇲 +237</div>
-        <input class="phone-input" type="tel" placeholder="6XX XXX XXX" id="phoneNumber" maxlength="9" oninput="updatePhone()">
+      <!-- Sélecteur plan -->
+      <div class="plan-tabs">
+        <div class="plan-tab active" id="tab-kit" onclick="selectPlan('kit')">
+          <div class="plan-tab-name">🔧 Kit + Installation</div>
+          <div class="plan-tab-price">131 000 – 196 000 FCFA</div>
+        </div>
+        <div class="plan-tab" id="tab-sub" onclick="selectPlan('subscription')">
+          <div class="plan-tab-name">📅 Abonnement</div>
+          <div class="plan-tab-price">13 000 FCFA/mois</div>
+        </div>
       </div>
 
-      <div class="error-banner" id="phoneError">⚠ Entrez un numéro valide (9 chiffres)</div>
-
-      <!-- Montant -->
-      <div class="amount-display">
-        <div class="ad-label">Montant à payer</div>
-        <div class="ad-amount">5 000 FCFA</div>
+      <!-- Résumé commande -->
+      <div class="order-summary" id="orderSummary">
+        <div class="order-row">
+          <span class="order-label" id="orderItem">Kit Tracium + Installation</span>
+          <span class="order-value" id="orderItemPrice">163 500 FCFA</span>
+        </div>
+        <div class="order-row">
+          <span class="order-label">Type</span>
+          <span class="order-value" id="orderType">Paiement unique</span>
+        </div>
+        <div class="order-row">
+          <span class="order-label">Total</span>
+          <span class="order-total" id="orderTotal">163 500 FCFA</span>
+        </div>
       </div>
 
-      <button class="pay-btn" id="continueBtn" onclick="goToConfirm()">
+      <button class="pay-btn" onclick="goTo('page-operator')">
         Continuer →
       </button>
-      <div class="secure-note">🔒 &nbsp; Paiement 100% sécurisé · Crypté</div>
-
     </div>
   </div>
 
-  <!-- ══ SCREEN 2: CONFIRMATION ══ -->
-  <div class="screen" id="confirm">
-    <div class="page-header">
-      <div class="back-btn" onclick="goTo('choose')">← Modifier</div>
-      <div class="page-title">Confirmer</div>
-      <div class="page-sub">Vérifiez avant de payer</div>
-    </div>
-    <div class="scroll-area">
+  <!-- PAGE: OPERATEUR -->
+  <div class="page" id="page-operator">
+    <div class="card">
+      <div class="card-title">📱 Choisir l'opérateur</div>
 
-      <div class="confirm-card">
-        <div class="confirm-row">
-          <span class="cr-key">Plan</span>
-          <span class="cr-val">Tracium Pro</span>
+      <div class="op-grid">
+        <div class="op-card selected" id="op-mtn" onclick="selectOp('mtn')">
+          <div class="op-icon">📲</div>
+          <div class="op-name">MTN MoMo</div>
         </div>
-        <div class="confirm-row">
-          <span class="cr-key">Durée</span>
-          <span class="cr-val">1 mois (renouvelable)</span>
-        </div>
-        <div class="confirm-row">
-          <span class="cr-key">Opérateur</span>
-          <span class="cr-val" id="confirmOp">MTN MoMo</span>
-        </div>
-        <div class="confirm-row">
-          <span class="cr-key">Numéro</span>
-          <span class="cr-val" id="confirmPhone">+237 6XX XXX XXX</span>
-        </div>
-        <div class="confirm-row">
-          <span class="cr-key">Véhicules protégés</span>
-          <span class="cr-val">4 maximum</span>
-        </div>
-        <div class="confirm-row">
-          <span class="cr-key">Activation</span>
-          <span class="cr-val gold">Immédiate</span>
+        <div class="op-card" id="op-orange" onclick="selectOp('orange')">
+          <div class="op-icon">🟠</div>
+          <div class="op-name">Orange Money</div>
         </div>
       </div>
 
-      <div class="total-row">
-        <div class="tr-label">Total à payer</div>
-        <div class="tr-amount">5 000 FCFA</div>
+      <div class="form-group">
+        <label class="form-label">Numéro Mobile Money</label>
+        <div class="phone-prefix">
+          <div class="prefix-badge">🇨🇲 +237</div>
+          <input class="form-input" type="tel" id="phoneInput" placeholder="6XX XXX XXX" maxlength="9">
+        </div>
       </div>
 
-      <div class="ussd-info">
-        📲 Vous allez recevoir une notification <strong id="opNotif">MTN MoMo</strong> sur votre téléphone pour valider le paiement.
-        <span class="ussd-code" id="ussdCode">*126# → Confirmer</span>
+      <div class="alert error" id="phoneError">⚠ Veuillez entrer un numéro valide (9 chiffres)</div>
+
+      <div class="order-summary">
+        <div class="order-row">
+          <span class="order-label" id="confirmItem">Kit Tracium</span>
+          <span class="order-total" id="confirmTotal">163 500 FCFA</span>
+        </div>
+        <div class="order-row">
+          <span class="order-label">Opérateur</span>
+          <span class="order-value" id="confirmOp">MTN MoMo</span>
+        </div>
       </div>
 
-      <button class="pay-btn" id="payBtn" onclick="doPay()">
-        💳 Payer 5 000 FCFA
+      <button class="pay-btn mtn" id="payBtn" onclick="doPay()">
+        📲 Payer via MTN MoMo
       </button>
-      <div class="secure-note">🔒 &nbsp; Transaction sécurisée · Remboursement sous 24h</div>
 
+      <div class="security-badges">
+        <span class="security-badge">🔒 Paiement sécurisé</span>
+        <span class="security-badge">✅ Activation automatique</span>
+        <span class="security-badge">📋 Reçu par SMS</span>
+      </div>
+    </div>
+    <button onclick="goTo('page-choose')" style="background:none;border:none;color:var(--text3);font-size:14px;cursor:pointer;display:block;margin:0 auto;">← Retour</button>
+  </div>
+
+  <!-- PAGE: PROCESSING -->
+  <div class="page" id="page-processing">
+    <div class="card" style="text-align:center;">
+      <div style="font-size:48px;margin-bottom:16px;">⏳</div>
+      <div class="card-title" style="text-align:center;">Traitement en cours...</div>
+      <p style="font-size:14px;color:var(--text2);margin-bottom:28px;" id="processingMsg">
+        Vous allez recevoir une notification sur votre téléphone pour valider le paiement.
+      </p>
+      <div class="processing-steps">
+        <div class="step active" id="step1">
+          <div class="step-icon"><div class="spinner"></div></div>
+          <div class="step-text">Initialisation du paiement...</div>
+        </div>
+        <div class="step" id="step2">
+          <div class="step-icon">📲</div>
+          <div class="step-text">Envoi notification Mobile Money</div>
+        </div>
+        <div class="step" id="step3">
+          <div class="step-icon">✅</div>
+          <div class="step-text">Validation du paiement</div>
+        </div>
+        <div class="step" id="step4">
+          <div class="step-icon">🚀</div>
+          <div class="step-text">Activation du service Tracium</div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- ══ SCREEN 3: PROCESSING ══ -->
-  <div class="screen" id="processing">
-    <div class="proc-spinner"></div>
-    <div class="proc-title">Traitement en cours...</div>
-    <div class="proc-steps">
-      <div class="proc-step done" id="step1">
-        <div class="proc-dot"></div>
-        Connexion à Mobile Money
+  <!-- PAGE: SUCCESS -->
+  <div class="page" id="page-success">
+    <div class="card">
+      <div class="success-icon">✅</div>
+      <div class="success-title">Paiement réussi !</div>
+      <div class="success-sub" id="successMsg">Votre service Tracium est maintenant actif.</div>
+
+      <div class="receipt">
+        <div class="receipt-row">
+          <span class="receipt-label">Référence</span>
+          <span class="receipt-value" id="receiptRef">—</span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Opérateur</span>
+          <span class="receipt-value" id="receiptOp">—</span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Montant</span>
+          <span class="receipt-value" id="receiptAmount">—</span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Date</span>
+          <span class="receipt-value" id="receiptDate">—</span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Statut</span>
+          <span class="receipt-value" style="color:var(--green);">✅ Confirmé</span>
+        </div>
       </div>
-      <div class="proc-step active" id="step2">
-        <div class="proc-dot"></div>
-        Validation du paiement
-      </div>
-      <div class="proc-step" id="step3">
-        <div class="proc-dot"></div>
-        Activation de votre abonnement
-      </div>
-      <div class="proc-step" id="step4">
-        <div class="proc-dot"></div>
-        Enregistrement Blockchain
-      </div>
+
+      <button class="pay-btn" onclick="window.location.href='/dashboard'">
+        🏠 Aller au tableau de bord
+      </button>
     </div>
-  </div>
-
-  <!-- ══ SCREEN 4: SUCCESS ══ -->
-  <div class="screen" id="success">
-    <div class="success-ring">✅</div>
-    <div class="success-title">Paiement réussi !</div>
-    <div class="success-amount">5 000 FCFA</div>
-    <div class="success-desc">Votre abonnement Tracium Pro est actif. Vos 4 couches de protection sont opérationnelles.</div>
-
-    <div class="receipt-card">
-      <div class="receipt-row">
-        <span class="rr-key">Référence</span>
-        <span class="rr-val" id="receiptRef">AMB-2026-7741</span>
-      </div>
-      <div class="receipt-row">
-        <span class="rr-key">Date</span>
-        <span class="rr-val">07 Mars 2026 · 09:41</span>
-      </div>
-      <div class="receipt-row">
-        <span class="rr-key">Opérateur</span>
-        <span class="rr-val" id="receiptOp">MTN MoMo</span>
-      </div>
-      <div class="receipt-row">
-        <span class="rr-key">Prochain paiement</span>
-        <span class="rr-val">07 Avril 2026</span>
-      </div>
-    </div>
-
-    <div class="success-tags">
-      <span class="s-tag">👁️ Tracium Scan</span>
-      <span class="s-tag">📡 GPS Actif</span>
-      <span class="s-tag">⛓️ Blockchain</span>
-      <span class="s-tag">🧬 ADN</span>
-    </div>
-
-    <button class="btn-success" onclick="goTo('choose')">Aller sur l'application →</button>
   </div>
 
 </div>
 
 <script type="module">
-// ══ FIREBASE CONFIG ══
+// ══ FIREBASE ══
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyATWUfF5OFw860JXw76Uo9G_0jAI6hF6WE",
-  authDomain: "tracium.firebaseapp.com",
-  projectId: "tracium",
-  storageBucket: "tracium.firebasestorage.app",
+  authDomain: "ambera-ai.firebaseapp.com",
+  projectId: "ambera-ai",
+  storageBucket: "ambera-ai.firebasestorage.app",
   messagingSenderId: "581529826084",
   appId: "1:581529826084:web:144a6ce179e0d8286979b1"
 };
@@ -506,91 +377,227 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentUser = null;
-onAuthStateChanged(auth, (user) => {
-  if(!user){ window.location.href = '/auth'; }
-  else { currentUser = user; }
-});
-
-let current = 'choose';
+let selectedPlan = 'kit';
 let selectedOp = 'mtn';
 
-function goTo(id){
-  const prev = document.getElementById(current);
-  const next = document.getElementById(id);
-  if(prev) prev.style.display = 'none';
-  if(next) next.style.display = 'flex';
-  current = id;
-}
+// Plans disponibles
+const PLANS = {
+  kit: { name: 'Kit Tracium + Installation', price: 163500, type: 'kit', label: 'Paiement unique' },
+  subscription: { name: 'Abonnement mensuel V1', price: 13000, type: 'subscription', label: 'Mensuel' },
+  premium: { name: 'Abonnement Premium IA V2', price: 49000, type: 'subscription_premium', label: 'Mensuel' }
+};
 
-function selectOp(op){
-  selectedOp = op;
-  document.getElementById('mtnCard').classList.toggle('selected', op==='mtn');
-  document.getElementById('orangeCard').classList.toggle('selected', op==='orange');
-}
+// Auth check
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = '/auth'; return; }
+  currentUser = user;
 
-function goToConfirm(){
-  const phone = document.getElementById('phoneInput') ? document.getElementById('phoneInput').value.trim() : '';
-  if(!phone){ alert('Veuillez entrer votre numéro de téléphone.'); return; }
-  if(document.getElementById('confirmPhone')) document.getElementById('confirmPhone').textContent = '+237 ' + phone;
-  if(document.getElementById('confirmOp')) document.getElementById('confirmOp').textContent = selectedOp==='mtn' ? 'MTN MoMo' : 'Orange Money';
-  if(document.getElementById('opNotif')) document.getElementById('opNotif').textContent = selectedOp==='mtn' ? 'MTN MoMo' : 'Orange Money';
-  goTo('confirm');
-}
+  // Lire params URL
+  const params = new URLSearchParams(window.location.search);
+  const planParam = params.get('type');
+  if (planParam && PLANS[planParam]) selectPlan(planParam);
 
-function doPay(){
-  const btn = document.getElementById('payBtn');
-  btn.innerHTML = '<span class="btn-loading"></span> Envoi en cours...';
-  btn.disabled = true;
-  goTo('processing');
+  // Charger statut abonnement
+  await loadSubscriptionStatus();
+});
 
-  const steps = ['step2','step3','step4'];
-  let i = 0;
-  const interval = setInterval(()=>{
-    if(i < steps.length){
-      const el = document.getElementById(steps[i]);
-      if(el){ el.classList.remove('active'); el.classList.add('done'); }
-      if(i+1 < steps.length){
-        const next = document.getElementById(steps[i+1]);
-        if(next) next.classList.add('active');
+// Charger statut abonnement
+async function loadSubscriptionStatus() {
+  if (!currentUser) return;
+  try {
+    const subDoc = await getDoc(doc(db, 'subscriptions', currentUser.uid));
+    if (subDoc.exists()) {
+      const sub = subDoc.data();
+      const endDate = sub.endDate?.toDate ? sub.endDate.toDate() : new Date(sub.endDate);
+      const today = new Date();
+      const daysLeft = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+
+      const subStatus = document.getElementById('subStatus');
+      const subDays = document.getElementById('subDays');
+      const subBadge = document.getElementById('subBadge');
+      const subBar = document.getElementById('subProgressBar');
+
+      subStatus.style.display = 'block';
+
+      if (daysLeft > 5) {
+        subDays.textContent = `Expire dans ${daysLeft} jours`;
+        subBadge.className = 'sub-badge active';
+        subBadge.textContent = '● Actif';
+        subBar.style.width = Math.min(100, daysLeft/30*100) + '%';
+        subBar.className = 'sub-progress-bar';
+      } else if (daysLeft > 0) {
+        subDays.textContent = `⚠ Expire dans ${daysLeft} jours — Renouvelez maintenant`;
+        subBadge.className = 'sub-badge expiring';
+        subBadge.textContent = '⚠ Bientôt expiré';
+        subBar.style.width = daysLeft/30*100 + '%';
+        subBar.className = 'sub-progress-bar expiring';
+      } else {
+        subDays.textContent = '❌ Abonnement expiré — Service désactivé';
+        subBadge.className = 'sub-badge expired';
+        subBadge.textContent = '● Expiré';
+        subBar.style.width = '5%';
+        subBar.className = 'sub-progress-bar expired';
       }
+    }
+  } catch(e) { console.log('Pas d\'abonnement trouvé'); }
+}
+
+// Sélectionner plan
+function selectPlan(plan) {
+  selectedPlan = plan;
+  const p = PLANS[plan] || PLANS.kit;
+
+  document.querySelectorAll('.plan-tab').forEach(t => t.classList.remove('active'));
+  const tab = document.getElementById('tab-' + plan);
+  if (tab) tab.classList.add('active');
+
+  document.getElementById('orderItem').textContent = p.name;
+  document.getElementById('orderItemPrice').textContent = p.price.toLocaleString('fr-FR') + ' FCFA';
+  document.getElementById('orderType').textContent = p.label;
+  document.getElementById('orderTotal').textContent = p.price.toLocaleString('fr-FR') + ' FCFA';
+  document.getElementById('confirmItem').textContent = p.name;
+  document.getElementById('confirmTotal').textContent = p.price.toLocaleString('fr-FR') + ' FCFA';
+}
+
+// Sélectionner opérateur
+function selectOp(op) {
+  selectedOp = op;
+  document.querySelectorAll('.op-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('op-' + op).classList.add('selected');
+  document.getElementById('confirmOp').textContent = op === 'mtn' ? 'MTN MoMo' : 'Orange Money';
+
+  const btn = document.getElementById('payBtn');
+  if (op === 'mtn') {
+    btn.className = 'pay-btn mtn';
+    btn.textContent = '📲 Payer via MTN MoMo';
+  } else {
+    btn.className = 'pay-btn orange';
+    btn.textContent = '🟠 Payer via Orange Money';
+  }
+}
+
+// Navigation
+function goTo(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// Payer
+async function doPay() {
+  const phone = document.getElementById('phoneInput').value.trim();
+  const errorEl = document.getElementById('phoneError');
+
+  if (!phone || phone.length < 8) {
+    errorEl.classList.add('show');
+    return;
+  }
+  errorEl.classList.remove('show');
+
+  const btn = document.getElementById('payBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Traitement...';
+
+  goTo('page-processing');
+
+  const plan = PLANS[selectedPlan] || PLANS.kit;
+  const opName = selectedOp === 'mtn' ? 'MTN MoMo' : 'Orange Money';
+
+  // Simuler les étapes (MODE TEST)
+  // En production : appel API Notchpay/CinetPay ici
+  const steps = ['step2', 'step3', 'step4'];
+  let i = 0;
+
+  document.getElementById('step1').classList.add('done');
+  document.getElementById('step1').querySelector('.step-icon').textContent = '✅';
+
+  const interval = setInterval(async () => {
+    if (i < steps.length) {
+      document.getElementById(steps[i]).classList.add('active');
+      setTimeout(() => {
+        document.getElementById(steps[i]).classList.remove('active');
+        document.getElementById(steps[i]).classList.add('done');
+        document.getElementById(steps[i]).querySelector('.step-icon').textContent = '✅';
+      }, 800);
       i++;
     } else {
       clearInterval(interval);
-      const ref = 'AMB-2026-' + Math.floor(1000+Math.random()*9000);
-      if(document.getElementById('receiptRef')) document.getElementById('receiptRef').textContent = ref;
-      if(document.getElementById('receiptOp')) document.getElementById('receiptOp').textContent = selectedOp==='mtn' ? 'MTN MoMo' : 'Orange Money';
 
-      if(currentUser){
-        addDoc(collection(db, 'paiements'), {
+      // Générer référence
+      const ref = 'TRC-' + Date.now().toString(36).toUpperCase();
+      const now = new Date();
+
+      // Sauvegarder paiement dans Firebase
+      try {
+        await addDoc(collection(db, 'payments'), {
           userId: currentUser.uid,
           userName: currentUser.displayName || '',
-          operateur: selectedOp==='mtn' ? 'MTN MoMo' : 'Orange Money',
-          montant: 5000,
-          devise: 'FCFA',
+          userPhone: '+237' + phone,
+          operator: opName,
+          amount: plan.price,
+          currency: 'FCFA',
           reference: ref,
-          statut: 'TEST - Succès',
-          plan: 'Pro',
+          type: plan.type,
+          status: 'TEST_SUCCESS', // Changer en 'SUCCESS' en production
+          planName: plan.name,
           date: serverTimestamp()
         });
+
+        // Activer abonnement si subscription
+        if (plan.type === 'subscription' || plan.type === 'subscription_premium') {
+          const startDate = new Date();
+          const endDate = new Date();
+          endDate.setMonth(endDate.getMonth() + 1);
+
+          await setDoc(doc(db, 'subscriptions', currentUser.uid), {
+            userId: currentUser.uid,
+            planType: plan.type,
+            planName: plan.name,
+            amount: plan.price,
+            startDate: startDate,
+            endDate: endDate,
+            status: 'ACTIVE',
+            paymentRef: ref,
+            updatedAt: serverTimestamp()
+          });
+        }
+
+        // Si kit → créer mission installateur
+        if (plan.type === 'kit') {
+          await addDoc(collection(db, 'installer_missions'), {
+            userId: currentUser.uid,
+            userName: currentUser.displayName || '',
+            userPhone: '+237' + phone,
+            status: 'PENDING',
+            paymentRef: ref,
+            amount: plan.price,
+            createdAt: serverTimestamp()
+          });
+        }
+
+      } catch(e) {
+        console.error('Firebase error:', e);
       }
-      setTimeout(()=>{ goTo('success'); }, 600);
+
+      // Afficher succès
+      document.getElementById('receiptRef').textContent = ref;
+      document.getElementById('receiptOp').textContent = opName;
+      document.getElementById('receiptAmount').textContent = plan.price.toLocaleString('fr-FR') + ' FCFA';
+      document.getElementById('receiptDate').textContent = now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
+      document.getElementById('successMsg').textContent = plan.type === 'kit'
+        ? 'Votre kit sera installé sous 48h. Un installateur vous contactera.'
+        : 'Votre abonnement Tracium est actif pour 30 jours.';
+
+      setTimeout(() => goTo('page-success'), 600);
     }
-  }, 900);
+  }, 1000);
 }
 
-function switchLang(l){
-  _lang = l;
-  document.querySelectorAll('[data-fr]').forEach(function(el){
-    el.textContent = l==='fr' ? el.dataset.fr : (el.dataset.en||el.dataset.fr);
-  });
-}
-
-// Rendre les fonctions accessibles depuis les onclick HTML
-window.goTo = goTo;
+// Rendre fonctions accessibles
+window.selectPlan = selectPlan;
 window.selectOp = selectOp;
-window.goToConfirm = goToConfirm;
+window.goTo = goTo;
 window.doPay = doPay;
-window.switchLang = switchLang;
 </script>
 </body>
 </html>

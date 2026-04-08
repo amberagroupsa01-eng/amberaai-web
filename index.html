@@ -10,7 +10,7 @@
 :root{
   --gold:#ffb432;--gold2:#ffe08a;--bronze:#e8720a;
   --dark:#07070f;--dark2:#0d0d1a;--dark3:#131328;
-  --line:#1e1e3a;--muted:#5a5a8a;--text:#d0cce0;
+  --line:#1e1e3a;--muted:#8a8ab0;--text:#e8e4f0;
   --green:#22c55e;
 }
 html{scroll-behavior:smooth;}
@@ -19,6 +19,7 @@ body{
   color:var(--text);
   font-family:'Rajdhani',sans-serif;
   overflow-x:hidden;
+  font-size:17px;
 }
 
 /* ── SCROLLBAR ── */
@@ -513,6 +514,19 @@ footer{
 /* ── LANG TOAST ── */
 .lang-toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--gold);color:var(--dark);padding:9px 22px;border-radius:25px;font-size:13px;font-weight:700;letter-spacing:1px;z-index:9999;transition:transform 0.35s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
 .lang-toast.show{transform:translateX(-50%) translateY(0);}
+
+@media(max-width:768px){
+  body{font-size:16px;}
+  .section-title{font-size:clamp(22px,6vw,36px)!important;}
+  .section-sub{font-size:16px!important;color:#a0a0c0!important;}
+  .hero-title{font-size:clamp(32px,8vw,56px)!important;}
+  .hero-sub{font-size:17px!important;color:#b0acd0!important;line-height:1.7!important;}
+  .how-desc{font-size:15px!important;color:#a0a0c0!important;line-height:1.6!important;}
+  .price-features li{font-size:15px!important;}
+  .nav-links{display:none;}
+  section{padding:60px 5%!important;}
+  .hero-badge{font-size:13px!important;}
+}
 </style>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#ffb432">

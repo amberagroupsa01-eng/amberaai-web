@@ -1,25 +1,25 @@
 {
-  "name": "Tracium",
-  "short_name": "Tracium",
-  "description": "One-Click Security",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#07070f",
-  "theme_color": "#ffb432",
-  "orientation": "portrait",
-  "lang": "fr",
-  "icons": [
-    {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+  "version": 2,
+  "routes": [
+    { "src": "/manifest.json", "dest": "/manifest.json" },
+    { "src": "/sw.js", "dest": "/sw.js" },
+    { "src": "/icon-192.png", "dest": "/icon-192.png" },
+    { "src": "/icon-512.png", "dest": "/icon-512.png" },
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/app", "dest": "/app.html" },
+    { "src": "/auth", "dest": "/auth.html" },
+    { "src": "/dashboard", "dest": "/dashboard.html" },
+    { "src": "/register", "dest": "/register.html" },
+    { "src": "/payment", "dest": "/payment.html" },
+    { "src": "/shop", "dest": "/shop.html" },
+    { "src": "/parrainage", "dest": "/parrainage.html" },
+    { "src": "/notifications", "dest": "/notifications.html" },
+    { "src": "/blocage", "dest": "/blocage.html" },
+    { "src": "/police", "dest": "/police.html" },
+    { "src": "/assureurs", "dest": "/assureurs.html" },
+    { "src": "/chat", "dest": "/chat.html" },
+    { "src": "/pitch", "dest": "/pitchdeck.html" },
+    { "src": "/puce-fantome", "dest": "/puce-fantome.html" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }

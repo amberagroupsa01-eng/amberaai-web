@@ -208,14 +208,22 @@ nav{
       </div>
 
       <!-- Sélecteur plan -->
-      <div class="plan-tabs">
+      <div class="plan-tabs" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
         <div class="plan-tab active" id="tab-kit" onclick="selectPlan('kit')">
-          <div class="plan-tab-name">🔧 Kit + Installation</div>
-          <div class="plan-tab-price">131 000 – 196 000 FCFA</div>
+          <div class="plan-tab-name">🔧 Kit</div>
+          <div class="plan-tab-price">163 500 FCFA</div>
         </div>
-        <div class="plan-tab" id="tab-sub" onclick="selectPlan('subscription')">
-          <div class="plan-tab-name">📅 Abonnement</div>
-          <div class="plan-tab-price">13 000 FCFA/mois</div>
+        <div class="plan-tab" id="tab-basic" onclick="selectPlan('basic')">
+          <div class="plan-tab-name">🔰 Basic</div>
+          <div class="plan-tab-price">3 000 FCFA/mois</div>
+        </div>
+        <div class="plan-tab" id="tab-pro" onclick="selectPlan('pro')">
+          <div class="plan-tab-name">⚡ Pro</div>
+          <div class="plan-tab-price">5 000 FCFA/mois</div>
+        </div>
+        <div class="plan-tab" id="tab-premium" onclick="selectPlan('premium')">
+          <div class="plan-tab-name">🔥 Premium</div>
+          <div class="plan-tab-price">10 000 FCFA/mois</div>
         </div>
       </div>
 
@@ -383,8 +391,10 @@ let selectedOp = 'mtn';
 // Plans disponibles
 const PLANS = {
   kit: { name: 'Kit Tracium + Installation', price: 163500, type: 'kit', label: 'Paiement unique' },
-  subscription: { name: 'Abonnement mensuel V1', price: 13000, type: 'subscription', label: 'Mensuel' },
-  premium: { name: 'Abonnement Premium IA V2', price: 49000, type: 'subscription_premium', label: 'Mensuel' }
+  basic: { name: 'Abonnement Basic', price: 3000, type: 'basic', label: 'Mensuel' },
+  pro: { name: 'Abonnement Pro', price: 5000, type: 'pro', label: 'Mensuel' },
+  premium: { name: 'Abonnement Premium', price: 10000, type: 'premium', label: 'Mensuel' },
+  subscription: { name: 'Abonnement Pro', price: 5000, type: 'pro', label: 'Mensuel' }
 };
 
 // Auth check
@@ -558,6 +568,10 @@ async function doPay() {
             endDate: endDate,
             status: 'ACTIVE',
             paymentRef: ref,
+            // Logique suspension progressive
+            suspensionJ7: new Date(endDate.getTime() + 7*24*60*60*1000),   // J+7: blocage moteur désactivé
+            suspensionJ30: new Date(endDate.getTime() + 30*24*60*60*1000),  // J+30: GPS uniquement
+            suspensionJ60: new Date(endDate.getTime() + 60*24*60*60*1000),  // J+60: suspension complète
             updatedAt: serverTimestamp()
           });
         }

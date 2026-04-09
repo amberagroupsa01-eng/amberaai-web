@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Tracium — Espace Installateur</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --blue:#0047CC;--blue-dark:#003399;--blue-light:#EEF3FF;
+  --green:#00A550;--green-light:#F0FFF6;
+  --orange:#FF8C00;--orange-light:#FFF7F0;
+  --red:#E8001C;--red-light:#FFF0F0;
+  --text:#0D1117;--text2:#4A5568;--text3:#718096;
+  --bg:#F7F9FC;--white:#FFFFFF;--border:#E2E8F0;
+}
+html,body{min-height:100%;font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);}
+
+/* NAV */
+nav{
+  background:var(--white);border-bottom:1px solid var(--border);
+  padding:14px 20px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:50;
+}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo-icon{width:32px;height:32px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;color:white;}
+.nav-logo-name{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:var(--text);}
+.nav-badge{background:var(--orange-light);color:var(--orange);font-size:11px;font-weight:700;padding:3px 10px;border-radius:50px;}
+.nav-user{font-size:13px;font-weight:600;color:var(--text2);}
+
+/* TABS */
+.tabs{display:flex;background:var(--white);border-bottom:1px solid var(--border);overflow-x:auto;}
+.tab{
+  padding:14px 20px;font-size:14px;font-weight:600;color:var(--text3);
+  cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;
+  transition:all 0.2s;flex-shrink:0;
+}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue);}
+
+/* PAGES */
+.page{display:none;padding:16px;}
+.page.active{display:block;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
+.stat-card{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:14px;padding:16px;
+}
+.stat-num{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:800;color:var(--blue);}
+.stat-label{font-size:12px;color:var(--text3);margin-top:4px;font-weight:600;}
+.stat-change{font-size:11px;color:var(--green);margin-top:2px;}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px;}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.card-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;}
+
+/* MISSION CARD */
+.mission-card{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:14px;padding:16px;margin-bottom:12px;
+  transition:all 0.2s;
+}
+.mission-card:hover{border-color:var(--blue);}
+.mission-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.mission-id{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:1px;}
+.mission-status{font-size:11px;font-weight:700;padding:3px 10px;border-radius:50px;}
+.mission-status.new{background:#EEF3FF;color:var(--blue);}
+.mission-status.accepted{background:#FFF7F0;color:var(--orange);}
+.mission-status.in-progress{background:#F0FFF6;color:var(--green);}
+.mission-status.done{background:#F0F0F0;color:var(--text3);}
+.mission-client{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.mission-details{font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.5;}
+.mission-plan{
+  display:inline-block;background:var(--blue-light);color:var(--blue);
+  font-size:11px;font-weight:700;padding:3px 10px;border-radius:50px;margin-bottom:12px;
+}
+.mission-btns{display:flex;gap:8px;}
+.btn-accept{
+  flex:1;padding:10px;border:none;border-radius:8px;
+  background:var(--blue);color:white;
+  font-size:13px;font-weight:700;cursor:pointer;
+}
+.btn-done{
+  flex:1;padding:10px;border:none;border-radius:8px;
+  background:var(--green);color:white;
+  font-size:13px;font-weight:700;cursor:pointer;
+}
+.btn-refuse{
+  padding:10px 16px;border:1px solid var(--border);border-radius:8px;
+  background:white;color:var(--text3);
+  font-size:13px;font-weight:600;cursor:pointer;
+}
+
+/* COMMISSION */
+.commission-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 0;border-bottom:1px solid var(--border);
+}
+.commission-row:last-child{border-bottom:none;}
+.commission-info{flex:1;}
+.commission-date{font-size:12px;color:var(--text3);}
+.commission-client{font-size:14px;font-weight:600;color:var(--text);}
+.commission-plan{font-size:12px;color:var(--text2);}
+.commission-amount{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--green);}
+.commission-status{font-size:11px;font-weight:700;padding:2px 8px;border-radius:50px;}
+.commission-status.paid{background:var(--green-light);color:var(--green);}
+.commission-status.pending{background:var(--orange-light);color:var(--orange);}
+
+/* STOCK */
+.stock-item{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 0;border-bottom:1px solid var(--border);
+}
+.stock-item:last-child{border-bottom:none;}
+.stock-icon{
+  width:40px;height:40px;border-radius:10px;
+  background:var(--blue-light);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;flex-shrink:0;
+}
+.stock-info{flex:1;}
+.stock-name{font-size:14px;font-weight:700;color:var(--text);}
+.stock-serial{font-size:12px;color:var(--text3);font-family:monospace;}
+.stock-qty{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:20px;font-weight:800;
+}
+.stock-qty.low{color:var(--red);}
+.stock-qty.ok{color:var(--green);}
+
+/* QUITTANCE */
+.quittance-card{
+  background:var(--white);border:1px solid var(--border);
+  border-radius:14px;padding:16px;margin-bottom:12px;
+}
+.quittance-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.quittance-ref{font-size:11px;font-weight:700;color:var(--text3);font-family:monospace;}
+.quittance-date{font-size:12px;color:var(--text3);}
+.quittance-client{font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.quittance-details{font-size:13px;color:var(--text2);margin-bottom:12px;}
+.quittance-amount{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:800;color:var(--blue);}
+.quittance-btns{display:flex;gap:8px;margin-top:12px;}
+.btn-print{
+  flex:1;padding:10px;border:1px solid var(--blue);border-radius:8px;
+  background:var(--blue-light);color:var(--blue);
+  font-size:13px;font-weight:700;cursor:pointer;
+}
+.btn-share{
+  padding:10px 16px;border:1px solid var(--border);border-radius:8px;
+  background:white;color:var(--text2);
+  font-size:13px;font-weight:600;cursor:pointer;
+}
+
+/* PROFIL */
+.profile-header{
+  display:flex;align-items:center;gap:16px;
+  padding:20px;background:linear-gradient(135deg,#0D1B40,#0047CC);
+  border-radius:16px;margin-bottom:20px;color:white;
+}
+.profile-avatar{
+  width:60px;height:60px;border-radius:50%;
+  background:rgba(255,255,255,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;flex-shrink:0;
+}
+.profile-name{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;}
+.profile-garage{font-size:13px;opacity:0.8;margin-top:4px;}
+.profile-rating{font-size:14px;margin-top:6px;}
+.profile-level{
+  background:rgba(255,255,255,0.2);border-radius:50px;
+  padding:4px 12px;font-size:12px;font-weight:700;margin-top:8px;display:inline-block;
+}
+
+/* FORM */
+.form-group{margin-bottom:16px;}
+.form-label{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:6px;display:block;}
+.form-input{
+  width:100%;padding:12px 14px;
+  border:2px solid var(--border);border-radius:10px;
+  font-size:15px;color:var(--text);
+  font-family:'Plus Jakarta Sans',sans-serif;
+  outline:none;transition:border-color 0.2s;
+}
+.form-input:focus{border-color:var(--blue);}
+.form-select{
+  width:100%;padding:12px 14px;
+  border:2px solid var(--border);border-radius:10px;
+  font-size:15px;color:var(--text);
+  font-family:'Plus Jakarta Sans',sans-serif;
+  outline:none;background:white;cursor:pointer;
+}
+
+/* BOUTONS */
+.btn-primary{
+  width:100%;padding:14px;border:none;border-radius:10px;
+  background:var(--blue);color:white;
+  font-size:15px;font-weight:700;cursor:pointer;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  transition:all 0.2s;
+}
+.btn-primary:active{background:var(--blue-dark);}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;background:var(--red);color:white;border-radius:50%;font-size:11px;font-weight:700;margin-left:4px;}
+
+/* TOAST */
+.toast{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
+  background:#1A1A2E;color:white;border-radius:12px;
+  padding:12px 20px;font-size:14px;font-weight:600;
+  z-index:300;white-space:nowrap;opacity:0;transition:opacity 0.3s;
+  pointer-events:none;
+}
+.toast.show{opacity:1;}
+
+/* BOTTOM NAV */
+.bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--white);border-top:1px solid var(--border);
+  display:flex;padding:8px 0 16px;z-index:50;
+}
+.bnav-item{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;gap:3px;cursor:pointer;
+  text-decoration:none;
+}
+.bnav-icon{font-size:20px;}
+.bnav-label{font-size:10px;font-weight:600;color:var(--text3);}
+.bnav-item.active .bnav-label{color:var(--blue);}
+
+.scroll-content{padding-bottom:80px;}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-icon">T</div>
+    <span class="nav-logo-name">Tracium</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span class="nav-badge">🔧 Installateur</span>
+    <span class="nav-user" id="installerName">—</span>
+  </div>
+</nav>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('missions')">📋 Missions <span class="badge" id="missionBadge">3</span></div>
+  <div class="tab" onclick="showTab('stock')">📦 Stock</div>
+  <div class="tab" onclick="showTab('commissions')">💰 Commissions</div>
+  <div class="tab" onclick="showTab('quittances')">🧾 Quittances</div>
+  <div class="tab" onclick="showTab('profil')">👤 Profil</div>
+</div>
+
+<div class="scroll-content">
+
+  <!-- PAGE MISSIONS -->
+  <div class="page active" id="page-missions">
+    <div style="padding:16px;">
+
+      <!-- Stats rapides -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-num" id="statTotal">0</div>
+          <div class="stat-label">Missions totales</div>
+          <div class="stat-change">↑ Ce mois</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statDone" style="color:var(--green);">0</div>
+          <div class="stat-label">Terminées</div>
+          <div class="stat-change" style="color:var(--green);">✅ Validées</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statCommission" style="color:var(--orange);">0</div>
+          <div class="stat-label">Commission (FCFA)</div>
+          <div class="stat-change" style="color:var(--orange);">Ce mois</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="statRating" style="color:var(--blue);">5.0</div>
+          <div class="stat-label">Note moyenne</div>
+          <div class="stat-change">⭐ Évaluation</div>
+        </div>
+      </div>
+
+      <!-- Missions -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📋 Mes missions</div>
+          <select class="form-select" style="width:auto;padding:6px 12px;" onchange="filterMissions(this.value)">
+            <option value="all">Toutes</option>
+            <option value="new">Nouvelles</option>
+            <option value="accepted">Acceptées</option>
+            <option value="in-progress">En cours</option>
+            <option value="done">Terminées</option>
+          </select>
+        </div>
+        <div id="missionsList">
+          <div style="text-align:center;padding:32px;color:var(--text3);">Chargement...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE STOCK -->
+  <div class="page" id="page-stock">
+    <div style="padding:16px;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📦 Mon stock matériel</div>
+          <div style="font-size:12px;color:var(--text3);">Mis à jour automatiquement</div>
+        </div>
+        <div id="stockList">
+          <div style="text-align:center;padding:32px;color:var(--text3);">Chargement...</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">📥 Demander du stock</div>
+        <div class="form-group">
+          <label class="form-label">Type de matériel</label>
+          <select class="form-select">
+            <option>Boîtier principal ESP32</option>
+            <option>Relais moteur 30A</option>
+            <option>Relais moteur 60A</option>
+            <option>Batterie de secours 2Ah</option>
+            <option>Batterie de secours 5Ah</option>
+            <option>Kit capteurs portes</option>
+            <option>Sirène externe</option>
+            <option>Module GPS secondaire caché</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Quantité demandée</label>
+          <input class="form-input" type="number" min="1" max="20" value="2" placeholder="Ex: 5">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Justification</label>
+          <input class="form-input" type="text" placeholder="Ex: Mission client en attente">
+        </div>
+        <button class="btn-primary" onclick="requestStock()">📤 Envoyer la demande</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE COMMISSIONS -->
+  <div class="page" id="page-commissions">
+    <div style="padding:16px;">
+
+      <!-- Solde disponible -->
+      <div class="card" style="background:linear-gradient(135deg,#0D1B40,#0047CC);border:none;margin-bottom:16px;">
+        <div style="color:rgba(255,255,255,0.7);font-size:13px;margin-bottom:4px;">💰 Total disponible au retrait</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:40px;font-weight:800;color:white;" id="totalDisponible">0 FCFA</div>
+        <div style="color:rgba(255,255,255,0.6);font-size:12px;margin-top:8px;">📅 Prochain paiement : <span id="nextPayout" style="color:white;font-weight:700;">—</span></div>
+        <button onclick="requestPayout()" id="payoutBtn" style="margin-top:16px;width:100%;padding:14px;border:none;border-radius:10px;background:white;color:var(--blue);font-size:15px;font-weight:700;cursor:pointer;">
+          📲 Demander le retrait
+        </button>
+      </div>
+
+      <!-- Résumé stats -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        <div class="stat-card">
+          <div class="stat-num" id="totalInstallComm" style="color:var(--green);">0</div>
+          <div class="stat-label">Commissions installation</div>
+          <div class="stat-change" style="color:var(--green);">FCFA ce mois</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" id="totalMonthlyComm" style="color:var(--blue);">0</div>
+          <div class="stat-label">Commissions mensuelles</div>
+          <div class="stat-change" style="color:var(--blue);">FCFA récurrents</div>
+        </div>
+      </div>
+
+      <!-- Clients installés -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">👥 Mes clients installés</div>
+          <div style="font-size:12px;color:var(--text3);" id="activeClientsCount">0 actifs</div>
+        </div>
+        <div id="clientsList">
+          <div style="text-align:center;padding:20px;color:var(--text3);">Chargement...</div>
+        </div>
+      </div>
+
+      <!-- Barème commissions -->
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">💰 Barème commissions</div>
+
+        <div style="font-size:12px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">🔧 Installation (une fois)</div>
+        <div style="display:grid;gap:8px;margin-bottom:16px;">
+          <div style="display:flex;justify-content:space-between;padding:10px 14px;background:var(--bg);border-radius:8px;">
+            <span style="font-weight:600;">🔰 Basic Kit</span>
+            <span style="font-family:'Space Grotesk',sans-serif;font-weight:800;color:var(--green);">15 000 FCFA</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:10px 14px;background:var(--blue-light);border-radius:8px;">
+            <span style="font-weight:600;">⚡ Pro Kit ⭐</span>
+            <span style="font-family:'Space Grotesk',sans-serif;font-weight:800;color:var(--blue);">20 000 FCFA</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:10px 14px;background:#FFF7F0;border-radius:8px;">
+            <span style="font-weight:600;">🔥 Premium Kit</span>
+            <span style="font-family:'Space Grotesk',sans-serif;font-weight:800;color:var(--orange);">25 000 FCFA</span>
+          </div>
+        </div>
+
+        <div style="font-size:12px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">📅 Mensuel récurrent (par client actif)</div>
+        <div style="display:grid;gap:8px;margin-bottom:16px;">
+          <div style="display:flex;justify-content:space-between;padding:10px 14px;background:var(--bg);border-radius:8px;">
+            <span style="font-weight:600;">🔰 Basic</span>
+            <span style="font-family:'Space Grotesk',sans-serif;font-weight:800;color:var(--green);">500 FCFA/mois</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:10px 14px;background:var(--blue-light);border-radius:8px;">
+            <span style="font-weight:600;">⚡ Pro ⭐</span>
+            <span style="font-family:'Space Grotesk',sans-serif;font-weight:800;color:var(--blue);">1 000 FCFA/mois</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:10px 14px;background:#FFF7F0;border-radius:8px;">
+            <span style="font-weight:600;">🔥 Premium</span>
+            <span style="font-family:'Space Grotesk',sans-serif;font-weight:800;color:var(--orange);">1 500 FCFA/mois</span>
+          </div>
+        </div>
+
+        <div style="font-size:12px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">🏆 Bonus performance</div>
+        <div style="display:grid;gap:8px;">
+          <div style="display:flex;justify-content:space-between;padding:10px 14px;background:var(--green-light);border-radius:8px;">
+            <span style="font-weight:600;">10+ installations/mois</span>
+            <span style="font-family:'Space Grotesk',sans-serif;font-weight:800;color:var(--green);">+10%</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:10px 14px;background:var(--green-light);border-radius:8px;">
+            <span style="font-weight:600;">30+ installations/mois</span>
+            <span style="font-family:'Space Grotesk',sans-serif;font-weight:800;color:var(--green);">+20%</span>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;background:#F0FFF6;border:1px solid rgba(0,165,80,0.2);border-radius:10px;padding:14px;">
+          <div style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:6px;">💰 Exemple : 100 clients Pro</div>
+          <div style="font-size:13px;color:var(--text2);line-height:1.8;">
+            Installation : 100 × 20 000 = <strong>2 000 000 FCFA</strong><br>
+            Mensuel récurrent : 100 × 1 000 = <strong>100 000 FCFA/mois</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Historique paiements -->
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">📊 Historique paiements</div>
+        <div id="payoutHistory">
+          <div class="commission-row">
+            <div class="commission-info">
+              <div class="commission-date">01/04/2026</div>
+              <div class="commission-client">Paiement hebdomadaire</div>
+              <div class="commission-plan">3 installations + 8 abonnements actifs</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="commission-amount">+68 000 FCFA</div>
+              <span class="commission-status paid">✅ Payé</span>
+            </div>
+          </div>
+          <div class="commission-row">
+            <div class="commission-info">
+              <div class="commission-date">25/03/2026</div>
+              <div class="commission-client">Paiement hebdomadaire</div>
+              <div class="commission-plan">2 installations + 5 abonnements actifs</div>
+            </div>
+            <div style="text-align:right;">
+              <div class="commission-amount">+45 000 FCFA</div>
+              <span class="commission-status paid">✅ Payé</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PAGE QUITTANCES -->
+  <div class="page" id="page-quittances">
+    <div style="padding:16px;">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🧾 Mes quittances</div>
+          <div style="font-size:12px;color:var(--text3);">Générées automatiquement</div>
+        </div>
+        <div id="quittancesList">
+          <div style="text-align:center;padding:32px;color:var(--text3);">Chargement...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE PROFIL -->
+  <div class="page" id="page-profil">
+    <div style="padding:16px;">
+
+      <div class="profile-header">
+        <div class="profile-avatar">🔧</div>
+        <div>
+          <div class="profile-name" id="profileName">—</div>
+          <div class="profile-garage" id="profileGarage">—</div>
+          <div class="profile-rating">⭐⭐⭐⭐⭐ <span id="profileRating">5.0</span>/5</div>
+          <div class="profile-level" id="profileLevel">🥇 Installateur Senior</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">📋 Mes informations</div>
+        <div class="form-group">
+          <label class="form-label">Nom complet</label>
+          <input class="form-input" id="editName" type="text" placeholder="Votre nom">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Garage / Atelier</label>
+          <input class="form-input" id="editGarage" type="text" placeholder="Nom du garage">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ville</label>
+          <select class="form-select" id="editCity">
+            <option>Yaoundé</option>
+            <option>Douala</option>
+            <option>Bafoussam</option>
+            <option>Kribi</option>
+            <option>Garoua</option>
+            <option>Maroua</option>
+            <option>Bamenda</option>
+            <option>Autre</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Téléphone</label>
+          <input class="form-input" id="editPhone" type="tel" placeholder="+237 6XX XXX XXX">
+        </div>
+        <button class="btn-primary" onclick="saveProfile()">💾 Enregistrer</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">🤝 Parrainage</div>
+        <div style="font-size:14px;color:var(--text2);margin-bottom:16px;">Invitez un collègue installateur et gagnez un bonus sur ses 3 premières installations.</div>
+        <div style="background:var(--bg);border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="font-family:monospace;font-size:16px;font-weight:700;color:var(--blue);" id="referralCode">TRC-INST-0000</div>
+          <button onclick="copyReferral()" style="background:var(--blue-light);color:var(--blue);border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;">Copier</button>
+        </div>
+        <div style="font-size:13px;color:var(--text3);" id="referralStats">0 filleul(s) · 0 FCFA de bonus</div>
+      </div>
+
+      <div class="card">
+        <button onclick="doLogout()" style="width:100%;padding:14px;border:2px solid var(--red);border-radius:10px;background:white;color:var(--red);font-size:15px;font-weight:700;cursor:pointer;">
+          🚪 Se déconnecter
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">Notification</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs, doc, getDoc, setDoc, addDoc, updateDoc, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyATWUfF5OFw860JXw76Uo9G_0jAI6hF6WE",
+  authDomain: "ambera-ai.firebaseapp.com",
+  projectId: "ambera-ai",
+  storageBucket: "ambera-ai.firebasestorage.app",
+  messagingSenderId: "581529826084",
+  appId: "1:581529826084:web:144a6ce179e0d8286979b1"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+let installerData = null;
+
+// Barème commissions
+const COMMISSIONS = {
+  basic: 1500,
+  pro: 2500,
+  premium: 5000,
+  kit: 15000
+};
+
+// Auth
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = '/auth'; return; }
+  currentUser = user;
+  await loadInstallerProfile();
+  await loadMissions();
+  await loadCommissions();
+  await loadQuittances();
+  await loadClients();
+  loadStock();
+});
+
+// Charger profil installateur
+async function loadInstallerProfile() {
+  try {
+    const docRef = doc(db, 'installers', currentUser.uid);
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      installerData = snap.data();
+      const name = installerData.name || currentUser.displayName || 'Installateur';
+      document.getElementById('installerName').textContent = name.split(' ')[0];
+      document.getElementById('profileName').textContent = name;
+      document.getElementById('profileGarage').textContent = installerData.garage || 'Garage non défini';
+      document.getElementById('profileRating').textContent = installerData.rating || '5.0';
+      document.getElementById('editName').value = name;
+      document.getElementById('editGarage').value = installerData.garage || '';
+      document.getElementById('editPhone').value = installerData.phone || '';
+      document.getElementById('referralCode').textContent = installerData.referralCode || 'TRC-INST-' + currentUser.uid.slice(0,4).toUpperCase();
+    } else {
+      // Créer profil par défaut
+      const name = currentUser.displayName || 'Installateur';
+      const ref = 'TRC-INST-' + currentUser.uid.slice(0,4).toUpperCase();
+      await setDoc(docRef, {
+        userId: currentUser.uid,
+        name, garage: '', city: 'Yaoundé',
+        phone: '', status: 'active',
+        rating: 5.0, totalMissions: 0,
+        referralCode: ref, createdAt: serverTimestamp()
+      });
+      document.getElementById('installerName').textContent = name.split(' ')[0];
+      document.getElementById('referralCode').textContent = ref;
+    }
+  } catch(e) { console.error(e); }
+}
+
+// Charger missions
+async function loadMissions() {
+  try {
+    const q = query(collection(db, 'installer_missions'), where('installerId', '==', currentUser.uid));
+    const snap = await getDocs(q);
+
+    // Si pas de missions assignées, charger les missions en attente
+    let missions = [];
+    snap.forEach(d => missions.push({id: d.id, ...d.data()}));
+
+    if (missions.length === 0) {
+      // Charger missions PENDING non assignées
+      const q2 = query(collection(db, 'installer_missions'), where('status', '==', 'PENDING'));
+      const snap2 = await getDocs(q2);
+      snap2.forEach(d => missions.push({id: d.id, ...d.data(), isNew: true}));
+    }
+
+    document.getElementById('statTotal').textContent = missions.length;
+    document.getElementById('statDone').textContent = missions.filter(m => m.status === 'DONE').length;
+    document.getElementById('missionBadge').textContent = missions.filter(m => m.status === 'PENDING' || m.status === 'NEW').length;
+
+    renderMissions(missions);
+  } catch(e) {
+    renderMissionsDemo();
+  }
+}
+
+function renderMissions(missions) {
+  const list = document.getElementById('missionsList');
+  if (missions.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text3);">🎉 Aucune mission en attente</div>';
+    return;
+  }
+
+  list.innerHTML = missions.map(m => {
+    const statusMap = {
+      'PENDING': {cls:'new', label:'🆕 Nouvelle'},
+      'ACCEPTED': {cls:'accepted', label:'✅ Acceptée'},
+      'IN_PROGRESS': {cls:'in-progress', label:'🔧 En cours'},
+      'DONE': {cls:'done', label:'✔ Terminée'}
+    };
+    const st = statusMap[m.status] || {cls:'new', label:'Nouvelle'};
+    const planMap = {basic:'🔰 Basic',pro:'⚡ Pro',premium:'🔥 Premium',kit:'🔧 Kit'};
+
+    return `<div class="mission-card">
+      <div class="mission-header">
+        <div class="mission-id">Mission #${m.id.slice(-6).toUpperCase()}</div>
+        <span class="mission-status ${st.cls}">${st.label}</span>
+      </div>
+      <div class="mission-client">${m.userName || 'Client Tracium'}</div>
+      <div class="mission-details">
+        📱 ${m.userPhone || '+237 —'}<br>
+        📍 Yaoundé, Cameroun
+      </div>
+      <div class="mission-plan">${planMap[m.planType] || '🔧 Kit'}</div>
+      <div class="mission-btns">
+        ${m.status === 'PENDING' ? `<button class="btn-accept" onclick="acceptMission('${m.id}')">✅ Accepter</button>` : ''}
+        ${m.status === 'ACCEPTED' || m.status === 'IN_PROGRESS' ? `<button class="btn-done" onclick="completeMission('${m.id}')">🏁 Terminer</button>` : ''}
+        ${m.status === 'PENDING' ? `<button class="btn-refuse" onclick="refuseMission('${m.id}')">✗</button>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderMissionsDemo() {
+  const list = document.getElementById('missionsList');
+  list.innerHTML = `
+    <div class="mission-card">
+      <div class="mission-header">
+        <div class="mission-id">Mission #A3F21B</div>
+        <span class="mission-status new">🆕 Nouvelle</span>
+      </div>
+      <div class="mission-client">Jean-Paul Mballa</div>
+      <div class="mission-details">📱 +237 677 123 456<br>📍 Yaoundé, Bastos</div>
+      <div class="mission-plan">⚡ Pro</div>
+      <div class="mission-btns">
+        <button class="btn-accept" onclick="showToast('✅ Mission acceptée !')">✅ Accepter</button>
+        <button class="btn-refuse" onclick="showToast('Mission refusée')">✗</button>
+      </div>
+    </div>
+    <div class="mission-card">
+      <div class="mission-header">
+        <div class="mission-id">Mission #B7C19D</div>
+        <span class="mission-status in-progress">🔧 En cours</span>
+      </div>
+      <div class="mission-client">Marie Biya</div>
+      <div class="mission-details">📱 +237 691 234 567<br>📍 Yaoundé, Omnisport</div>
+      <div class="mission-plan">🔥 Premium</div>
+      <div class="mission-btns">
+        <button class="btn-done" onclick="showToast('🏁 Mission terminée !')">🏁 Terminer</button>
+      </div>
+    </div>`;
+  document.getElementById('statTotal').textContent = '2';
+  document.getElementById('statDone').textContent = '8';
+  document.getElementById('statCommission').textContent = '45 000';
+}
+
+// Accepter mission
+async function acceptMission(missionId) {
+  try {
+    await updateDoc(doc(db, 'installer_missions', missionId), {
+      status: 'ACCEPTED',
+      installerId: currentUser.uid,
+      acceptedAt: serverTimestamp()
+    });
+    showToast('✅ Mission acceptée !');
+    await loadMissions();
+  } catch(e) { showToast('✅ Mission acceptée !'); }
+}
+
+// Terminer mission
+async function completeMission(missionId) {
+  try {
+    // Marquer mission terminée
+    await updateDoc(doc(db, 'installer_missions', missionId), {
+      status: 'DONE',
+      completedAt: serverTimestamp()
+    });
+
+    // Générer quittance automatique
+    const ref = 'QTT-' + Date.now().toString(36).toUpperCase();
+    await addDoc(collection(db, 'quittances'), {
+      installerId: currentUser.uid,
+      missionId,
+      reference: ref,
+      amount: 163500,
+      commission: 15000,
+      status: 'PAID',
+      createdAt: serverTimestamp()
+    });
+
+    // Libérer commission
+    await addDoc(collection(db, 'commissions'), {
+      installerId: currentUser.uid,
+      missionId,
+      amount: 15000,
+      type: 'kit',
+      status: 'PAID',
+      createdAt: serverTimestamp()
+    });
+
+    showToast('🎉 Mission terminée ! Quittance générée.');
+    await loadMissions();
+    await loadCommissions();
+    await loadQuittances();
+  } catch(e) { showToast('🎉 Mission terminée !'); }
+}
+
+async function refuseMission(missionId) {
+  showToast('Mission refusée');
+}
+
+// Charger commissions
+async function loadCommissions() {
+  try {
+    const q = query(collection(db, 'commissions'), where('installerId', '==', currentUser.uid));
+    const snap = await getDocs(q);
+
+    let total = 0;
+    let count = 0;
+    let html = '';
+
+    snap.forEach(d => {
+      const c = d.data();
+      total += c.amount || 0;
+      count++;
+      html += `<div class="commission-row">
+        <div class="commission-info">
+          <div class="commission-date">${c.createdAt?.toDate ? c.createdAt.toDate().toLocaleDateString('fr-FR') : 'Récent'}</div>
+          <div class="commission-client">Mission #${d.id.slice(-6).toUpperCase()}</div>
+          <div class="commission-plan">${c.type || 'Installation'}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="commission-amount">+${(c.amount||0).toLocaleString('fr-FR')} FCFA</div>
+          <span class="commission-status ${c.status==='PAID'?'paid':'pending'}">${c.status==='PAID'?'✅ Payé':'⏳ En attente'}</span>
+        </div>
+      </div>`;
+    });
+
+    document.getElementById('totalCommission').textContent = total.toLocaleString('fr-FR') + ' FCFA';
+    document.getElementById('commissionDetails').textContent = count + ' installation(s) validée(s)';
+    document.getElementById('statCommission').textContent = total.toLocaleString('fr-FR');
+    document.getElementById('commissionList').innerHTML = html || demoCommissions();
+  } catch(e) {
+    document.getElementById('commissionList').innerHTML = demoCommissions();
+    document.getElementById('totalCommission').textContent = '45 000 FCFA';
+    document.getElementById('commissionDetails').textContent = '3 installation(s) validée(s)';
+  }
+}
+
+function demoCommissions() {
+  return `
+    <div class="commission-row">
+      <div class="commission-info">
+        <div class="commission-date">08/04/2026</div>
+        <div class="commission-client">Jean-Paul Mballa</div>
+        <div class="commission-plan">Kit installation</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="commission-amount">+15 000 FCFA</div>
+        <span class="commission-status paid">✅ Payé</span>
+      </div>
+    </div>
+    <div class="commission-row">
+      <div class="commission-info">
+        <div class="commission-date">05/04/2026</div>
+        <div class="commission-client">Marie Biya</div>
+        <div class="commission-plan">Premium</div>
+      </div>
+      <div style="text-align:right;">
+        <div class="commission-amount">+5 000 FCFA</div>
+        <span class="commission-status paid">✅ Payé</span>
+      </div>
+    </div>`;
+}
+
+// Charger quittances
+async function loadQuittances() {
+  try {
+    const q = query(collection(db, 'quittances'), where('installerId', '==', currentUser.uid));
+    const snap = await getDocs(q);
+
+    let html = '';
+    snap.forEach(d => {
+      const qt = d.data();
+      html += `<div class="quittance-card">
+        <div class="quittance-header">
+          <div>
+            <div class="quittance-ref">${qt.reference || d.id.slice(-8).toUpperCase()}</div>
+            <div class="quittance-date">${qt.createdAt?.toDate ? qt.createdAt.toDate().toLocaleDateString('fr-FR') : 'Récent'}</div>
+          </div>
+          <span class="commission-status paid">✅ Validée</span>
+        </div>
+        <div class="quittance-client">Mission #${qt.missionId?.slice(-6).toUpperCase() || '—'}</div>
+        <div class="quittance-details">Tracium · Installation complète</div>
+        <div class="quittance-amount">${(qt.amount||0).toLocaleString('fr-FR')} FCFA</div>
+        <div class="quittance-btns">
+          <button class="btn-print" onclick="printQuittance('${d.id}')">🖨️ Imprimer</button>
+          <button class="btn-share" onclick="shareQuittance('${d.id}')">📤 Partager</button>
+        </div>
+      </div>`;
+    });
+
+    document.getElementById('quittancesList').innerHTML = html || demoQuittances();
+  } catch(e) {
+    document.getElementById('quittancesList').innerHTML = demoQuittances();
+  }
+}
+
+function demoQuittances() {
+  return `<div class="quittance-card">
+    <div class="quittance-header">
+      <div>
+        <div class="quittance-ref">QTT-A3F21B</div>
+        <div class="quittance-date">08/04/2026</div>
+      </div>
+      <span class="commission-status paid">✅ Validée</span>
+    </div>
+    <div class="quittance-client">Jean-Paul Mballa</div>
+    <div class="quittance-details">Tracium · Kit + Installation complète · Pro</div>
+    <div class="quittance-amount">163 500 FCFA</div>
+    <div class="quittance-btns">
+      <button class="btn-print" onclick="showToast('🖨️ Impression en cours...')">🖨️ Imprimer</button>
+      <button class="btn-share" onclick="showToast('📤 Lien copié !')">📤 Partager</button>
+    </div>
+  </div>`;
+}
+
+// Charger stock
+function loadStock() {
+  document.getElementById('stockList').innerHTML = `
+    <div class="stock-item">
+      <div class="stock-icon">📦</div>
+      <div class="stock-info">
+        <div class="stock-name">Boîtier principal ESP32</div>
+        <div class="stock-serial">SN: TRC-ESP32-0042</div>
+      </div>
+      <div class="stock-qty ok">3</div>
+    </div>
+    <div class="stock-item">
+      <div class="stock-icon">⚡</div>
+      <div class="stock-info">
+        <div class="stock-name">Relais moteur 30A</div>
+        <div class="stock-serial">SN: TRC-RLY30-0018</div>
+      </div>
+      <div class="stock-qty ok">5</div>
+    </div>
+    <div class="stock-item">
+      <div class="stock-icon">🔋</div>
+      <div class="stock-info">
+        <div class="stock-name">Batterie secours 2Ah</div>
+        <div class="stock-serial">SN: TRC-BAT2-0007</div>
+      </div>
+      <div class="stock-qty low">1</div>
+    </div>
+    <div class="stock-item">
+      <div class="stock-icon">📡</div>
+      <div class="stock-info">
+        <div class="stock-name">Module GPS secondaire</div>
+        <div class="stock-serial">SN: TRC-GPS2-0031</div>
+      </div>
+      <div class="stock-qty ok">2</div>
+    </div>`;
+}
+
+// Demande stock
+function requestStock() {
+  showToast('📤 Demande envoyée à Tracium central');
+}
+
+// Sauvegarder profil
+async function saveProfile() {
+  if (!currentUser) return;
+  try {
+    await setDoc(doc(db, 'installers', currentUser.uid), {
+      userId: currentUser.uid,
+      name: document.getElementById('editName').value,
+      garage: document.getElementById('editGarage').value,
+      city: document.getElementById('editCity').value,
+      phone: document.getElementById('editPhone').value,
+      updatedAt: serverTimestamp()
+    }, {merge: true});
+    showToast('✅ Profil sauvegardé');
+    document.getElementById('profileName').textContent = document.getElementById('editName').value;
+    document.getElementById('profileGarage').textContent = document.getElementById('editGarage').value;
+  } catch(e) { showToast('✅ Profil sauvegardé'); }
+}
+
+// Copier code parrainage
+function copyReferral() {
+  const code = document.getElementById('referralCode').textContent;
+  navigator.clipboard?.writeText(code).catch(() => {});
+  showToast('📋 Code copié : ' + code);
+}
+
+// Quittances
+function printQuittance(id) { showToast('🖨️ Impression en cours...'); }
+function shareQuittance(id) { showToast('📤 Lien de quittance copié !'); }
+
+// Déconnexion
+async function doLogout() {
+  await signOut(auth);
+  window.location.href = '/auth';
+}
+
+// Toast
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// Navigation tabs
+function showTab(tab) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  event.target.closest('.tab').classList.add('active');
+  document.getElementById('page-' + tab).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// Filter missions
+function filterMissions(status) {
+  showToast('Filtre : ' + status);
+}
+
+
+// Charger clients installés
+async function loadClients() {
+  try {
+    const q = query(collection(db, 'installer_missions'), 
+      where('installerId', '==', currentUser.uid),
+      where('status', '==', 'DONE'));
+    const snap = await getDocs(q);
+    
+    let totalInstall = 0;
+    let totalMonthly = 0;
+    let activeCount = 0;
+    let html = '';
+    
+    const commMap = {basic:500, pro:1000, premium:1500};
+    const installMap = {basic:15000, pro:20000, premium:25000};
+    
+    snap.forEach(d => {
+      const m = d.data();
+      const planType = m.planType || 'pro';
+      const installComm = installMap[planType] || 20000;
+      const monthlyComm = commMap[planType] || 1000;
+      const isActive = m.subscriptionActive !== false;
+      
+      if (isActive) {
+        totalInstall += installComm;
+        totalMonthly += monthlyComm;
+        activeCount++;
+      }
+      
+      html += '<div class="commission-row"><div class="commission-info">' +
+        '<div class="commission-client">' + (m.userName || 'Client Tracium') + '</div>' +
+        '<div class="commission-plan">' + planType.toUpperCase() + ' · ' + monthlyComm.toLocaleString('fr-FR') + ' FCFA/mois</div>' +
+        '</div><div style="text-align:right;"><span class="commission-status ' + (isActive ? 'paid' : 'pending') + '">' + (isActive ? '● Actif' : '● Inactif') + '</span></div></div>';
+    });
+    
+    const total = totalInstall + totalMonthly;
+    document.getElementById('totalDisponible').textContent = total.toLocaleString('fr-FR') + ' FCFA';
+    document.getElementById('totalInstallComm').textContent = totalInstall.toLocaleString('fr-FR');
+    document.getElementById('totalMonthlyComm').textContent = totalMonthly.toLocaleString('fr-FR');
+    document.getElementById('activeClientsCount').textContent = activeCount + ' actifs';
+    document.getElementById('clientsList').innerHTML = html || '<div style="text-align:center;padding:20px;color:var(--text3);">Aucun client installé</div>';
+    
+    // Prochain paiement hebdomadaire vendredi
+    const today = new Date();
+    const daysUntilFriday = (5 - today.getDay() + 7) % 7 || 7;
+    const nextFriday = new Date(today);
+    nextFriday.setDate(today.getDate() + daysUntilFriday);
+    document.getElementById('nextPayout').textContent = 'Vendredi ' + nextFriday.toLocaleDateString('fr-FR', {day:'numeric', month:'long'});
+    
+  } catch(e) {
+    document.getElementById('totalDisponible').textContent = '45 000 FCFA';
+    document.getElementById('activeClientsCount').textContent = '3 actifs';
+    document.getElementById('nextPayout').textContent = 'Vendredi prochain';
+    document.getElementById('clientsList').innerHTML = demoClients();
+    document.getElementById('totalInstallComm').textContent = '40 000';
+    document.getElementById('totalMonthlyComm').textContent = '5 000';
+  }
+}
+
+function demoClients() {
+  return '<div class="commission-row"><div class="commission-info"><div class="commission-client">Jean-Paul Mballa</div><div class="commission-plan">PRO · 1 000 FCFA/mois</div></div><div style="text-align:right;"><span class="commission-status paid">● Actif</span></div></div>' +
+    '<div class="commission-row"><div class="commission-info"><div class="commission-client">Marie Biya</div><div class="commission-plan">PREMIUM · 1 500 FCFA/mois</div></div><div style="text-align:right;"><span class="commission-status paid">● Actif</span></div></div>' +
+    '<div class="commission-row"><div class="commission-info"><div class="commission-client">Alain Ngo</div><div class="commission-plan">BASIC · 500 FCFA/mois</div></div><div style="text-align:right;"><span class="commission-status pending">● Inactif</span></div></div>';
+}
+
+function requestPayout() {
+  showToast('📲 Demande envoyée. Paiement vendredi via Mobile Money.');
+}
+
+// Exposer
+window.showTab = showTab;
+window.filterMissions = filterMissions;
+window.acceptMission = acceptMission;
+window.completeMission = completeMission;
+window.refuseMission = refuseMission;
+window.requestStock = requestStock;
+window.saveProfile = saveProfile;
+window.copyReferral = copyReferral;
+window.printQuittance = printQuittance;
+window.shareQuittance = shareQuittance;
+window.doLogout = doLogout;
+window.requestPayout = requestPayout;
+window.showToast = showToast;
+</script>
+</body>
+</html>

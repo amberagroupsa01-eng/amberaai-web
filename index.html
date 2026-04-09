@@ -680,64 +680,93 @@ footer{
 <section id="tarifs">
   <div style="text-align:center;">
     <div class="section-label" style="text-align:center;">Tarifs</div>
-    <h2 class="section-title" style="text-align:center;">Transparent et <em>adapté au Cameroun</em></h2>
-    <p class="section-sub" style="margin:0 auto 48px;text-align:center;">Conçu pour les réalités économiques du Cameroun.</p>
+    <h2 class="section-title" style="text-align:center;">Simple et <em>adapté au Cameroun</em></h2>
+    <p class="section-sub" style="margin:0 auto 16px;text-align:center;">Abonnement mensuel — activé automatiquement après paiement Mobile Money.</p>
+    <div style="display:inline-block;background:var(--blue-light);border:1px solid rgba(0,71,204,0.2);border-radius:50px;padding:8px 20px;font-size:13px;color:var(--blue);margin-bottom:48px;font-weight:600;">
+      🔧 Kit d'installation : 131 000 – 196 000 FCFA · Paiement unique
+    </div>
   </div>
-  <div class="pricing-grid">
+
+  <div class="pricing-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
+
     <div class="price-card">
-      <div class="price-name">Tracium Connect V1</div>
-      <div class="price-target">Particuliers · Taxis · Véhicules partagés</div>
-      <div class="price-amount">13 000</div>
+      <div class="price-name">🔰 Basic</div>
+      <div class="price-target">Particuliers · Taxis</div>
+      <div class="price-amount">3 000</div>
       <div class="price-currency">FCFA / mois</div>
       <ul class="price-features">
-        <li>🔴 Bouton urgence One-Click</li>
-        <li>📡 Suivi GPS temps réel</li>
-        <li>🔒 Anti-redémarrage automatique</li>
-        <li>🚨 Alertes contacts d'urgence</li>
-        <li>📱 Mode hors réseau</li>
-        <li>🔑 PIN multi-niveaux</li>
+        <li>📍 Localisation GPS</li>
+        <li>📊 Historique trajets</li>
+        <li>🔔 Alertes simples</li>
       </ul>
-      <button class="price-btn secondary" onclick="window.location.href='/auth'">Commencer</button>
+      <button class="price-btn secondary" onclick="window.location.href='/payment?type=basic'">Commencer</button>
     </div>
+
     <div class="price-card featured">
-      <div class="price-popular">V2 · Intelligence Artificielle</div>
-      <div class="price-name">Tracium Premium IA</div>
-      <div class="price-target">Flottes · Entreprises · Assureurs</div>
-      <div class="price-amount">49 000</div>
+      <div class="price-popular">⚡ Recommandé</div>
+      <div class="price-name">Pro</div>
+      <div class="price-target">Familles · Entrepreneurs</div>
+      <div class="price-amount">5 000</div>
       <div class="price-currency">FCFA / mois</div>
       <ul class="price-features">
-        <li>✅ Tout Tracium Connect V1</li>
-        <li>🧠 Détection prédictive IA</li>
-        <li>📊 Score de risque automatique</li>
-        <li>🚔 Intervention police automatique</li>
-        <li>📁 Historique légal complet</li>
-        <li>📈 Rapport mensuel détaillé</li>
+        <li>✅ Tout Basic</li>
+        <li>🔒 Blocage moteur à distance</li>
+        <li>🚨 Alertes sabotage</li>
+        <li>📡 Monitoring 5 couches</li>
       </ul>
-      <button class="price-btn primary" onclick="window.location.href='/auth'">Choisir Premium</button>
+      <button class="price-btn primary" onclick="window.location.href='/payment?type=pro'">Choisir Pro</button>
     </div>
+
     <div class="price-card">
-      <div class="price-name">Tracium B2B</div>
-      <div class="price-target">Assureurs · Flottes · Garagistes</div>
+      <div class="price-name">🔥 Premium</div>
+      <div class="price-target">Flottes · Institutions</div>
+      <div class="price-amount">10 000</div>
+      <div class="price-currency">FCFA / mois</div>
+      <ul class="price-features">
+        <li>✅ Tout Pro</li>
+        <li>🧠 Surveillance avancée IA</li>
+        <li>⚡ Alertes prioritaires</li>
+        <li>🎧 Support rapide 24h/7j</li>
+      </ul>
+      <button class="price-btn secondary" onclick="window.location.href='/payment?type=premium'">Choisir Premium</button>
+    </div>
+
+    <div class="price-card">
+      <div class="price-name">🚛 Flotte</div>
+      <div class="price-target">Entreprises · Assureurs</div>
       <div class="price-amount">Sur</div>
       <div class="price-currency">devis personnalisé</div>
       <ul class="price-features">
         <li>🏢 Véhicules illimités</li>
-        <li>🔌 API Police / Institutions</li>
-        <li>📊 Dashboard admin dédié</li>
-        <li>💰 Commission par véhicule</li>
-        <li>🤝 Account manager dédié</li>
-        <li>📋 Intégration système existant</li>
+        <li>📊 Dashboard entreprise</li>
+        <li>📋 Rapports mensuels</li>
+        <li>🔌 API police / institutions</li>
       </ul>
       <button class="price-btn secondary" onclick="window.location.href='mailto:contact@tracium.app'">Nous contacter</button>
     </div>
+
   </div>
-  <div class="kit-banner">
-    <div class="kit-text">
-      <h3>🔧 Kit Tracium — Installation complète</h3>
-      <p>Module GPS/GSM + relais anti-redémarrage + installation par technicien certifié</p>
+
+  <!-- Suspension progressive -->
+  <div style="max-width:700px;margin:40px auto 0;background:#FFF7F0;border:1px solid rgba(255,140,0,0.3);border-radius:16px;padding:28px;">
+    <div style="font-size:13px;font-weight:700;letter-spacing:1px;color:#FF8C00;margin-bottom:16px;text-transform:uppercase;">⚠ Politique de non-paiement</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;">
+      <div style="text-align:center;">
+        <div style="font-size:24px;font-weight:800;color:#FF8C00;">J+7</div>
+        <div style="font-size:13px;color:#4A5568;margin-top:4px;">Blocage moteur désactivé</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:24px;font-weight:800;color:#E86000;">J+30</div>
+        <div style="font-size:13px;color:#4A5568;margin-top:4px;">GPS uniquement</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:24px;font-weight:800;color:#E8001C;">J+60</div>
+        <div style="font-size:13px;color:#4A5568;margin-top:4px;">Suspension complète</div>
+      </div>
     </div>
-    <div class="kit-price">131 000 – 196 000 FCFA</div>
+    <div style="margin-top:16px;font-size:13px;color:#4A5568;text-align:center;">⚠ La sécurité minimale reste toujours active — nous ne compromettons jamais votre sécurité.</div>
   </div>
+
 </section>
 
 <!-- TÉMOIGNAGES -->

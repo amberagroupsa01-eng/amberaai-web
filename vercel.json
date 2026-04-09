@@ -11,6 +11,7 @@
     { "src": "/dashboard", "dest": "/dashboard.html" },
     { "src": "/register", "dest": "/register.html" },
     { "src": "/payment", "dest": "/payment.html" },
+    { "src": "/installer", "dest": "/installer.html" },
     { "src": "/shop", "dest": "/shop.html" },
     { "src": "/parrainage", "dest": "/parrainage.html" },
     { "src": "/notifications", "dest": "/notifications.html" },

@@ -197,6 +197,13 @@ body{background:#111;display:flex;align-items:center;justify-content:center;min-
 .btn-loading{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,0,0,0.3);border-top-color:#0a0a14;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-right:6px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 </style>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(r => r.unregister());
+  });
+}
+</script>
 </head>
 <body>
 <div class="phone">
@@ -533,7 +540,7 @@ body{background:#111;display:flex;align-items:center;justify-content:center;min-
 <script type="module">
 // ══ FIREBASE CONFIG ══
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -549,6 +556,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentUser = null;
+setPersistence(auth, browserLocalPersistence).catch(()=>{});
 onAuthStateChanged(auth, (user) => {
   if (!user) { window.location.href = '/auth'; }
   else { currentUser = user; }

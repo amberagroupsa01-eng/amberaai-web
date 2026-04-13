@@ -270,6 +270,13 @@ body{background:var(--dark);color:var(--text);font-family:'Rajdhani',sans-serif;
 }
 .filter-btn:hover{border-color:rgba(255,180,50,0.3);color:var(--gold);}
 </style>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(r => r.unregister());
+  });
+}
+</script>
 </head>
 <body>
 
@@ -714,7 +721,7 @@ body{background:var(--dark);color:var(--text);font-family:'Rajdhani',sans-serif;
 <script type="module">
 // ══ FIREBASE AUTH CHECK ══
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence, signOut } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -731,6 +738,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const typeIcons = { 'Moto':'🏍️', 'Voiture':'🚗', 'Camion':'🚚', 'Téléphone':'📱', 'Ordinateur':'💻', 'Autre':'📦' };
 
+setPersistence(auth, browserLocalPersistence).catch(()=>{});
 onAuthStateChanged(auth, (user) => {
   if (user) {
     const name = user.displayName || user.email.split('@')[0];

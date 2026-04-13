@@ -190,6 +190,13 @@ body{
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 .msg{animation:fadeUp 0.3s ease;}
 </style>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(r => r.unregister());
+  });
+}
+</script>
 </head>
 <body>
 <div class="phone">

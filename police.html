@@ -284,6 +284,13 @@ body{background:#111;display:flex;align-items:center;justify-content:center;min-
 .sr-empty{padding:18px;text-align:center;font-size:12px;color:var(--muted);}
 
 </style>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(r => r.unregister());
+  });
+}
+</script>
 </head>
 <body>
 <div class="phone">

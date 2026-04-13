@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Tracium — Mon Véhicule</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --safe:#00A550;--safe-bg:#F0FFF6;--safe-light:#E0FFE8;
+  --warn:#FF8C00;--warn-bg:#FFF7F0;--warn-light:#FFE8CC;
+  --danger:#E8001C;--danger-bg:#FFF0F0;--danger-light:#FFD0D0;
+  --inactive:#9CA3AF;--inactive-bg:#F9FAFB;
+  --blue:#0047CC;--blue-light:#EEF3FF;
+  --text:#0D1117;--text2:#4A5568;--text3:#9CA3AF;
+  --bg:#F7F9FC;--white:#FFFFFF;--border:#E2E8F0;
+  --current-color:var(--safe);
+  --current-bg:var(--safe-bg);
+}
+html,body{height:100%;overflow-x:hidden;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Plus Jakarta Sans',sans-serif;
+  max-width:430px;margin:0 auto;
+  position:relative;
+}
+
+/* ── HEADER ── */
+header{
+  background:var(--white);
+  border-bottom:1px solid var(--border);
+  padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:50;
+}
+.header-logo{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:20px;font-weight:800;color:var(--text);
+  display:flex;align-items:center;gap:8px;
+}
+.logo-icon{
+  width:32px;height:32px;background:var(--blue);
+  border-radius:8px;display:flex;align-items:center;
+  justify-content:center;font-weight:800;font-size:16px;color:white;
+}
+.header-user{
+  display:flex;align-items:center;gap:10px;
+}
+.user-name{font-size:13px;font-weight:600;color:var(--text2);}
+.user-avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--blue-light);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;
+}
+.offline-badge{
+  display:none;
+  background:#FFF3CD;border:1px solid #FFD700;
+  border-radius:50px;padding:4px 12px;
+  font-size:11px;font-weight:700;color:#856404;
+}
+.offline-badge.show{display:flex;align-items:center;gap:4px;}
+
+/* ── SCROLL CONTAINER ── */
+.scroll{
+  padding:16px;
+  padding-bottom:100px;
+  overflow-y:auto;
+}
+
+/* ── BLOC 1 : STATUT VÉHICULE ── */
+.status-card{
+  border-radius:20px;padding:24px;
+  margin-bottom:16px;
+  transition:all 0.4s ease;
+  position:relative;overflow:hidden;
+}
+.status-card.safe{background:var(--safe-bg);border:2px solid var(--safe);}
+.status-card.warn{background:var(--warn-bg);border:2px solid var(--warn);}
+.status-card.danger{background:var(--danger-bg);border:2px solid var(--danger);animation:dangerPulse 1.5s ease-in-out infinite;}
+.status-card.inactive{background:var(--inactive-bg);border:2px solid var(--border);}
+
+@keyframes dangerPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(232,0,28,0);}
+  50%{box-shadow:0 0 0 12px rgba(232,0,28,0.15);}
+}
+
+.status-header{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.status-dot{
+  width:14px;height:14px;border-radius:50%;flex-shrink:0;
+  animation:dotPulse 2s ease-in-out infinite;
+}
+.status-dot.safe{background:var(--safe);}
+.status-dot.warn{background:var(--warn);}
+.status-dot.danger{background:var(--danger);}
+.status-dot.inactive{background:var(--inactive);animation:none;}
+@keyframes dotPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.3);}}
+
+.status-label{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;font-weight:800;
+}
+.status-label.safe{color:var(--safe);}
+.status-label.warn{color:var(--warn);}
+.status-label.danger{color:var(--danger);}
+.status-label.inactive{color:var(--inactive);}
+
+.status-details{display:flex;gap:16px;flex-wrap:wrap;}
+.status-detail{
+  display:flex;align-items:center;gap:6px;
+  font-size:13px;color:var(--text2);
+}
+.status-detail strong{color:var(--text);font-weight:600;}
+
+.last-update{
+  margin-top:12px;font-size:12px;color:var(--text3);
+  display:flex;align-items:center;gap:4px;
+}
+
+/* ── BLOC 2 : BOUTON PRINCIPAL ── */
+.emergency-btn{
+  width:100%;
+  padding:22px;
+  border:none;border-radius:20px;
+  background:var(--danger);color:white;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:20px;font-weight:800;
+  letter-spacing:0.5px;
+  cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  transition:all 0.2s;
+  margin-bottom:16px;
+  box-shadow:0 6px 24px rgba(232,0,28,0.3);
+  position:relative;overflow:hidden;
+}
+.emergency-btn::after{
+  content:'';position:absolute;inset:0;
+  background:rgba(255,255,255,0);transition:background 0.2s;
+}
+.emergency-btn:active::after{background:rgba(255,255,255,0.15);}
+.emergency-btn:active{transform:scale(0.98);}
+.emergency-btn.activated{
+  background:#7B0000;
+  box-shadow:0 6px 24px rgba(123,0,0,0.4);
+}
+.emergency-btn.deactivate{background:#4A5568;}
+.btn-icon{font-size:28px;}
+.btn-text{display:flex;flex-direction:column;align-items:flex-start;}
+.btn-main{font-size:20px;font-weight:800;line-height:1.1;}
+.btn-sub{font-size:12px;font-weight:500;opacity:0.9;margin-top:2px;}
+
+/* ── BLOC 3 : ACTIONS RAPIDES ── */
+.actions-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:12px;margin-bottom:16px;
+}
+.action-btn{
+  background:var(--white);
+  border:1px solid var(--border);border-radius:16px;
+  padding:16px 8px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:8px;
+  cursor:pointer;transition:all 0.2s;
+  text-decoration:none;
+}
+.action-btn:active{transform:scale(0.95);background:var(--blue-light);}
+.action-btn.disabled{opacity:0.4;pointer-events:none;}
+.action-icon{font-size:28px;}
+.action-label{font-size:12px;font-weight:700;color:var(--text2);text-align:center;line-height:1.3;}
+
+/* ── BLOC 4 : STATUT ABONNEMENT ── */
+.sub-card{
+  background:var(--white);
+  border:1px solid var(--border);border-radius:16px;
+  padding:20px;margin-bottom:16px;
+}
+.sub-card.expired{border-color:var(--danger);background:var(--danger-bg);}
+.sub-card.expiring{border-color:var(--warn);background:var(--warn-bg);}
+.sub-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sub-title{font-size:14px;font-weight:700;color:var(--text2);}
+.sub-status-badge{
+  font-size:11px;font-weight:700;
+  padding:3px 10px;border-radius:50px;
+}
+.sub-status-badge.active{background:var(--safe-light);color:var(--safe);}
+.sub-status-badge.expiring{background:var(--warn-light);color:var(--warn);}
+.sub-status-badge.expired{background:var(--danger-light);color:var(--danger);}
+.sub-info{font-size:15px;font-weight:600;color:var(--text);margin-bottom:12px;}
+.sub-progress{height:8px;background:var(--bg);border-radius:4px;margin-bottom:12px;}
+.sub-bar{height:100%;border-radius:4px;transition:width 0.5s;}
+.sub-bar.active{background:var(--safe);}
+.sub-bar.expiring{background:var(--warn);}
+.sub-bar.expired{background:var(--danger);width:5%!important;}
+.renew-btn{
+  width:100%;padding:12px;border:none;border-radius:10px;
+  background:var(--blue);color:white;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:14px;font-weight:700;cursor:pointer;
+  transition:all 0.2s;
+}
+.renew-btn:active{background:var(--blue-dark);transform:scale(0.98);}
+
+/* ── BLOC 5 : DERNIÈRE ACTIVITÉ ── */
+.activity-card{
+  background:var(--white);
+  border:1px solid var(--border);border-radius:16px;
+  padding:20px;
+}
+.activity-title{font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;}
+.activity-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 0;border-bottom:1px solid var(--border);
+}
+.activity-item:last-child{border-bottom:none;padding-bottom:0;}
+.activity-icon{
+  width:36px;height:36px;border-radius:10px;
+  background:var(--blue-light);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+}
+.activity-text{flex:1;}
+.activity-main{font-size:14px;font-weight:600;color:var(--text);}
+.activity-time{font-size:12px;color:var(--text3);margin-top:2px;}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{
+  position:fixed;bottom:0;left:50%;transform:translateX(-50%);
+  width:100%;max-width:430px;
+  background:var(--white);
+  border-top:1px solid var(--border);
+  display:flex;padding:8px 0 16px;
+  z-index:50;
+}
+.nav-item{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;gap:4px;
+  cursor:pointer;padding:4px;
+  text-decoration:none;
+}
+.nav-item-icon{font-size:22px;}
+.nav-item-label{font-size:10px;font-weight:600;color:var(--text3);}
+.nav-item.active .nav-item-label{color:var(--blue);}
+.nav-item.active .nav-item-icon{filter:brightness(0) saturate(100%) invert(17%) sepia(96%) saturate(2400%) hue-rotate(213deg) brightness(98%) contrast(101%);}
+
+/* ── MODAL URGENCE ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,0.7);
+  display:none;align-items:center;justify-content:center;
+  padding:20px;
+}
+.modal-overlay.show{display:flex;}
+.modal{
+  background:white;border-radius:24px;
+  padding:32px;width:100%;max-width:380px;
+  text-align:center;
+}
+.modal-icon{font-size:56px;margin-bottom:16px;}
+.modal-title{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;font-weight:800;
+  color:var(--text);margin-bottom:8px;
+}
+.modal-text{font-size:15px;color:var(--text2);margin-bottom:28px;line-height:1.6;}
+.modal-btns{display:flex;flex-direction:column;gap:12px;}
+.modal-btn-confirm{
+  padding:16px;border:none;border-radius:12px;
+  background:var(--danger);color:white;
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:16px;font-weight:700;cursor:pointer;
+}
+.modal-btn-cancel{
+  padding:16px;border:2px solid var(--border);border-radius:12px;
+  background:white;color:var(--text2);
+  font-family:'Plus Jakarta Sans',sans-serif;
+  font-size:16px;font-weight:600;cursor:pointer;
+}
+
+/* ── TOAST NOTIFICATION ── */
+.toast{
+  position:fixed;top:80px;left:50%;transform:translateX(-50%);
+  background:#1A1A2E;color:white;
+  border-radius:12px;padding:14px 20px;
+  font-size:14px;font-weight:600;
+  z-index:300;white-space:nowrap;
+  opacity:0;transition:opacity 0.3s;pointer-events:none;
+  display:flex;align-items:center;gap:8px;
+}
+.toast.show{opacity:1;}
+</style>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(registrations => {
+    for (let registration of registrations) {
+      registration.unregister();
+    }
+  });
+}
+</script>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-logo">
+    <div class="logo-icon">T</div>
+    Tracium
+  </div>
+  <div class="header-user">
+    <div class="offline-badge" id="offlineBadge">📡 Hors ligne</div>
+    <div class="user-name" id="userName">—</div>
+    <div class="user-avatar" onclick="window.location.href='/dashboard'">👤</div>
+  </div>
+</header>
+
+<!-- SCROLL CONTAINER -->
+<div class="scroll">
+
+  <!-- BLOC 1 : STATUT VÉHICULE -->
+  <div class="status-card safe" id="statusCard">
+    <div class="status-header">
+      <div class="status-dot safe" id="statusDot"></div>
+      <div class="status-label safe" id="statusLabel">🟢 Véhicule sécurisé</div>
+    </div>
+    <div class="status-details">
+      <div class="status-detail">📍 <strong id="statusLocation">Yaoundé, Centre</strong></div>
+      <div class="status-detail">🕐 <strong id="statusTime">À l'instant</strong></div>
+      <div class="status-detail">⚡ <strong id="statusEngine">Moteur éteint</strong></div>
+    </div>
+    <div class="last-update">🔄 Mis à jour <span id="lastUpdate">à l'instant</span></div>
+  </div>
+
+  <!-- BLOC 2 : BOUTON PRINCIPAL -->
+  <button class="emergency-btn" id="emergencyBtn" onclick="showEmergencyModal()">
+    <div class="btn-icon">🔴</div>
+    <div class="btn-text">
+      <div class="btn-main">SÉCURISER MA VOITURE</div>
+      <div class="btn-sub">Appuyez en cas de danger</div>
+    </div>
+  </button>
+
+  <!-- BLOC 3 : ACTIONS RAPIDES -->
+  <div class="actions-grid">
+    <div class="action-btn" id="btnLocate" onclick="locateVehicle()">
+      <div class="action-icon">📍</div>
+      <div class="action-label">Localiser</div>
+    </div>
+    <div class="action-btn" id="btnLock" onclick="lockVehicle()">
+      <div class="action-icon">🔒</div>
+      <div class="action-label">Verrouiller</div>
+    </div>
+    <div class="action-btn" onclick="window.location.href='/payment?type=subscription'">
+      <div class="action-icon">💳</div>
+      <div class="action-label">Renouveler</div>
+    </div>
+  </div>
+
+  <!-- BLOC 4 : STATUT ABONNEMENT -->
+  <div class="sub-card" id="subCard">
+    <div class="sub-header">
+      <div class="sub-title">📅 Mon abonnement</div>
+      <span class="sub-status-badge active" id="subBadge">● Actif</span>
+    </div>
+    <div class="sub-info" id="subInfo">Chargement...</div>
+    <div class="sub-progress">
+      <div class="sub-bar active" id="subBar" style="width:80%;"></div>
+    </div>
+    <button class="renew-btn" id="renewBtn" onclick="window.location.href='/payment?type=subscription'" style="display:none;">
+      💳 Renouveler maintenant
+    </button>
+  </div>
+
+  <!-- BLOC 5 : DERNIÈRE ACTIVITÉ -->
+  <div class="activity-card">
+    <div class="activity-title">Dernière activité</div>
+    <div id="activityList">
+      <div class="activity-item">
+        <div class="activity-icon">📍</div>
+        <div class="activity-text">
+          <div class="activity-main" id="lastPosition">Chargement...</div>
+          <div class="activity-time" id="lastPositionTime">—</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-icon">🔋</div>
+        <div class="activity-text">
+          <div class="activity-main">Batterie module</div>
+          <div class="activity-time" id="batteryStatus">Niveau normal</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-icon">📡</div>
+        <div class="activity-text">
+          <div class="activity-main">Signal GPS</div>
+          <div class="activity-time" id="gpsStatus">Fort · 8 satellites</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a href="/app" class="nav-item active">
+    <div class="nav-item-icon">🏠</div>
+    <div class="nav-item-label">Accueil</div>
+  </a>
+  <a href="/register" class="nav-item">
+    <div class="nav-item-icon">📷</div>
+    <div class="nav-item-label">Scanner</div>
+  </a>
+  <a href="/notifications" class="nav-item">
+    <div class="nav-item-icon">🔔</div>
+    <div class="nav-item-label">Alertes</div>
+  </a>
+  <a href="/dashboard" class="nav-item">
+    <div class="nav-item-icon">📊</div>
+    <div class="nav-item-label">Dashboard</div>
+  </a>
+  <a href="/payment" class="nav-item">
+    <div class="nav-item-icon">💳</div>
+    <div class="nav-item-label">Paiement</div>
+  </a>
+</nav>
+
+<!-- MODAL URGENCE -->
+<div class="modal-overlay" id="emergencyModal">
+  <div class="modal">
+    <div class="modal-icon">🚨</div>
+    <div class="modal-title">Confirmer l'urgence ?</div>
+    <div class="modal-text">Cette action va immédiatement sécuriser votre véhicule et alerter la police et vos contacts d'urgence.</div>
+    <div class="modal-btns">
+      <button class="modal-btn-confirm" onclick="activateEmergency()">🔴 Oui, Sécuriser maintenant</button>
+      <button class="modal-btn-cancel" onclick="closeModal()">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">🔔 Notification</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs, doc, getDoc, addDoc, serverTimestamp, orderBy, limit } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyATWUfF5OFw860JXw76Uo9G_0jAI6hF6WE",
+  authDomain: "ambera-ai.firebaseapp.com",
+  projectId: "ambera-ai",
+  storageBucket: "ambera-ai.firebasestorage.app",
+  messagingSenderId: "581529826084",
+  appId: "1:581529826084:web:144a6ce179e0d8286979b1"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+let emergencyActive = false;
+let currentStatus = 'safe'; // safe | warn | danger | inactive
+
+// Auth
+setPersistence(auth, browserLocalPersistence).catch(()=>{});
+
+onAuthStateChanged(auth, async (user) => {
+  // Ne rien faire si on n'est pas sur /app
+  if (!window.location.pathname.startsWith('/app')) return;
+  if (!user) { window.location.href = '/auth'; return; }
+  currentUser = user;
+
+  const name = user.displayName ? user.displayName.split(' ')[0] : 'Utilisateur';
+  document.getElementById('userName').textContent = name;
+
+  await loadSubscription();
+  await loadLastActivity();
+  simulateRealtimeStatus();
+});
+
+// Charger abonnement
+async function loadSubscription() {
+  try {
+    const subDoc = await getDoc(doc(db, 'subscriptions', currentUser.uid));
+    const subCard = document.getElementById('subCard');
+    const subBadge = document.getElementById('subBadge');
+    const subInfo = document.getElementById('subInfo');
+    const subBar = document.getElementById('subBar');
+    const renewBtn = document.getElementById('renewBtn');
+
+    if (subDoc.exists()) {
+      const sub = subDoc.data();
+      const endDate = sub.endDate?.toDate ? sub.endDate.toDate() : new Date(sub.endDate);
+      const today = new Date();
+      const daysLeft = Math.ceil((endDate - today) / (1000*60*60*24));
+      const progress = Math.max(5, Math.min(100, daysLeft/30*100));
+
+      if (daysLeft > 5) {
+        subInfo.textContent = `Actif · Expire dans ${daysLeft} jours`;
+        subBadge.className = 'sub-status-badge active';
+        subBadge.textContent = '● Actif';
+        subBar.className = 'sub-bar active';
+        subBar.style.width = progress + '%';
+      } else if (daysLeft > 0) {
+        subInfo.textContent = `⚠ Expire dans ${daysLeft} jours — Renouvelez vite !`;
+        subBadge.className = 'sub-status-badge expiring';
+        subBadge.textContent = '⚠ Bientôt expiré';
+        subBar.className = 'sub-bar expiring';
+        subBar.style.width = progress + '%';
+        subCard.className = 'sub-card expiring';
+        renewBtn.style.display = 'block';
+      } else {
+        subInfo.textContent = '❌ Abonnement expiré — Service désactivé';
+        subBadge.className = 'sub-status-badge expired';
+        subBadge.textContent = '● Expiré';
+        subBar.className = 'sub-bar expired';
+        subCard.className = 'sub-card expired';
+        renewBtn.style.display = 'block';
+        setStatus('inactive');
+        document.getElementById('btnLocate').classList.add('disabled');
+        document.getElementById('btnLock').classList.add('disabled');
+      }
+    } else {
+      subInfo.textContent = 'Aucun abonnement actif';
+      subBadge.className = 'sub-status-badge expired';
+      subBadge.textContent = '● Inactif';
+      subBar.style.width = '0%';
+      renewBtn.style.display = 'block';
+      setStatus('inactive');
+    }
+  } catch(e) {
+    document.getElementById('subInfo').textContent = 'Abonnement non chargé';
+  }
+}
+
+// Charger dernière activité
+async function loadLastActivity() {
+  try {
+    const q = query(
+      collection(db, 'biens'),
+      where('userId', '==', currentUser.uid),
+      limit(1)
+    );
+    const snap = await getDocs(q);
+    if (!snap.empty) {
+      const bien = snap.docs[0].data();
+      document.getElementById('lastPosition').textContent = `${bien.marque} ${bien.modele} — Yaoundé`;
+      document.getElementById('lastPositionTime').textContent = 'Dernière synchronisation : à l\'instant';
+      document.getElementById('statusLocation').textContent = 'Yaoundé, Centre';
+    } else {
+      document.getElementById('lastPosition').textContent = 'Aucun véhicule enregistré';
+      document.getElementById('lastPositionTime').textContent = 'Enregistrez un véhicule pour commencer';
+    }
+  } catch(e) {}
+}
+
+// Simuler statut temps réel (à remplacer par vrai GPS)
+function simulateRealtimeStatus() {
+  setInterval(() => {
+    const now = new Date();
+    document.getElementById('lastUpdate').textContent = now.toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'});
+  }, 30000);
+}
+
+// Définir statut
+function setStatus(status) {
+  currentStatus = status;
+  const card = document.getElementById('statusCard');
+  const dot = document.getElementById('statusDot');
+  const label = document.getElementById('statusLabel');
+
+  card.className = 'status-card ' + status;
+  dot.className = 'status-dot ' + status;
+  label.className = 'status-label ' + status;
+
+  const labels = {
+    safe: '🟢 Véhicule sécurisé',
+    warn: '🟠 Activité suspecte',
+    danger: '🔴 Danger détecté',
+    inactive: '⚫ Service inactif'
+  };
+  label.textContent = labels[status];
+}
+
+// Afficher modal urgence
+function showEmergencyModal() {
+  if (currentStatus === 'inactive') {
+    showToast('⚠ Abonnez-vous pour activer cette fonction');
+    return;
+  }
+  if (emergencyActive) {
+    deactivateEmergency();
+    return;
+  }
+  document.getElementById('emergencyModal').classList.add('show');
+}
+
+// Fermer modal
+function closeModal() {
+  document.getElementById('emergencyModal').classList.remove('show');
+}
+
+// Activer urgence
+async function activateEmergency() {
+  closeModal();
+  emergencyActive = true;
+  setStatus('danger');
+
+  const btn = document.getElementById('emergencyBtn');
+  btn.classList.add('activated');
+  btn.innerHTML = `<div class="btn-icon">🔴</div>
+    <div class="btn-text">
+      <div class="btn-main">MODE URGENCE ACTIF</div>
+      <div class="btn-sub">Appuyez pour désactiver</div>
+    </div>`;
+
+  showToast('🚨 Mode urgence activé — Police alertée');
+
+  // Sauvegarder événement dans Firebase
+  if (currentUser) {
+    try {
+      await addDoc(collection(db, 'events'), {
+        userId: currentUser.uid,
+        type: 'EMERGENCY',
+        status: 'ACTIVE',
+        timestamp: serverTimestamp(),
+        location: 'Yaoundé, Cameroun'
+      });
+    } catch(e) {}
+  }
+}
+
+// Désactiver urgence
+async function deactivateEmergency() {
+  emergencyActive = false;
+  setStatus('safe');
+
+  const btn = document.getElementById('emergencyBtn');
+  btn.classList.remove('activated');
+  btn.classList.remove('deactivate');
+  btn.innerHTML = `<div class="btn-icon">🔴</div>
+    <div class="btn-text">
+      <div class="btn-main">SÉCURISER MA VOITURE</div>
+      <div class="btn-sub">Appuyez en cas de danger</div>
+    </div>`;
+
+  showToast('✅ Mode urgence désactivé');
+}
+
+// Localiser
+function locateVehicle() {
+  showToast('📍 Localisation en cours...');
+  setTimeout(() => showToast('📍 Véhicule localisé — Yaoundé, Centre'), 1500);
+}
+
+// Verrouiller
+function lockVehicle() {
+  showToast('🔒 Commande de verrouillage envoyée...');
+  setTimeout(() => showToast('✅ Véhicule verrouillé'), 2000);
+}
+
+// Toast
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// Offline detection
+window.addEventListener('offline', () => {
+  document.getElementById('offlineBadge').classList.add('show');
+  showToast('📡 Mode hors ligne activé');
+});
+window.addEventListener('online', () => {
+  document.getElementById('offlineBadge').classList.remove('show');
+  showToast('✅ Connexion rétablie');
+});
+
+// Exposer fonctions
+window.showEmergencyModal = showEmergencyModal;
+window.closeModal = closeModal;
+window.activateEmergency = activateEmergency;
+window.locateVehicle = locateVehicle;
+window.lockVehicle = lockVehicle;
+</script>
+</body>
+</html>

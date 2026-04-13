@@ -175,6 +175,13 @@ nav{
 .alert.success{background:#F0FFF6;border:1px solid rgba(0,165,80,0.2);color:var(--green);}
 .alert.show{display:block;}
 </style>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(r => r.unregister());
+  });
+}
+</script>
 </head>
 <body>
 
@@ -369,7 +376,7 @@ nav{
 <script type="module">
 // ══ FIREBASE ══
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 import { getFirestore, collection, addDoc, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -398,6 +405,8 @@ const PLANS = {
 };
 
 // Auth check
+setPersistence(auth, browserLocalPersistence).catch(()=>{});
+
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = '/auth'; return; }
   currentUser = user;

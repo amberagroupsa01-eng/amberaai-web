@@ -82,6 +82,13 @@ header{background:var(--white);border-bottom:1px solid var(--border);padding:16p
 .page{display:none;}
 .page.active{display:block;}
 </style>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(r => r.unregister());
+  });
+}
+</script>
 </head>
 <body>
 

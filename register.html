@@ -9,8 +9,8 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{
   --gold:#ffb432;--gold2:#ffe08a;--bronze:#e8720a;
-  --dark:#07070f;--dark2:#0d0d1a;--dark3:#131328;
-  --line:#1e1e3a;--muted:#5a5a8a;--text:#d0cce0;
+  --dark:#F7F9FC;--dark2:#F7F9FC;--dark3:#F7F9FC;
+  --line:#1e1e3a;--muted:#718096;--text:#d0cce0;
   --green:#22c55e;--red:#ef4444;--blue:#38bdf8;
 }
 body{background:#111;display:flex;align-items:center;justify-content:center;min-height:100vh;font-family:'Rajdhani',sans-serif;padding:20px;}
@@ -197,6 +197,7 @@ body{background:#111;display:flex;align-items:center;justify-content:center;min-
 .btn-loading{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,0,0,0.3);border-top-color:#0a0a14;border-radius:50%;animation:spin 0.6s linear infinite;vertical-align:middle;margin-right:6px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then(regs => {
@@ -212,9 +213,9 @@ if ('serviceWorker' in navigator) {
   <!-- Lang bar -->
   <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;padding:6px 14px 0;position:relative;">
     <input id="rgSrInput" placeholder="🔍 Chercher..." oninput="rgSrFilter()" onfocus="rgSrOpen()" onblur="setTimeout(rgSrClose,200)"
-      style="flex:1;padding:5px 10px;border-radius:14px;border:1px solid #FFB432;background:rgba(255,180,50,.08);color:#FFE08A;font-size:11px;outline:none;max-width:130px;" />
-    <div id="rgSrDrop" style="position:absolute;top:34px;left:14px;width:220px;background:#0D0D1A;border:1px solid #FFB432;border-radius:10px;overflow:hidden;display:none;z-index:9999;"></div>
-    <button onclick="rgLang('fr')" id="rgBtnFr" style="padding:3px 9px;border-radius:14px;border:2px solid #FFB432;background:#FFB432;color:#0D0D1A;font-weight:700;font-size:10px;cursor:pointer;">FR</button>
+      style="flex:1;padding:5px 10px;border-radius:14px;border:1px solid #FFB432;background:rgba(255,180,50,.08);color:#0D1117;font-size:11px;outline:none;max-width:130px;" />
+    <div id="rgSrDrop" style="position:absolute;top:34px;left:14px;width:220px;background:var(--bg);border:1px solid #FFB432;border-radius:10px;overflow:hidden;display:none;z-index:9999;"></div>
+    <button onclick="rgLang('fr')" id="rgBtnFr" style="padding:3px 9px;border-radius:14px;border:2px solid #FFB432;background:#FFB432;color:#F7F9FC;font-weight:700;font-size:10px;cursor:pointer;">FR</button>
     <button onclick="rgLang('en')" id="rgBtnEn" style="padding:3px 9px;border-radius:14px;border:2px solid #FFB432;background:transparent;color:#FFB432;font-weight:700;font-size:10px;cursor:pointer;">EN</button>
   </div>
 
@@ -690,9 +691,9 @@ var RG_LABELS={
 function rgLang(l){
   _rgLang=l;
   document.getElementById('rgBtnFr').style.background=l==='fr'?'#FFB432':'transparent';
-  document.getElementById('rgBtnFr').style.color=l==='fr'?'#0D0D1A':'#FFB432';
+  document.getElementById('rgBtnFr').style.color=l==='fr'?'#F7F9FC':'#FFB432';
   document.getElementById('rgBtnEn').style.background=l==='en'?'#FFB432':'transparent';
-  document.getElementById('rgBtnEn').style.color=l==='en'?'#0D0D1A':'#FFB432';
+  document.getElementById('rgBtnEn').style.color=l==='en'?'#F7F9FC':'#FFB432';
   var steps=['step1','step2','step3','step4'];
   steps.forEach(function(s,i){
     var el=document.getElementById(s);
@@ -707,7 +708,7 @@ function rgLang(l){
 function rgSrOpen(){
   var idx=RG_SR[_rgLang];
   var drop=document.getElementById('rgSrDrop');
-  drop.innerHTML=idx.map(function(it,i){return'<div style="padding:8px 12px;color:#FFE08A;font-size:11px;cursor:pointer;border-bottom:1px solid #1e1e3a;" onmousedown="rgSrGo('+i+')">'+it.t+'</div>';}).join('');
+  drop.innerHTML=idx.map(function(it,i){return'<div style="padding:8px 12px;color:#0D1117;font-size:11px;cursor:pointer;border-bottom:1px solid #1e1e3a;" onmousedown="rgSrGo('+i+')">'+it.t+'</div>';}).join('');
   drop.style.display='block';
 }
 function rgSrClose(){document.getElementById('rgSrDrop').style.display='none';}
@@ -716,7 +717,7 @@ function rgSrFilter(){
   var idx=RG_SR[_rgLang];
   var drop=document.getElementById('rgSrDrop');
   var res=q?idx.filter(function(it){return it.k.indexOf(q)>-1||it.t.toLowerCase().indexOf(q)>-1;}):idx;
-  drop.innerHTML=res.length?res.map(function(it){var gi=idx.indexOf(it);return'<div style="padding:8px 12px;color:#FFE08A;font-size:11px;cursor:pointer;border-bottom:1px solid #1e1e3a;" onmousedown="rgSrGo('+gi+')">'+it.t+'</div>';}).join(''):'<div style="padding:8px 12px;color:#6a6a8a;font-size:11px;">Aucun résultat</div>';
+  drop.innerHTML=res.length?res.map(function(it){var gi=idx.indexOf(it);return'<div style="padding:8px 12px;color:#0D1117;font-size:11px;cursor:pointer;border-bottom:1px solid #1e1e3a;" onmousedown="rgSrGo('+gi+')">'+it.t+'</div>';}).join(''):'<div style="padding:8px 12px;color:#718096;font-size:11px;">Aucun résultat</div>';
   drop.style.display='block';
 }
 function rgSrGo(i){

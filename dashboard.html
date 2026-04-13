@@ -9,8 +9,8 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
   --gold:#ffb432;--gold2:#ffe08a;--bronze:#e8720a;
-  --dark:#07070f;--dark2:#0d0d1a;--dark3:#131328;
-  --line:#1e1e3a;--muted:#5a5a8a;--text:#d0cce0;
+  --dark:#F7F9FC;--dark2:#F7F9FC;--dark3:#F7F9FC;
+  --line:#1e1e3a;--muted:#718096;--text:#d0cce0;
   --green:#22c55e;--red:#ef4444;--blue:#38bdf8;--purple:#a855f7;
 }
 body{background:var(--dark);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;display:flex;overflow:hidden;}
@@ -270,6 +270,7 @@ body{background:var(--dark);color:var(--text);font-family:'Rajdhani',sans-serif;
 }
 .filter-btn:hover{border-color:rgba(255,180,50,0.3);color:var(--gold);}
 </style>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.getRegistrations().then(regs => {
@@ -354,9 +355,9 @@ if ('serviceWorker' in navigator) {
       <button class="topbar-btn primary" onclick="showPage('users',null)">+ Ajouter</button>
       <div style="display:flex;align-items:center;gap:5px;margin-left:6px;position:relative;">
         <input id="dbSrInput" placeholder="🔍 Chercher..." oninput="dbSrFilter()" onfocus="dbSrOpen()" onblur="setTimeout(dbSrClose,200)"
-          style="padding:4px 10px;border-radius:16px;border:1px solid #FFB432;background:rgba(255,180,50,.08);color:#FFE08A;font-size:11px;outline:none;width:130px;" />
-        <div id="dbSrDrop" style="position:absolute;top:30px;left:0;width:240px;background:#0D0D1A;border:1px solid #FFB432;border-radius:10px;overflow:hidden;display:none;z-index:9999;"></div>
-        <button onclick="dbLang('fr')" id="dbBtnFr" style="padding:4px 9px;border-radius:16px;border:2px solid #FFB432;background:#FFB432;color:#0D0D1A;font-weight:700;font-size:11px;cursor:pointer;">FR</button>
+          style="padding:4px 10px;border-radius:16px;border:1px solid #FFB432;background:rgba(255,180,50,.08);color:#0D1117;font-size:11px;outline:none;width:130px;" />
+        <div id="dbSrDrop" style="position:absolute;top:30px;left:0;width:240px;background:var(--bg);border:1px solid #FFB432;border-radius:10px;overflow:hidden;display:none;z-index:9999;"></div>
+        <button onclick="dbLang('fr')" id="dbBtnFr" style="padding:4px 9px;border-radius:16px;border:2px solid #FFB432;background:#FFB432;color:#F7F9FC;font-weight:700;font-size:11px;cursor:pointer;">FR</button>
         <button onclick="dbLang('en')" id="dbBtnEn" style="padding:4px 9px;border-radius:16px;border:2px solid #FFB432;background:transparent;color:#FFB432;font-weight:700;font-size:11px;cursor:pointer;">EN</button>
       </div>
     </div>
@@ -430,7 +431,7 @@ if ('serviceWorker' in navigator) {
               <circle cx="50" cy="50" r="35" fill="none" stroke="#22c55e" stroke-width="18"
                 stroke-dasharray="10 210" stroke-dashoffset="-210" transform="rotate(-90 50 50)"/>
               <text x="50" y="46" text-anchor="middle" fill="#c0b870" font-size="11" font-family="Cinzel" font-weight="700">612</text>
-              <text x="50" y="58" text-anchor="middle" fill="#5a5a8a" font-size="7">biens</text>
+              <text x="50" y="58" text-anchor="middle" fill="#718096" font-size="7">biens</text>
             </svg>
             <div class="donut-legend">
               <div class="legend-item"><div class="legend-dot" style="background:#ffb432"></div><span class="legend-label">Motos</span><span class="legend-val">358</span></div>
@@ -698,7 +699,7 @@ if ('serviceWorker' in navigator) {
             </div>
             <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
               <div><div style="font-size:14px;color:#c0b880;">Blockchain auto-sync</div><div style="font-size:11px;color:var(--muted);">Synchronisation toutes les 24h</div></div>
-              <div style="width:40px;height:22px;border-radius:11px;background:var(--line);cursor:pointer;display:flex;align-items:center;padding:2px;"><div style="width:18px;height:18px;border-radius:50%;background:#5a5a8a;"></div></div>
+              <div style="width:40px;height:22px;border-radius:11px;background:var(--line);cursor:pointer;display:flex;align-items:center;padding:2px;"><div style="width:18px;height:18px;border-radius:50%;background:#718096;"></div></div>
             </div>
           </div>
         </div>
@@ -750,7 +751,7 @@ onAuthStateChanged(auth, (user) => {
       const tbody = document.getElementById('mesBiensTbody');
       if(!tbody) return;
       if(snapshot.empty){
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#5a5a8a;padding:20px;">Aucun bien enregistré — <a href="/register" style="color:#ffb432;">Enregistrer un bien →</a></td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#718096;padding:20px;">Aucun bien enregistré — <a href="/register" style="color:#ffb432;">Enregistrer un bien →</a></td></tr>';
         return;
       }
       let html = '';
@@ -842,9 +843,9 @@ var DB_LABELS = {
 function dbLang(l){
   _dbLang=l;
   document.getElementById('dbBtnFr').style.background=l==='fr'?'#FFB432':'transparent';
-  document.getElementById('dbBtnFr').style.color=l==='fr'?'#0D0D1A':'#FFB432';
+  document.getElementById('dbBtnFr').style.color=l==='fr'?'#F7F9FC':'#FFB432';
   document.getElementById('dbBtnEn').style.background=l==='en'?'#FFB432':'transparent';
-  document.getElementById('dbBtnEn').style.color=l==='en'?'#0D0D1A':'#FFB432';
+  document.getElementById('dbBtnEn').style.color=l==='en'?'#F7F9FC':'#FFB432';
   // translate KPI labels
   document.querySelectorAll('.kpi-label').forEach(function(el){
     var txt=el.textContent.trim();
@@ -859,7 +860,7 @@ function dbLang(l){
 function dbSrOpen(){
   var idx=DB_SR[_dbLang];
   var drop=document.getElementById('dbSrDrop');
-  drop.innerHTML=idx.map(function(it,i){return'<div style="padding:9px 13px;color:#FFE08A;font-size:12px;cursor:pointer;border-bottom:1px solid #1e1e3a;" onmousedown="dbSrGo('+i+')">'+it.t+'</div>';}).join('');
+  drop.innerHTML=idx.map(function(it,i){return'<div style="padding:9px 13px;color:#0D1117;font-size:12px;cursor:pointer;border-bottom:1px solid #1e1e3a;" onmousedown="dbSrGo('+i+')">'+it.t+'</div>';}).join('');
   drop.style.display='block';
 }
 function dbSrClose(){document.getElementById('dbSrDrop').style.display='none';}
@@ -870,8 +871,8 @@ function dbSrFilter(){
   var res=q?idx.filter(function(it){return it.k.indexOf(q)>-1||it.t.toLowerCase().indexOf(q)>-1;}):idx;
   drop.innerHTML=res.length?res.map(function(it){
     var gi=idx.indexOf(it);
-    return'<div style="padding:9px 13px;color:#FFE08A;font-size:12px;cursor:pointer;border-bottom:1px solid #1e1e3a;" onmousedown="dbSrGo('+gi+')">'+it.t+'</div>';
-  }).join(''):'<div style="padding:9px 13px;color:#6a6a8a;font-size:12px;">Aucun résultat</div>';
+    return'<div style="padding:9px 13px;color:#0D1117;font-size:12px;cursor:pointer;border-bottom:1px solid #1e1e3a;" onmousedown="dbSrGo('+gi+')">'+it.t+'</div>';
+  }).join(''):'<div style="padding:9px 13px;color:#718096;font-size:12px;">Aucun résultat</div>';
   drop.style.display='block';
 }
 function dbSrGo(i){

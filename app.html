@@ -5,7 +5,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Tracium — Mon Véhicule</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
 <style>
@@ -370,7 +370,27 @@ if ('serviceWorker' in navigator) {
     <div class="sub-progress">
       <div class="sub-bar active" id="subBar" style="width:80%;"></div>
     </div>
-    <button class="renew-btn" id="renewBtn" onclick="window.location.href='/payment?type=subscription'" style="display:none;">
+
+    <!-- Plans disponibles -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;margin-bottom:12px;">
+      <div id="planBasic" onclick="selectPlan('basic')" style="border:2px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;transition:all 0.2s;">
+        <div style="font-size:11px;font-weight:700;color:var(--text2);">🔰 Basic</div>
+        <div style="font-size:14px;font-weight:800;color:var(--text);font-family:'Space Grotesk',sans-serif;">3 000</div>
+        <div style="font-size:10px;color:var(--text3);">FCFA/mois</div>
+      </div>
+      <div id="planPro" onclick="selectPlan('pro')" style="border:2px solid var(--blue);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;background:var(--blue-light);transition:all 0.2s;">
+        <div style="font-size:11px;font-weight:700;color:var(--blue);">⚡ Pro ⭐</div>
+        <div style="font-size:14px;font-weight:800;color:var(--blue);font-family:'Space Grotesk',sans-serif;">5 000</div>
+        <div style="font-size:10px;color:var(--blue);">FCFA/mois</div>
+      </div>
+      <div id="planPremium" onclick="selectPlan('premium')" style="border:2px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center;cursor:pointer;transition:all 0.2s;">
+        <div style="font-size:11px;font-weight:700;color:var(--orange);">🔥 Premium</div>
+        <div style="font-size:14px;font-weight:800;color:var(--orange);font-family:'Space Grotesk',sans-serif;">10 000</div>
+        <div style="font-size:10px;color:var(--text3);">FCFA/mois</div>
+      </div>
+    </div>
+
+    <button class="renew-btn" id="renewBtn" onclick="goToPay()">
       💳 Renouveler maintenant
     </button>
   </div>
@@ -683,11 +703,35 @@ window.addEventListener('online', () => {
   showToast('✅ Connexion rétablie');
 });
 
+// Plan sélectionné
+let selectedPlan = 'pro';
+
+function selectPlan(plan) {
+  selectedPlan = plan;
+  ['basic','pro','premium'].forEach(p => {
+    const el = document.getElementById('plan' + p.charAt(0).toUpperCase() + p.slice(1));
+    if(!el) return;
+    if(p === plan) {
+      el.style.borderColor = 'var(--blue)';
+      el.style.background = 'var(--blue-light)';
+    } else {
+      el.style.borderColor = 'var(--border)';
+      el.style.background = 'white';
+    }
+  });
+}
+
+function goToPay() {
+  window.location.href = '/payment?type=' + selectedPlan;
+}
+
 // Exposer fonctions
 window.showEmergencyModal = showEmergencyModal;
 window.closeModal = closeModal;
 window.activateEmergency = activateEmergency;
 window.locateVehicle = locateVehicle;
+window.selectPlan = selectPlan;
+window.goToPay = goToPay;
 window.lockVehicle = lockVehicle;
 </script>
 </body>

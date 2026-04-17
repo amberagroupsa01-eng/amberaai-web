@@ -317,6 +317,10 @@ if ('serviceWorker' in navigator) {
   </div>
   <div class="header-user">
     <div class="offline-badge" id="offlineBadge">📡 Hors ligne</div>
+    <div style="display:flex;gap:4px;background:var(--bg);border-radius:20px;padding:3px;">
+      <button onclick="setLang('fr')" id="btn-fr" style="padding:4px 10px;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;background:var(--blue);color:white;">FR</button>
+      <button onclick="setLang('en')" id="btn-en" style="padding:4px 10px;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:var(--text3);">EN</button>
+    </div>
     <div class="user-name" id="userName">—</div>
     <div class="user-avatar" onclick="window.location.href='/dashboard'">👤</div>
   </div>
@@ -352,15 +356,15 @@ if ('serviceWorker' in navigator) {
   <div class="actions-grid">
     <div class="action-btn" id="btnLocate" onclick="locateVehicle()">
       <div class="action-icon">📍</div>
-      <div class="action-label">Localiser</div>
+      <div class="action-label" id="btnLocateLabel">Localiser</div>
     </div>
     <div class="action-btn" id="btnLock" onclick="lockVehicle()">
       <div class="action-icon">🔒</div>
-      <div class="action-label">Verrouiller</div>
+      <div class="action-label" id="btnLockLabel">Verrouiller</div>
     </div>
     <div class="action-btn" onclick="window.location.href='/payment?type=subscription'">
       <div class="action-icon">💳</div>
-      <div class="action-label">Renouveler</div>
+      <div class="action-label" id="btnRenewLabel">Renouveler</div>
     </div>
   </div>
 
@@ -401,7 +405,7 @@ if ('serviceWorker' in navigator) {
 
   <!-- BLOC 5 : DERNIÈRE ACTIVITÉ -->
   <div class="activity-card">
-    <div class="activity-title">Dernière activité</div>
+    <div class="activity-title" id="activityTitle">Dernière activité</div>
     <div id="activityList">
       <div class="activity-item">
         <div class="activity-icon">📍</div>
@@ -413,14 +417,14 @@ if ('serviceWorker' in navigator) {
       <div class="activity-item">
         <div class="activity-icon">🔋</div>
         <div class="activity-text">
-          <div class="activity-main">Batterie module</div>
+          <div class="activity-main" id="batteryLabel">Batterie module</div>
           <div class="activity-time" id="batteryStatus">Niveau normal</div>
         </div>
       </div>
       <div class="activity-item">
         <div class="activity-icon">📡</div>
         <div class="activity-text">
-          <div class="activity-main">Signal GPS</div>
+          <div class="activity-main" id="gpsLabel">Signal GPS</div>
           <div class="activity-time" id="gpsStatus">Fort · 8 satellites</div>
         </div>
       </div>
@@ -516,11 +520,11 @@ if ('serviceWorker' in navigator) {
 <div class="modal-overlay" id="emergencyModal">
   <div class="modal">
     <div class="modal-icon">🚨</div>
-    <div class="modal-title">Confirmer l'urgence ?</div>
-    <div class="modal-text">Cette action va immédiatement sécuriser votre véhicule et alerter la police et vos contacts d'urgence.</div>
+    <div class="modal-title" id="modalTitle">Confirmer l'urgence ?</div>
+    <div class="modal-text" id="modalText">Cette action va immédiatement sécuriser votre véhicule et alerter la police et vos contacts d'urgence.</div>
     <div class="modal-btns">
-      <button class="modal-btn-confirm" onclick="activateEmergency()">🔴 Oui, Sécuriser maintenant</button>
-      <button class="modal-btn-cancel" onclick="closeModal()">Annuler</button>
+      <button class="modal-btn-confirm" id="modalConfirmBtn" onclick="activateEmergency()">🔴 Oui, Sécuriser maintenant</button>
+      <button class="modal-btn-cancel" id="modalCancelBtn" onclick="closeModal()">Annuler</button>
     </div>
   </div>
 </div>
@@ -662,11 +666,12 @@ function setStatus(status) {
   dot.className = 'status-dot ' + status;
   label.className = 'status-label ' + status;
 
+  const t = TRANSLATIONS[currentLang] || TRANSLATIONS.fr;
   const labels = {
-    safe: '🟢 Véhicule sécurisé',
-    warn: '🟠 Activité suspecte',
-    danger: '🔴 Danger détecté',
-    inactive: '⚫ Service inactif'
+    safe: t.statusSafe,
+    warn: t.statusWarn,
+    danger: t.statusDanger,
+    inactive: t.statusInactive
   };
   label.textContent = labels[status];
 }
@@ -799,6 +804,135 @@ function toggleMenu() {
   overlay.style.display = isOpen ? 'none' : 'block';
 }
 window.toggleMenu = toggleMenu;
+
+// ── SYSTÈME BILINGUE ──
+const TRANSLATIONS = {
+  fr: {
+    statusSafe: '🟢 Véhicule sécurisé',
+    statusWarn: '🟠 Activité suspecte', 
+    statusDanger: '🔴 Danger détecté',
+    statusInactive: '⚫ Service inactif',
+    emergencyBtn: 'SÉCURISER MA VOITURE',
+    emergencyBtnSub: 'Appuyez en cas de danger',
+    emergencyActive: 'MODE URGENCE ACTIF',
+    emergencyActiveSub: 'Appuyez pour désactiver',
+    locate: 'Localiser',
+    lock: 'Verrouiller',
+    renew: 'Renouveler',
+    subActive: 'Actif',
+    subExpiring: 'Bientôt expiré',
+    subExpired: 'Expiré',
+    lastActivity: 'Dernière activité',
+    battery: 'Batterie module',
+    gps: 'Signal GPS',
+    offlineBadge: '📡 Hors ligne',
+    home: 'Accueil',
+    scan: 'Scanner',
+    payment: 'Paiement',
+    alerts: 'Alertes',
+    more: 'Plus',
+    dashboard: 'Dashboard',
+    installer: 'Installateur',
+    shop: 'Boutique',
+    referral: 'Parrainage',
+    block: 'Blocage',
+    police: 'Police',
+    insurers: 'Assureurs',
+    ai: 'Assistant IA',
+    close: '✕ Fermer',
+    confirmTitle: 'Confirmer l'urgence ?',
+    confirmText: 'Cette action va immédiatement sécuriser votre véhicule et alerter la police et vos contacts d'urgence.',
+    confirmBtn: '🔴 Oui, Sécuriser maintenant',
+    cancelBtn: 'Annuler',
+  },
+  en: {
+    statusSafe: '🟢 Vehicle secured',
+    statusWarn: '🟠 Suspicious activity',
+    statusDanger: '🔴 Danger detected',
+    statusInactive: '⚫ Service inactive',
+    emergencyBtn: 'SECURE MY VEHICLE',
+    emergencyBtnSub: 'Press in case of danger',
+    emergencyActive: 'EMERGENCY MODE ACTIVE',
+    emergencyActiveSub: 'Press to deactivate',
+    locate: 'Locate',
+    lock: 'Lock',
+    renew: 'Renew',
+    subActive: 'Active',
+    subExpiring: 'Expiring soon',
+    subExpired: 'Expired',
+    lastActivity: 'Last activity',
+    battery: 'Module battery',
+    gps: 'GPS signal',
+    offlineBadge: '📡 Offline',
+    home: 'Home',
+    scan: 'Scan',
+    payment: 'Payment',
+    alerts: 'Alerts',
+    more: 'More',
+    dashboard: 'Dashboard',
+    installer: 'Installer',
+    shop: 'Shop',
+    referral: 'Referral',
+    block: 'Block',
+    police: 'Police',
+    insurers: 'Insurers',
+    ai: 'AI Assistant',
+    close: '✕ Close',
+    confirmTitle: 'Confirm emergency?',
+    confirmText: 'This action will immediately secure your vehicle and alert police and your emergency contacts.',
+    confirmBtn: '🔴 Yes, Secure now',
+    cancelBtn: 'Cancel',
+  }
+};
+
+let currentLang = localStorage.getItem('tracium-lang') || 'fr';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('tracium-lang', lang);
+  const t = TRANSLATIONS[lang];
+  
+  // Toggle buttons
+  document.getElementById('btn-fr').style.background = lang === 'fr' ? 'var(--blue)' : 'transparent';
+  document.getElementById('btn-fr').style.color = lang === 'fr' ? 'white' : 'var(--text3)';
+  document.getElementById('btn-en').style.background = lang === 'en' ? 'var(--blue)' : 'transparent';
+  document.getElementById('btn-en').style.color = lang === 'en' ? 'white' : 'var(--text3)';
+  
+  // Traduire les éléments
+  const el = (id) => document.getElementById(id);
+  if(el('offlineBadge')) el('offlineBadge').textContent = t.offlineBadge;
+  if(el('btnLocateLabel')) el('btnLocateLabel').textContent = t.locate;
+  if(el('btnLockLabel')) el('btnLockLabel').textContent = t.lock;
+  if(el('btnRenewLabel')) el('btnRenewLabel').textContent = t.renew;
+  if(el('activityTitle')) el('activityTitle').textContent = t.lastActivity;
+  if(el('batteryLabel')) el('batteryLabel').textContent = t.battery;
+  if(el('gpsLabel')) el('gpsLabel').textContent = t.gps;
+  if(el('modalTitle')) el('modalTitle').textContent = t.confirmTitle;
+  if(el('modalText')) el('modalText').textContent = t.confirmText;
+  if(el('modalConfirmBtn')) el('modalConfirmBtn').textContent = t.confirmBtn;
+  if(el('modalCancelBtn')) el('modalCancelBtn').textContent = t.cancelBtn;
+  
+  // Nav labels
+  const navLabels = document.querySelectorAll('.nav-item-label');
+  const navKeys = ['home', 'scan', 'payment', 'alerts', 'more'];
+  navLabels.forEach((el, i) => {
+    if(navKeys[i]) el.textContent = t[navKeys[i]];
+  });
+  
+  // Bouton urgence
+  if(!emergencyActive) {
+    const btnMain = document.querySelector('.btn-main');
+    const btnSub = document.querySelector('.btn-sub');
+    if(btnMain) btnMain.textContent = t.emergencyBtn;
+    if(btnSub) btnSub.textContent = t.emergencyBtnSub;
+  }
+  
+  // Status actuel
+  setStatus(currentStatus);
+}
+
+// Appliquer la langue au chargement
+setTimeout(() => setLang(currentLang), 500);
 window.closeModal = closeModal;
 window.activateEmergency = activateEmergency;
 window.locateVehicle = locateVehicle;

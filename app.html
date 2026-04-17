@@ -439,19 +439,78 @@ if ('serviceWorker' in navigator) {
     <div class="nav-item-icon">📷</div>
     <div class="nav-item-label">Scanner</div>
   </a>
-  <a href="/notifications" class="nav-item">
-    <div class="nav-item-icon">🔔</div>
-    <div class="nav-item-label">Alertes</div>
-  </a>
-  <a href="/dashboard" class="nav-item">
-    <div class="nav-item-icon">📊</div>
-    <div class="nav-item-label">Dashboard</div>
-  </a>
   <a href="/payment" class="nav-item">
     <div class="nav-item-icon">💳</div>
     <div class="nav-item-label">Paiement</div>
   </a>
+  <a href="/notifications" class="nav-item">
+    <div class="nav-item-icon">🔔</div>
+    <div class="nav-item-label">Alertes</div>
+  </a>
+  <div class="nav-item" onclick="toggleMenu()">
+    <div class="nav-item-icon">☰</div>
+    <div class="nav-item-label">Plus</div>
+  </div>
 </nav>
+
+<!-- MENU COMPLET -->
+<div id="fullMenu" style="display:none;position:fixed;bottom:80px;left:0;right:0;background:white;border-top:2px solid var(--border);border-radius:20px 20px 0 0;padding:20px;z-index:100;max-height:70vh;overflow-y:auto;">
+  <div style="font-size:14px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;">Toutes les pages</div>
+  
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    <a href="/dashboard" style="text-decoration:none;">
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:6px;">📊</div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);">Dashboard</div>
+      </div>
+    </a>
+    <a href="/installer" style="text-decoration:none;">
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:6px;">🔧</div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);">Installateur</div>
+      </div>
+    </a>
+    <a href="/shop" style="text-decoration:none;">
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:6px;">🛒</div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);">Boutique</div>
+      </div>
+    </a>
+    <a href="/parrainage" style="text-decoration:none;">
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:6px;">🤝</div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);">Parrainage</div>
+      </div>
+    </a>
+    <a href="/blocage" style="text-decoration:none;">
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:6px;">🔒</div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);">Blocage</div>
+      </div>
+    </a>
+    <a href="/police" style="text-decoration:none;">
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:6px;">🚔</div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);">Police</div>
+      </div>
+    </a>
+    <a href="/assureurs" style="text-decoration:none;">
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:6px;">🏢</div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);">Assureurs</div>
+      </div>
+    </a>
+    <a href="/chat" style="text-decoration:none;">
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;">
+        <div style="font-size:28px;margin-bottom:6px;">💬</div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);">Assistant IA</div>
+      </div>
+    </a>
+  </div>
+  
+  <button onclick="toggleMenu()" style="width:100%;padding:14px;margin-top:16px;background:var(--bg);border:1px solid var(--border);border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;color:var(--text2);">✕ Fermer</button>
+</div>
+<div id="menuOverlay" onclick="toggleMenu()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:99;"></div>
 
 <!-- MODAL URGENCE -->
 <div class="modal-overlay" id="emergencyModal">
@@ -731,6 +790,15 @@ function goToPay() {
 
 // Exposer fonctions
 window.showEmergencyModal = showEmergencyModal;
+
+function toggleMenu() {
+  const menu = document.getElementById('fullMenu');
+  const overlay = document.getElementById('menuOverlay');
+  const isOpen = menu.style.display !== 'none';
+  menu.style.display = isOpen ? 'none' : 'block';
+  overlay.style.display = isOpen ? 'none' : 'block';
+}
+window.toggleMenu = toggleMenu;
 window.closeModal = closeModal;
 window.activateEmergency = activateEmergency;
 window.locateVehicle = locateVehicle;

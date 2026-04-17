@@ -569,6 +569,12 @@ onAuthStateChanged(auth, async (user) => {
   await loadSubscription();
   await loadLastActivity();
   simulateRealtimeStatus();
+  
+  // Vérifier abonnement et envoyer notification si nécessaire
+  const userPhone = user.phoneNumber || '';
+  if (userPhone) {
+    setTimeout(() => checkSubscriptionAndNotify(user.uid, userPhone, name), 2000);
+  }
 });
 
 // Charger abonnement
@@ -804,6 +810,61 @@ function toggleMenu() {
   overlay.style.display = isOpen ? 'none' : 'block';
 }
 window.toggleMenu = toggleMenu;
+
+// ── NOTIFICATIONS WHATSAPP ──
+const WEBHOOK_URL = 'https://hook.eu1.make.com/1tpoubt6lvbbxe136a76w0gpajq2rsaa';
+
+async function sendWhatsAppNotification(phone, message) {
+  try {
+    await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, message, timestamp: new Date().toISOString() })
+    });
+    console.log('Notification envoyée');
+  } catch(e) {
+    console.error('Erreur notification:', e);
+  }
+}
+
+// Vérifier abonnement et envoyer alertes
+async function checkSubscriptionAndNotify(userId, phone, userName) {
+  try {
+    const subDoc = await getDoc(doc(db, 'subscriptions', userId));
+    if (!subDoc.exists()) return;
+    
+    const sub = subDoc.data();
+    const endDate = sub.endDate?.toDate ? sub.endDate.toDate() : new Date(sub.endDate);
+    const today = new Date();
+    const daysLeft = Math.ceil((endDate - today) / (1000*60*60*24));
+    
+    let message = '';
+    if (daysLeft === 5) {
+      message = `Bonjour ${userName}, votre abonnement Tracium expire dans 5 jours. Renouvelez ici: https://amberaai-web.vercel.app/payment`;
+    } else if (daysLeft === 2) {
+      message = `Rappel ${userName}: votre abonnement Tracium expire dans 2 jours! Renouvelez: https://amberaai-web.vercel.app/payment`;
+    } else if (daysLeft === 0) {
+      message = `${userName}, votre abonnement Tracium expire AUJOURD'HUI! Renouvelez maintenant: https://amberaai-web.vercel.app/payment`;
+    } else if (daysLeft < 0) {
+      message = `${userName}, votre abonnement Tracium a expiré. Service suspendu. Renouvelez: https://amberaai-web.vercel.app/payment`;
+    }
+    
+    if (message && phone) {
+      await sendWhatsAppNotification('whatsapp:' + phone, message);
+    }
+  } catch(e) {
+    console.error('Erreur vérification abonnement:', e);
+  }
+}
+
+// Notification urgence
+async function notifyEmergency(phone, location) {
+  const message = '🚨 ALERTE TRACIUM: Mode urgence activé! Véhicule en danger à ' + (location || 'Yaoundé, Cameroun') + '. Contactez le propriétaire immédiatement.';
+  await sendWhatsAppNotification('whatsapp:' + phone, message);
+}
+
+window.sendWhatsAppNotification = sendWhatsAppNotification;
+window.notifyEmergency = notifyEmergency;
 
 // ── SYSTÈME BILINGUE ──
 const TRANSLATIONS = {

@@ -208,7 +208,13 @@ if ('serviceWorker' in navigator) {
     <div class="nav-logo-icon">T</div>
     <span class="nav-logo-name">Tracium</span>
   </a>
-  <a href="/dashboard" class="nav-back">← Retour</a>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div style="display:flex;gap:4px;background:#F7F9FC;border-radius:20px;padding:3px;">
+      <button onclick="setLang('fr')" id="btn-fr" style="padding:4px 10px;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;background:#0047CC;color:white;">FR</button>
+      <button onclick="setLang('en')" id="btn-en" style="padding:4px 10px;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:#718096;">EN</button>
+    </div>
+    <a href="/dashboard" class="nav-back" id="backBtn">← Retour</a>
+  </div>
 </nav>
 
 <div class="container">
@@ -216,7 +222,7 @@ if ('serviceWorker' in navigator) {
   <!-- PAGE: CHOOSE -->
   <div class="page active" id="page-choose">
     <div class="card">
-      <div class="card-title">💳 Choisir un plan</div>
+      <div class="card-title" id="chooseTitleEl">💳 Choisir un plan</div>
 
       <!-- Statut abonnement actuel -->
       <div class="sub-status" id="subStatus" style="display:none;">
@@ -234,8 +240,8 @@ if ('serviceWorker' in navigator) {
 
       <!-- Toggle Kit / Abonnement -->
       <div class="billing-toggle">
-        <button class="billing-btn active" id="btn-kit" onclick="switchCategory('kit')">🔧 Kit d'installation</button>
-        <button class="billing-btn" id="btn-sub" onclick="switchCategory('sub')">📅 Abonnement</button>
+        <button class="billing-btn active" id="btn-kit" onclick="switchCategory('kit')"><span id="btnKitLabel">🔧 Kit d'installation</span></button>
+        <button class="billing-btn" id="btn-sub" onclick="switchCategory('sub')"><span id="btnSubLabel">📅 Abonnement</span></button>
       </div>
 
       <!-- KITS -->
@@ -272,7 +278,7 @@ if ('serviceWorker' in navigator) {
       <div id="section-sub" style="display:none;">
         <!-- Toggle Mensuel / Annuel -->
         <div class="billing-toggle" style="margin-bottom:16px;">
-          <button class="billing-btn active" id="btn-monthly" onclick="switchBilling('monthly')">Mensuel</button>
+          <button class="billing-btn active" id="btn-monthly" onclick="switchBilling('monthly')"><span id="btnMonthlyLabel">Mensuel</span></button>
           <button class="billing-btn" id="btn-yearly" onclick="switchBilling('yearly')">Annuel <span class="billing-badge">-17%</span></button>
         </div>
         <div class="kits-grid">
@@ -325,7 +331,7 @@ if ('serviceWorker' in navigator) {
   <!-- PAGE: OPERATEUR -->
   <div class="page" id="page-operator">
     <div class="card">
-      <div class="card-title">📱 Choisir l'opérateur</div>
+      <div class="card-title" id="operatorTitleEl">📱 Choisir l'opérateur</div>
 
       <div class="op-grid">
         <div class="op-card selected" id="op-mtn" onclick="selectOp('mtn')">
@@ -339,7 +345,7 @@ if ('serviceWorker' in navigator) {
       </div>
 
       <div class="form-group">
-        <label class="form-label">Numéro Mobile Money</label>
+        <label class="form-label" id="phoneLabelEl">Numéro Mobile Money</label>
         <div class="phone-prefix">
           <div class="prefix-badge">🇨🇲 +237</div>
           <input class="form-input" type="tel" id="phoneInput" placeholder="6XX XXX XXX" maxlength="9">
@@ -376,8 +382,8 @@ if ('serviceWorker' in navigator) {
   <div class="page" id="page-processing">
     <div class="card" style="text-align:center;">
       <div style="font-size:48px;margin-bottom:16px;">⏳</div>
-      <div class="card-title" style="text-align:center;">Traitement en cours...</div>
-      <p style="font-size:14px;color:var(--text2);margin-bottom:28px;" id="processingMsg">
+      <div class="card-title" id="processingTitle" style="text-align:center;">Traitement en cours...</div>
+      <p style="font-size:14px;color:var(--text2);margin-bottom:28px;" id="processingMsgEl">
         Vous allez recevoir une notification sur votre téléphone pour valider le paiement.
       </p>
       <div class="processing-steps">
@@ -405,7 +411,7 @@ if ('serviceWorker' in navigator) {
   <div class="page" id="page-success">
     <div class="card">
       <div class="success-icon">✅</div>
-      <div class="success-title">Paiement réussi !</div>
+      <div class="success-title" id="successTitle">Paiement réussi !</div>
       <div class="success-sub" id="successMsg">Votre service Tracium est maintenant actif.</div>
 
       <div class="receipt">
@@ -729,7 +735,149 @@ async function doPay() {
 }
 
 // Rendre fonctions accessibles
+// ── BILINGUE ──
+const PAY_TRANS = {
+  fr: {
+    back: '← Retour',
+    chooseTitle: '💳 Choisir un plan',
+    kitTab: '🔧 Kit d'installation',
+    subTab: '📅 Abonnement',
+    monthly: 'Mensuel',
+    yearly: 'Annuel',
+    savings: '-17%',
+    included: 'tout inclus',
+    free1: '1 mois offert',
+    free3: '3 mois offerts',
+    operatorTitle: '📱 Choisir l'opérateur',
+    phoneLabel: 'Numéro Mobile Money',
+    payMtn: '📲 Payer via MTN MoMo',
+    payOrange: '🟠 Payer via Orange Money',
+    secure: '🔒 Paiement sécurisé',
+    auto: '✅ Activation automatique',
+    receipt: '📋 Reçu par SMS',
+    processing: 'Traitement en cours...',
+    successTitle: 'Paiement réussi !',
+    toDashboard: '🏠 Aller au tableau de bord',
+    modify: '← Modifier',
+    verify: 'Vérifiez avant de payer',
+    continue: 'Continuer →',
+  },
+  en: {
+    back: '← Back',
+    chooseTitle: '💳 Choose a plan',
+    kitTab: '🔧 Installation Kit',
+    subTab: '📅 Subscription',
+    monthly: 'Monthly',
+    yearly: 'Yearly',
+    savings: '-17%',
+    included: 'all inclusive',
+    free1: '1 month free',
+    free3: '3 months free',
+    operatorTitle: '📱 Choose operator',
+    phoneLabel: 'Mobile Money Number',
+    payMtn: '📲 Pay via MTN MoMo',
+    payOrange: '🟠 Pay via Orange Money',
+    secure: '🔒 Secure payment',
+    auto: '✅ Automatic activation',
+    receipt: '📋 SMS receipt',
+    processing: 'Processing...',
+    successTitle: 'Payment successful!',
+    toDashboard: '🏠 Go to dashboard',
+    modify: '← Modify',
+    verify: 'Verify before paying',
+    continue: 'Continue →',
+  }
+};
+
+let payLang = localStorage.getItem('tracium-lang') || 'fr';
+
+function setLang(lang) {
+  payLang = lang;
+  localStorage.setItem('tracium-lang', lang);
+  const t = PAY_TRANS[lang];
+  
+  document.getElementById('btn-fr').style.background = lang === 'fr' ? '#0047CC' : 'transparent';
+  document.getElementById('btn-fr').style.color = lang === 'fr' ? 'white' : '#718096';
+  document.getElementById('btn-en').style.background = lang === 'en' ? '#0047CC' : 'transparent';
+  document.getElementById('btn-en').style.color = lang === 'en' ? 'white' : '#718096';
+  
+  const el = (id) => document.getElementById(id);
+  if(el('backBtn')) el('backBtn').textContent = t.back;
+  if(el('chooseTitleEl')) el('chooseTitleEl').textContent = t.chooseTitle;
+  if(el('btnKitLabel')) el('btnKitLabel').textContent = t.kitTab;
+  if(el('btnSubLabel')) el('btnSubLabel').textContent = t.subTab;
+  if(el('btnMonthlyLabel')) el('btnMonthlyLabel').textContent = t.monthly;
+  if(el('operatorTitleEl')) el('operatorTitleEl').textContent = t.operatorTitle;
+  if(el('phoneLabelEl')) el('phoneLabelEl').textContent = t.phoneLabel;
+  if(el('processingMsgEl')) el('processingMsgEl').textContent = t.processing;
+  if(el('successTitleEl')) el('successTitleEl').textContent = t.successTitle;
+}
+
+setTimeout(() => setLang(payLang), 200);
+
 window.selectPlan = selectPlan;
+window.setLang = setLang;
+
+// ── SYSTÈME BILINGUE ──
+const TRANS = {
+  fr: {
+    title: '💳 Choisir un plan',
+    kitTab: '🔧 Kit d'installation',
+    subTab: '📅 Abonnement',
+    monthly: 'Mensuel',
+    yearly: 'Annuel',
+    included: 'tout inclus',
+    continue: 'Continuer →',
+    operator: '📱 Choisir l'opérateur',
+    phone: 'Numéro Mobile Money',
+    pay: 'Payer',
+    processing: 'Traitement en cours...',
+    success: 'Paiement réussi !',
+    freeMonth: 'mois offert',
+    freeMonths: 'mois offerts',
+  },
+  en: {
+    title: '💳 Choose a plan',
+    kitTab: '🔧 Installation Kit',
+    subTab: '📅 Subscription',
+    monthly: 'Monthly',
+    yearly: 'Yearly',
+    included: 'all included',
+    continue: 'Continue →',
+    operator: '📱 Choose operator',
+    phone: 'Mobile Money Number',
+    pay: 'Pay',
+    processing: 'Processing...',
+    success: 'Payment successful!',
+    freeMonth: 'month free',
+    freeMonths: 'months free',
+  }
+};
+
+let currentLang = localStorage.getItem('tracium-lang') || 'fr';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('tracium-lang', lang);
+  document.getElementById('btn-fr').style.background = lang === 'fr' ? '#0047CC' : 'transparent';
+  document.getElementById('btn-fr').style.color = lang === 'fr' ? 'white' : '#718096';
+  document.getElementById('btn-en').style.background = lang === 'en' ? '#0047CC' : 'transparent';
+  document.getElementById('btn-en').style.color = lang === 'en' ? 'white' : '#718096';
+  
+  const t = TRANS[lang];
+  const el = id => document.getElementById(id);
+  if(el('cardTitle')) el('cardTitle').textContent = t.title;
+  if(el('btn-kit')) el('btn-kit').textContent = t.kitTab;
+  if(el('btn-sub')) el('btn-sub').textContent = t.subTab + ' ';
+  if(el('btn-monthly')) el('btn-monthly').textContent = t.monthly;
+  if(el('continueBtn')) el('continueBtn').textContent = t.continue;
+  if(el('operatorTitle')) el('operatorTitle').textContent = t.operator;
+  if(el('phoneLabel')) el('phoneLabel').textContent = t.phone;
+  if(el('processingTitle')) el('processingTitle').textContent = t.processing;
+  if(el('successTitle')) el('successTitle').textContent = t.success;
+}
+
+setTimeout(() => setLang(currentLang), 300);
 window.switchCategory = switchCategory;
 window.switchBilling = switchBilling;
 window.selectKit = selectKit;

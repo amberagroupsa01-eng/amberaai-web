@@ -92,9 +92,19 @@ if ('serviceWorker' in navigator) {
 </head>
 <body>
 
-<header>
-  <div class="logo-icon">T</div>
-  <div class="logo-name">Tracium</div>
+<header style="display:flex;justify-content:space-between;align-items:center;">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div class="logo-icon">T</div>
+    <div class="logo-name">Tracium</div>
+  </div>
+  <div style="display:flex;gap:4px;background:#F7F9FC;border-radius:20px;padding:3px;">
+    <button onclick="setAuthLang('fr')" id="auth-btn-fr" style="padding:4px 10px;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;background:#0047CC;color:white;">FR</button>
+    <button onclick="setAuthLang('en')" id="auth-btn-en" style="padding:4px 10px;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:#718096;">EN</button>
+  </div>
+  <div style="display:flex;gap:4px;background:#F7F9FC;border-radius:20px;padding:3px;">
+    <button onclick="setLang('fr')" id="btn-fr" style="padding:4px 10px;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;background:#0047CC;color:white;">FR</button>
+    <button onclick="setLang('en')" id="btn-en" style="padding:4px 10px;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:#718096;">EN</button>
+  </div>
 </header>
 
 <div class="auth-hero">
@@ -269,7 +279,148 @@ async function doReset() {
   }
 }
 
+const AUTH_TRANS = {
+  fr: {
+    login: 'Connexion',
+    register: 'Inscription',
+    name: 'Nom complet',
+    email: 'Email',
+    phone: 'Téléphone',
+    password: 'Mot de passe',
+    loginBtn: 'Se connecter',
+    registerBtn: 'Créer mon compte',
+    forgot: 'Mot de passe oublié ?',
+    resetTitle: 'Réinitialiser le mot de passe',
+    resetDesc: 'Entrez votre email — vous recevrez un lien de réinitialisation.',
+    sendLink: 'Envoyer le lien',
+    back: '← Retour',
+    heroTitle: '🔴 One-Click Security',
+    heroDesc: 'Protégez votre véhicule instantanément.',
+  },
+  en: {
+    login: 'Login',
+    register: 'Sign up',
+    name: 'Full name',
+    email: 'Email',
+    phone: 'Phone',
+    password: 'Password',
+    loginBtn: 'Sign in',
+    registerBtn: 'Create account',
+    forgot: 'Forgot password?',
+    resetTitle: 'Reset password',
+    resetDesc: 'Enter your email — you will receive a reset link.',
+    sendLink: 'Send link',
+    back: '← Back',
+    heroTitle: '🔴 One-Click Security',
+    heroDesc: 'Protect your vehicle instantly.',
+  }
+};
+
+let authLang = localStorage.getItem('tracium-lang') || 'fr';
+
+function setAuthLang(lang) {
+  authLang = lang;
+  localStorage.setItem('tracium-lang', lang);
+  const t = AUTH_TRANS[lang];
+  
+  document.getElementById('auth-btn-fr').style.background = lang === 'fr' ? '#0047CC' : 'transparent';
+  document.getElementById('auth-btn-fr').style.color = lang === 'fr' ? 'white' : '#718096';
+  document.getElementById('auth-btn-en').style.background = lang === 'en' ? '#0047CC' : 'transparent';
+  document.getElementById('auth-btn-en').style.color = lang === 'en' ? 'white' : '#718096';
+  
+  // Tabs
+  const tabs = document.querySelectorAll('.auth-tab');
+  if(tabs[0]) tabs[0].textContent = t.login;
+  if(tabs[1]) tabs[1].textContent = t.register;
+  
+  // Labels
+  const labels = document.querySelectorAll('.form-label');
+  // Login form labels
+  const loginLabels = document.querySelectorAll('#page-login .form-label');
+  if(loginLabels[0]) loginLabels[0].textContent = t.email;
+  if(loginLabels[1]) loginLabels[1].textContent = t.password;
+  
+  // Register form labels  
+  const regLabels = document.querySelectorAll('#page-register .form-label');
+  if(regLabels[0]) regLabels[0].textContent = t.name;
+  if(regLabels[1]) regLabels[1].textContent = t.email;
+  if(regLabels[2]) regLabels[2].textContent = t.phone;
+  if(regLabels[3]) regLabels[3].textContent = t.password;
+  
+  // Buttons
+  const loginBtn = document.getElementById('loginBtn');
+  const registerBtn = document.getElementById('registerBtn');
+  if(loginBtn) loginBtn.textContent = t.loginBtn;
+  if(registerBtn) registerBtn.textContent = t.registerBtn;
+  
+  // Hero
+  const hero = document.querySelector('.auth-hero h1');
+  const heroP = document.querySelector('.auth-hero p');
+  if(hero) hero.textContent = t.heroTitle;
+  if(heroP) heroP.textContent = t.heroDesc;
+}
+
+setTimeout(() => setAuthLang(authLang), 200);
+
 window.showPage = showPage;
+
+const TRANS_AUTH = {
+  fr: {
+    hero: '🔴 One-Click Security',
+    heroSub: 'Protégez votre véhicule instantanément.',
+    loginTab: 'Connexion',
+    registerTab: 'Inscription',
+    email: 'Email',
+    password: 'Mot de passe',
+    name: 'Nom complet',
+    phone: 'Téléphone',
+    loginBtn: 'Se connecter',
+    registerBtn: 'Créer mon compte',
+    forgot: 'Mot de passe oublié ?',
+    resetTitle: 'Réinitialiser le mot de passe',
+    resetSub: 'Entrez votre email — vous recevrez un lien.',
+    sendLink: 'Envoyer le lien',
+    back: '← Retour',
+  },
+  en: {
+    hero: '🔴 One-Click Security',
+    heroSub: 'Protect your vehicle instantly.',
+    loginTab: 'Login',
+    registerTab: 'Sign up',
+    email: 'Email',
+    password: 'Password',
+    name: 'Full name',
+    phone: 'Phone',
+    loginBtn: 'Log in',
+    registerBtn: 'Create account',
+    forgot: 'Forgot password?',
+    resetTitle: 'Reset password',
+    resetSub: 'Enter your email — you'll receive a link.',
+    sendLink: 'Send link',
+    back: '← Back',
+  }
+};
+
+let currentLang = localStorage.getItem('tracium-lang') || 'fr';
+
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('tracium-lang', lang);
+  document.getElementById('btn-fr').style.background = lang === 'fr' ? '#0047CC' : 'transparent';
+  document.getElementById('btn-fr').style.color = lang === 'fr' ? 'white' : '#718096';
+  document.getElementById('btn-en').style.background = lang === 'en' ? '#0047CC' : 'transparent';
+  document.getElementById('btn-en').style.color = lang === 'en' ? 'white' : '#718096';
+  
+  const t = TRANS_AUTH[lang];
+  document.querySelectorAll('.auth-tab')[0].textContent = t.loginTab;
+  document.querySelectorAll('.auth-tab')[1].textContent = t.registerTab;
+  document.getElementById('loginBtn').textContent = t.loginBtn;
+  document.getElementById('registerBtn').textContent = t.registerBtn;
+}
+
+setTimeout(() => setLang(currentLang), 200);
+window.setLang = setLang;
+window.setAuthLang = setAuthLang;
 window.doLogin = doLogin;
 window.doRegister = doRegister;
 window.doReset = doReset;

@@ -748,7 +748,7 @@ const PAY_TRANS = {
     included: 'tout inclus',
     free1: '1 mois offert',
     free3: '3 mois offerts',
-    operatorTitle: '📱 Choisir l'opérateur',
+    operatorTitle: "📱 Choisir l'opérateur",
     phoneLabel: 'Numéro Mobile Money',
     payMtn: '📲 Payer via MTN MoMo',
     payOrange: '🟠 Payer via Orange Money',
@@ -756,7 +756,7 @@ const PAY_TRANS = {
     auto: '✅ Activation automatique',
     receipt: '📋 Reçu par SMS',
     processing: 'Traitement en cours...',
-    successTitle: 'Paiement réussi !',
+    successTitle: 'Paiement reussi !',
     toDashboard: '🏠 Aller au tableau de bord',
     modify: '← Modifier',
     verify: 'Vérifiez avant de payer',
@@ -819,72 +819,3 @@ window.selectPlan = selectPlan;
 window.setLang = setLang;
 
 // ── SYSTÈME BILINGUE ──
-const TRANS = {
-  fr: {
-    title: '💳 Choisir un plan',
-    kitTab: '🔧 Kit installation',
-    subTab: '📅 Abonnement',
-    monthly: 'Mensuel',
-    yearly: 'Annuel',
-    included: 'tout inclus',
-    continue: 'Continuer →',
-    operator: '📱 Choisir l'opérateur',
-    phone: 'Numéro Mobile Money',
-    pay: 'Payer',
-    processing: 'Traitement en cours...',
-    success: 'Paiement réussi !',
-    freeMonth: 'mois offert',
-    freeMonths: 'mois offerts',
-  },
-  en: {
-    title: '💳 Choose a plan',
-    kitTab: '🔧 Installation Kit',
-    subTab: '📅 Subscription',
-    monthly: 'Monthly',
-    yearly: 'Yearly',
-    included: 'all included',
-    continue: 'Continue →',
-    operator: '📱 Choose operator',
-    phone: 'Mobile Money Number',
-    pay: 'Pay',
-    processing: 'Processing...',
-    success: 'Payment successful!',
-    freeMonth: 'month free',
-    freeMonths: 'months free',
-  }
-};
-
-let currentLang = localStorage.getItem('tracium-lang') || 'fr';
-
-function setLang(lang) {
-  currentLang = lang;
-  localStorage.setItem('tracium-lang', lang);
-  document.getElementById('btn-fr').style.background = lang === 'fr' ? '#0047CC' : 'transparent';
-  document.getElementById('btn-fr').style.color = lang === 'fr' ? 'white' : '#718096';
-  document.getElementById('btn-en').style.background = lang === 'en' ? '#0047CC' : 'transparent';
-  document.getElementById('btn-en').style.color = lang === 'en' ? 'white' : '#718096';
-  
-  const t = TRANS[lang];
-  const el = id => document.getElementById(id);
-  if(el('cardTitle')) el('cardTitle').textContent = t.title;
-  if(el('btn-kit')) el('btn-kit').textContent = t.kitTab;
-  if(el('btn-sub')) el('btn-sub').textContent = t.subTab + ' ';
-  if(el('btn-monthly')) el('btn-monthly').textContent = t.monthly;
-  if(el('continueBtn')) el('continueBtn').textContent = t.continue;
-  if(el('operatorTitle')) el('operatorTitle').textContent = t.operator;
-  if(el('phoneLabel')) el('phoneLabel').textContent = t.phone;
-  if(el('processingTitle')) el('processingTitle').textContent = t.processing;
-  if(el('successTitle')) el('successTitle').textContent = t.success;
-}
-
-setTimeout(() => setLang(currentLang), 300);
-window.switchCategory = switchCategory;
-window.switchBilling = switchBilling;
-window.selectKit = selectKit;
-window.selectSub = selectSub;
-window.selectOp = selectOp;
-window.goTo = goTo;
-window.doPay = doPay;
-</script>
-</body>
-</html>

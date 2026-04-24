@@ -12,308 +12,272 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+*{margin:0;padding:0;box-sizing:border-box;}
 :root{
-  --blue:#0047CC;--blue-dark:#003399;--blue-light:#EEF3FF;
+  --blue:#0047CC;--blue-light:#EEF3FF;
   --green:#00A550;--green-light:#F0FFF6;
   --orange:#FF8C00;--orange-light:#FFF7F0;
   --red:#E8001C;--red-light:#FFF0F0;
   --text:#0D1117;--text2:#4A5568;--text3:#718096;
   --bg:#F7F9FC;--white:#FFFFFF;--border:#E2E8F0;
 }
-body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;font-size:16px;}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;}
 
-/* NAV */
-nav{background:var(--white);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
-.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.nav-logo-icon{width:36px;height:36px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:white;font-family:'Space Grotesk',sans-serif;}
-.nav-logo-name{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--text);}
-.nav-user{display:flex;align-items:center;gap:10px;}
-.user-name{font-size:15px;font-weight:600;color:var(--text2);}
-.btn-logout{background:var(--red-light);color:var(--red);border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-ico{width:36px;height:36px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:white;font-family:'Space Grotesk',sans-serif;}
+.logo-nm{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--text);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.user-nm{font-size:14px;font-weight:600;color:var(--text2);}
+.btn-out{background:var(--red-light);color:var(--red);border:none;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
 
-/* HERO */
-.hero{background:linear-gradient(135deg,#0D1B40,#0047CC);padding:28px 20px;color:white;}
-.hero-greeting{font-size:14px;opacity:0.8;margin-bottom:4px;}
-.hero-name{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:800;margin-bottom:16px;}
-.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
-.hero-stat{background:rgba(255,255,255,0.1);border-radius:12px;padding:14px;text-align:center;}
-.hero-stat-num{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:800;}
-.hero-stat-label{font-size:12px;opacity:0.8;margin-top:4px;}
+.hero{background:linear-gradient(135deg,#0D1B40,#0047CC);padding:24px 20px;}
+.hero-hi{font-size:13px;color:rgba(255,255,255,0.75);margin-bottom:4px;}
+.hero-name{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;color:white;margin-bottom:20px;}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.stat{background:rgba(255,255,255,0.12);border-radius:12px;padding:14px;text-align:center;}
+.stat-n{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:800;color:white;}
+.stat-l{font-size:11px;color:rgba(255,255,255,0.7);margin-top:4px;}
 
-/* CONTAINER */
-.container{padding:16px;max-width:1100px;margin:0 auto;padding-bottom:80px;}
+.scroll{padding:16px;padding-bottom:100px;}
 
-/* CARDS */
-.card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px;}
-.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.card-title{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:var(--text);}
-.card-link{font-size:13px;color:var(--blue);text-decoration:none;font-weight:600;}
+.sec-ttl{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:12px;margin-top:4px;}
 
-/* QUICK ACTIONS */
-.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px;}
-.quick-btn{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px 14px;text-align:center;text-decoration:none;cursor:pointer;transition:all 0.2s;display:block;}
-.quick-btn:hover{border-color:var(--blue);background:var(--blue-light);}
-.quick-icon{font-size:30px;margin-bottom:8px;}
-.quick-label{font-size:15px;font-weight:700;color:var(--text);}
-.quick-desc{font-size:12px;color:var(--text3);margin-top:4px;}
+.sub-box{background:var(--blue-light);border:1px solid rgba(0,71,204,0.2);border-radius:16px;padding:20px;margin-bottom:20px;}
+.sub-nm{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px;}
+.sub-exp{font-size:14px;color:var(--text2);margin-bottom:14px;}
+.sub-prog{height:8px;background:rgba(0,71,204,0.15);border-radius:4px;margin-bottom:16px;}
+.sub-bar{height:100%;border-radius:4px;background:var(--blue);}
+.btn-renew{display:block;width:100%;padding:14px;background:var(--blue);color:white;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;font-family:'Plus Jakarta Sans',sans-serif;}
 
-/* BIENS LIST */
-.bien-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
-.bien-item:last-child{border-bottom:none;}
-.bien-icon{width:44px;height:44px;border-radius:12px;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
-.bien-info{flex:1;}
-.bien-name{font-size:16px;font-weight:700;color:var(--text);}
-.bien-detail{font-size:13px;color:var(--text3);margin-top:2px;}
-.bien-status{font-size:12px;font-weight:700;padding:4px 10px;border-radius:50px;}
-.status-active{background:var(--green-light);color:var(--green);}
-.status-inactive{background:var(--red-light);color:var(--red);}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.qcard{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:18px 12px;text-align:center;text-decoration:none;display:block;}
+.qcard:active{background:var(--blue-light);border-color:var(--blue);}
+.q-ico{font-size:28px;margin-bottom:8px;}
+.q-ttl{font-size:14px;font-weight:700;color:var(--text);}
+.q-sub{font-size:12px;color:var(--text3);margin-top:3px;}
 
-/* ALERTES */
-.alerte-item{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--orange-light);border:1px solid rgba(255,140,0,0.2);border-radius:12px;margin-bottom:10px;}
-.alerte-item.danger{background:var(--red-light);border-color:rgba(232,0,28,0.2);}
-.alerte-icon{font-size:24px;flex-shrink:0;}
-.alerte-text{font-size:15px;font-weight:600;color:var(--text);}
-.alerte-time{font-size:12px;color:var(--text3);margin-top:4px;}
+.biens-box{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px;}
+.biens-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);}
+.biens-ttl{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--text);}
+.biens-add{font-size:13px;color:var(--blue);text-decoration:none;font-weight:700;}
+.bien{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--border);}
+.bien:last-child{border-bottom:none;}
+.bien-ico{width:44px;height:44px;background:var(--blue-light);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.bien-inf{flex:1;}
+.bien-nm{font-size:15px;font-weight:700;color:var(--text);}
+.bien-dt{font-size:12px;color:var(--text3);margin-top:2px;}
+.badge-ok{background:var(--green-light);color:var(--green);font-size:11px;font-weight:700;padding:3px 10px;border-radius:50px;}
 
-/* SUBSCRIPTION */
-.sub-card{background:linear-gradient(135deg,#0D1B40,#0047CC);border-radius:16px;padding:20px;color:white;margin-bottom:16px;}
-.sub-plan{font-size:13px;opacity:0.8;margin-bottom:4px;}
-.sub-name{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:800;margin-bottom:8px;}
-.sub-expires{font-size:14px;opacity:0.9;margin-bottom:16px;}
-.sub-progress{height:6px;background:rgba(255,255,255,0.2);border-radius:3px;margin-bottom:16px;}
-.sub-bar{height:100%;border-radius:3px;background:white;}
-.btn-renew{background:white;color:var(--blue);border:none;border-radius:10px;padding:12px 24px;font-size:15px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;width:100%;}
+.mod-box{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:20px;}
+.mod-hdr{padding:16px 20px;border-bottom:1px solid var(--border);}
+.mod-row{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);}
+.mod-row:last-child{border-bottom:none;}
+.mod-ico{font-size:22px;width:32px;text-align:center;}
+.mod-inf{flex:1;}
+.mod-nm{font-size:14px;font-weight:700;color:var(--text);}
+.mod-dc{font-size:12px;color:var(--text3);margin-top:2px;}
+.badge-gr{background:var(--green-light);color:var(--green);font-size:11px;font-weight:700;padding:3px 10px;border-radius:50px;}
+.badge-or{background:var(--orange-light);color:var(--orange);font-size:11px;font-weight:700;padding:3px 10px;border-radius:50px;}
 
-/* BOTTOM NAV */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);display:flex;padding:10px 0 18px;z-index:50;}
-.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;text-decoration:none;}
-.bnav-icon{font-size:24px;}
-.bnav-label{font-size:12px;font-weight:600;color:var(--text3);}
-.bnav-item.active .bnav-label{color:var(--blue);}
+.botnav{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);display:flex;padding:10px 0 18px;z-index:50;}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;}
+.bni-ico{font-size:22px;}
+.bni-lbl{font-size:11px;font-weight:600;color:var(--text3);}
+.bni.active .bni-lbl{color:var(--blue);}
 </style>
 </head>
 <body>
 
-<nav>
-  <a href="/" class="nav-logo">
-    <div class="nav-logo-icon">T</div>
-    <span class="nav-logo-name">Tracium</span>
+<div class="topbar">
+  <a href="/" class="logo">
+    <div class="logo-ico">T</div>
+    <span class="logo-nm">Tracium</span>
   </a>
-  <div class="nav-user">
-    <span class="user-name" id="userName">—</span>
-    <button class="btn-logout" onclick="doLogout()">Déconnecter</button>
+  <div class="topbar-right">
+    <span class="user-nm" id="userNm">—</span>
+    <button class="btn-out" onclick="doLogout()">Sortir</button>
   </div>
-</nav>
+</div>
 
-<!-- HERO -->
 <div class="hero">
-  <div class="hero-greeting">Bonjour 👋</div>
+  <div class="hero-hi">Bonjour 👋</div>
   <div class="hero-name" id="heroName">—</div>
-  <div class="hero-stats">
-    <div class="hero-stat">
-      <div class="hero-stat-num" id="statBiens">0</div>
-      <div class="hero-stat-label">Véhicules</div>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-n" id="stV">0</div>
+      <div class="stat-l">Véhicules</div>
     </div>
-    <div class="hero-stat">
-      <div class="hero-stat-num" id="statStatus">🟢</div>
-      <div class="hero-stat-label">Statut</div>
+    <div class="stat">
+      <div class="stat-n" id="stS">🟢</div>
+      <div class="stat-l">Statut</div>
     </div>
-    <div class="hero-stat">
-      <div class="hero-stat-num" id="statDays">—</div>
-      <div class="hero-stat-label">Jours restants</div>
+    <div class="stat">
+      <div class="stat-n" id="stD">—</div>
+      <div class="stat-l">Jours restants</div>
     </div>
   </div>
 </div>
 
-<div class="container">
+<div class="scroll">
 
-  <!-- ABONNEMENT -->
-  <div class="sub-card" id="subCard">
-    <div class="sub-plan">Mon abonnement</div>
-    <div class="sub-name" id="subName">Chargement...</div>
-    <div class="sub-expires" id="subExpires">—</div>
-    <div class="sub-progress"><div class="sub-bar" id="subBar" style="width:80%;"></div></div>
-    <button class="btn-renew" onclick="window.location.href='/payment'">💳 Renouveler l'abonnement</button>
+  <div class="sec-ttl">📅 Mon abonnement</div>
+  <div class="sub-box">
+    <div class="sub-nm" id="subNm">Chargement...</div>
+    <div class="sub-exp" id="subExp">—</div>
+    <div class="sub-prog"><div class="sub-bar" id="subBar" style="width:80%;"></div></div>
+    <a href="/payment" class="btn-renew">💳 Renouveler l'abonnement</a>
   </div>
 
-  <!-- ACTIONS RAPIDES -->
-  <div class="card-title" style="margin-bottom:12px;">⚡ Actions rapides</div>
-  <div class="quick-grid">
-    <a href="/app" class="quick-btn">
-      <div class="quick-icon">🔴</div>
-      <div class="quick-label">One-Click</div>
-      <div class="quick-desc">Sécuriser maintenant</div>
+  <div class="sec-ttl">⚡ Actions rapides</div>
+  <div class="quick">
+    <a href="/app" class="qcard">
+      <div class="q-ico">🔴</div>
+      <div class="q-ttl">One-Click</div>
+      <div class="q-sub">Sécuriser</div>
     </a>
-    <a href="/register" class="quick-btn">
-      <div class="quick-icon">📷</div>
-      <div class="quick-label">Scanner VIN</div>
-      <div class="quick-desc">Enregistrer un bien</div>
+    <a href="/register" class="qcard">
+      <div class="q-ico">📷</div>
+      <div class="q-ttl">Scanner VIN</div>
+      <div class="q-sub">Enregistrer</div>
     </a>
-    <a href="/payment" class="quick-btn">
-      <div class="quick-icon">💳</div>
-      <div class="quick-label">Paiement</div>
-      <div class="quick-desc">Kit & abonnement</div>
+    <a href="/payment" class="qcard">
+      <div class="q-ico">💳</div>
+      <div class="q-ttl">Paiement</div>
+      <div class="q-sub">Kit & abonnement</div>
     </a>
-    <a href="/notifications" class="quick-btn">
-      <div class="quick-icon">🔔</div>
-      <div class="quick-label">Alertes</div>
-      <div class="quick-desc">Voir les notifications</div>
+    <a href="/blocage" class="qcard">
+      <div class="q-ico">🔒</div>
+      <div class="q-ttl">Blocage</div>
+      <div class="q-sub">Contrôle moteur</div>
     </a>
   </div>
 
-  <!-- MES VÉHICULES -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">🚗 Mes véhicules</div>
-      <a href="/register" class="card-link">+ Ajouter</a>
+  <div class="biens-box">
+    <div class="biens-hdr">
+      <div class="biens-ttl">🚗 Mes véhicules</div>
+      <a href="/register" class="biens-add">+ Ajouter</a>
     </div>
-    <div id="biensList">
-      <div style="text-align:center;padding:24px;color:var(--text3);">Chargement...</div>
-    </div>
-  </div>
-
-  <!-- ALERTES RÉCENTES -->
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title">🚨 Alertes récentes</div>
-    </div>
-    <div id="alertesList">
-      <div style="text-align:center;padding:16px;color:var(--text3);">Aucune alerte récente</div>
+    <div id="biensC">
+      <div style="padding:24px;text-align:center;color:var(--text3);">Chargement...</div>
     </div>
   </div>
 
-  <!-- MODULES TRACIUM -->
-  <div class="card">
-    <div class="card-title" style="margin-bottom:16px;">🛡️ Modules Tracium actifs</div>
-    <div style="display:grid;gap:10px;">
-      <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--green-light);border-radius:10px;">
-        <div style="font-size:24px;">🔍</div>
-        <div>
-          <div style="font-size:15px;font-weight:700;color:var(--text);">Tracium Scan</div>
-          <div style="font-size:13px;color:var(--text3);">Identification VIN, IMEI, QR code</div>
-        </div>
-        <div style="margin-left:auto;font-size:13px;font-weight:700;color:var(--green);">✅ Actif</div>
+  <div class="mod-box">
+    <div class="mod-hdr">
+      <div class="biens-ttl">🛡️ Modules Tracium</div>
+    </div>
+    <div class="mod-row">
+      <div class="mod-ico">🔴</div>
+      <div class="mod-inf">
+        <div class="mod-nm">One-Click Security</div>
+        <div class="mod-dc">Bouton urgence — réaction en moins de 2 secondes</div>
       </div>
-      <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--green-light);border-radius:10px;">
-        <div style="font-size:24px;">📡</div>
-        <div>
-          <div style="font-size:15px;font-weight:700;color:var(--text);">Tracium Locate</div>
-          <div style="font-size:13px;color:var(--text3);">GPS temps réel + offline-first</div>
-        </div>
-        <div style="margin-left:auto;font-size:13px;font-weight:700;color:var(--green);">✅ Actif</div>
+      <span class="badge-gr">✅ Actif</span>
+    </div>
+    <div class="mod-row">
+      <div class="mod-ico">📡</div>
+      <div class="mod-inf">
+        <div class="mod-nm">Tracium Locate</div>
+        <div class="mod-dc">GPS temps réel + offline-first</div>
       </div>
-      <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--green-light);border-radius:10px;">
-        <div style="font-size:24px;">🪪</div>
-        <div>
-          <div style="font-size:15px;font-weight:700;color:var(--text);">Tracium ID</div>
-          <div style="font-size:13px;color:var(--text3);">Passeport numérique du véhicule</div>
-        </div>
-        <div style="margin-left:auto;font-size:13px;font-weight:700;color:var(--green);">✅ Actif</div>
+      <span class="badge-gr">✅ Actif</span>
+    </div>
+    <div class="mod-row">
+      <div class="mod-ico">🔍</div>
+      <div class="mod-inf">
+        <div class="mod-nm">Tracium Scan</div>
+        <div class="mod-dc">Identification VIN, IMEI, QR code</div>
       </div>
-      <div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--orange-light);border-radius:10px;">
-        <div style="font-size:24px;">🧬</div>
-        <div>
-          <div style="font-size:15px;font-weight:700;color:var(--text);">Tracium DNA</div>
-          <div style="font-size:13px;color:var(--text3);">Marquage UV physique</div>
-        </div>
-        <div style="margin-left:auto;font-size:13px;font-weight:700;color:var(--orange);">⏳ Installation</div>
+      <span class="badge-gr">✅ Actif</span>
+    </div>
+    <div class="mod-row">
+      <div class="mod-ico">🪪</div>
+      <div class="mod-inf">
+        <div class="mod-nm">Tracium ID</div>
+        <div class="mod-dc">Passeport numérique + historique légal</div>
       </div>
+      <span class="badge-gr">✅ Actif</span>
+    </div>
+    <div class="mod-row">
+      <div class="mod-ico">🧬</div>
+      <div class="mod-inf">
+        <div class="mod-nm">Tracium DNA</div>
+        <div class="mod-dc">Marquage UV physique invisible</div>
+      </div>
+      <span class="badge-or">⏳ Installation</span>
     </div>
   </div>
 
 </div>
 
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav">
-  <a href="/app" class="bnav-item">
-    <div class="bnav-icon">🏠</div>
-    <div class="bnav-label">Accueil</div>
-  </a>
-  <a href="/register" class="bnav-item">
-    <div class="bnav-icon">📷</div>
-    <div class="bnav-label">Scanner</div>
-  </a>
-  <a href="/payment" class="bnav-item">
-    <div class="bnav-icon">💳</div>
-    <div class="bnav-label">Paiement</div>
-  </a>
-  <a href="/dashboard" class="bnav-item active">
-    <div class="bnav-icon">📊</div>
-    <div class="bnav-label">Dashboard</div>
-  </a>
-  <a href="/notifications" class="bnav-item">
-    <div class="bnav-icon">🔔</div>
-    <div class="bnav-label">Alertes</div>
-  </a>
-</nav>
+<div class="botnav">
+  <a href="/app" class="bni"><div class="bni-ico">🏠</div><div class="bni-lbl">Accueil</div></a>
+  <a href="/register" class="bni"><div class="bni-ico">📷</div><div class="bni-lbl">Scanner</div></a>
+  <a href="/payment" class="bni"><div class="bni-ico">💳</div><div class="bni-lbl">Paiement</div></a>
+  <a href="/dashboard" class="bni active"><div class="bni-ico">📊</div><div class="bni-lbl">Dashboard</div></a>
+  <a href="/notifications" class="bni"><div class="bni-ico">🔔</div><div class="bni-lbl">Alertes</div></a>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 import { getFirestore, collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyATWUfF5OFw860JXw76Uo9G_0jAI6hF6WE",
-  authDomain: "ambera-ai.firebaseapp.com",
-  projectId: "ambera-ai",
-  storageBucket: "ambera-ai.firebasestorage.app",
-  messagingSenderId: "581529826084",
-  appId: "1:581529826084:web:144a6ce179e0d8286979b1"
-};
-
-const app = initializeApp(firebaseConfig);
+const app = initializeApp({
+  apiKey:"AIzaSyATWUfF5OFw860JXw76Uo9G_0jAI6hF6WE",
+  authDomain:"ambera-ai.firebaseapp.com",
+  projectId:"ambera-ai",
+  storageBucket:"ambera-ai.firebasestorage.app",
+  messagingSenderId:"581529826084",
+  appId:"1:581529826084:web:144a6ce179e0d8286979b1"
+});
 const auth = getAuth(app);
 const db = getFirestore(app);
-
-const typeIcons = {'Moto':'🏍️','Voiture':'🚗','Camion':'🚚','Téléphone':'📱','Ordinateur':'💻','Autre':'📦'};
+const icons = {'Voiture':'🚗','SUV':'🚙','Camion':'🚚','Taxi':'🚕','Moto':'🏍️','Autre':'📦'};
 
 setPersistence(auth, browserLocalPersistence).catch(()=>{});
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = '/auth'; return; }
-
   const name = user.displayName || user.email.split('@')[0];
-  document.getElementById('userName').textContent = name;
+  document.getElementById('userNm').textContent = name;
   document.getElementById('heroName').textContent = name;
 
-  // Charger biens
-  const q = query(collection(db, 'biens'), where('userId', '==', user.uid));
-  const snap = await getDocs(q);
-  document.getElementById('statBiens').textContent = snap.size;
-
-  let html = '';
-  snap.forEach(d => {
-    const b = d.data();
-    html += `<div class="bien-item">
-      <div class="bien-icon">${typeIcons[b.type] || '📦'}</div>
-      <div class="bien-info">
-        <div class="bien-name">${b.marque} ${b.modele}</div>
-        <div class="bien-detail">${b.vin || 'VIN non défini'}</div>
-      </div>
-      <span class="bien-status status-active">✅ Actif</span>
-    </div>`;
-  });
-  document.getElementById('biensList').innerHTML = html || '<div style="text-align:center;padding:24px;color:var(--text3);">Aucun véhicule — <a href="/register" style="color:var(--blue);">Enregistrer →</a></div>';
-
-  // Charger abonnement
   try {
-    const subDoc = await getDoc(doc(db, 'subscriptions', user.uid));
-    if (subDoc.exists()) {
-      const sub = subDoc.data();
-      const endDate = sub.endDate?.toDate ? sub.endDate.toDate() : new Date(sub.endDate);
-      const today = new Date();
-      const daysLeft = Math.ceil((endDate - today) / (1000*60*60*24));
-      const progress = Math.max(5, Math.min(100, daysLeft/30*100));
+    const q = query(collection(db, 'biens'), where('userId','==',user.uid));
+    const snap = await getDocs(q);
+    document.getElementById('stV').textContent = snap.size;
+    let html = '';
+    snap.forEach(d => {
+      const b = d.data();
+      html += `<div class="bien">
+        <div class="bien-ico">${icons[b.type]||'🚗'}</div>
+        <div class="bien-inf">
+          <div class="bien-nm">${b.marque||''} ${b.modele||''}</div>
+          <div class="bien-dt">${b.plaque||b.vin||'—'}</div>
+        </div>
+        <span class="badge-ok">✅ Actif</span>
+      </div>`;
+    });
+    document.getElementById('biensC').innerHTML = html || '<div style="padding:24px;text-align:center;color:var(--text3);">Aucun véhicule — <a href="/register" style="color:var(--blue);font-weight:700;">Enregistrer →</a></div>';
+  } catch(e) {}
 
-      document.getElementById('subName').textContent = sub.planName || 'Abonnement actif';
-      document.getElementById('subExpires').textContent = daysLeft > 0 ? `Expire dans ${daysLeft} jours` : 'Abonnement expiré';
-      document.getElementById('subBar').style.width = progress + '%';
-      document.getElementById('statDays').textContent = daysLeft > 0 ? daysLeft : '0';
+  try {
+    const subDoc = await getDoc(doc(db,'subscriptions',user.uid));
+    if (subDoc.exists()) {
+      const s = subDoc.data();
+      const end = s.endDate?.toDate ? s.endDate.toDate() : new Date(s.endDate);
+      const days = Math.ceil((end-new Date())/(1000*60*60*24));
+      document.getElementById('subNm').textContent = s.planName || 'Abonnement actif';
+      document.getElementById('subExp').textContent = days > 0 ? `Expire dans ${days} jours` : 'Abonnement expiré';
+      document.getElementById('subBar').style.width = Math.max(5,Math.min(100,days/30*100))+'%';
+      document.getElementById('stD').textContent = Math.max(0,days);
     } else {
-      document.getElementById('subName').textContent = 'Aucun abonnement';
-      document.getElementById('subExpires').textContent = 'Souscrivez maintenant';
-      document.getElementById('statDays').textContent = '—';
+      document.getElementById('subNm').textContent = 'Aucun abonnement';
+      document.getElementById('subExp').textContent = 'Souscrivez maintenant';
+      document.getElementById('subBar').style.width = '0%';
+      document.getElementById('stD').textContent = '0';
     }
   } catch(e) {}
 });
@@ -322,7 +286,6 @@ async function doLogout() {
   await signOut(auth);
   window.location.href = '/auth';
 }
-
 window.doLogout = doLogout;
 </script>
 </body>

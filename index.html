@@ -499,7 +499,11 @@ footer{
     <li><a href="#tarifs">Tarifs</a></li>
     <li><a href="#temoignages">Témoignages</a></li>
   </ul>
-  <a href="/auth" class="nav-cta">Commencer</a>
+  <div style="display:flex;gap:4px;background:#F7F9FC;border-radius:20px;padding:3px;margin-right:8px;">
+    <button onclick="setLang('fr')" id="btn-fr" style="padding:4px 10px;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;background:#0047CC;color:white;">FR</button>
+    <button onclick="setLang('en')" id="btn-en" style="padding:4px 10px;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:#718096;">EN</button>
+  </div>
+  <a href="/auth" class="nav-cta" id="navCta">Commencer</a>
 </nav>
 
 <!-- HERO -->
@@ -869,6 +873,94 @@ window.addEventListener('scroll',()=>{
     nav.style.boxShadow = 'none';
   }
 });
+</script>
+
+<script>
+(function() {
+  var TRANS = {
+    fr: {
+      navHow: 'Comment ça marche',
+      navModules: 'Modules',
+      navTarifs: 'Tarifs',
+      navTest: 'Témoignages',
+      navCta: 'Commencer',
+      heroSub: 'IA embarquée · GPS · Anti-redémarrage.',
+      heroBtn: '🔴 Sécuriser ma voiture',
+      heroSub2: 'Découvrir les modules',
+      section1: 'Comment ça marche',
+      section2: 'Modules Tracium',
+      section3: 'Nos tarifs',
+      basicName: '🔰 Basic Kit',
+      proName: '⚡ Pro Kit',
+      premiumName: '🔥 Premium Kit',
+      ctaBtn: 'Commencer maintenant',
+    },
+    en: {
+      navHow: 'How it works',
+      navModules: 'Modules',
+      navTarifs: 'Pricing',
+      navTest: 'Testimonials',
+      navCta: 'Get started',
+      heroSub: 'Embedded AI · GPS · Engine block.',
+      heroBtn: '🔴 Secure my vehicle',
+      heroSub2: 'Discover modules',
+      section1: 'How it works',
+      section2: 'Tracium Modules',
+      section3: 'Our pricing',
+      basicName: '🔰 Basic Kit',
+      proName: '⚡ Pro Kit',
+      premiumName: '🔥 Premium Kit',
+      ctaBtn: 'Start now',
+    }
+  };
+
+  var lang = localStorage.getItem('tracium-lang') || 'fr';
+
+  function applyLang(l) {
+    lang = l;
+    localStorage.setItem('tracium-lang', l);
+    var t = TRANS[l];
+    var fr = document.getElementById('btn-fr');
+    var en = document.getElementById('btn-en');
+    if (fr) { fr.style.background = l==='fr'?'#0047CC':'transparent'; fr.style.color = l==='fr'?'white':'#718096'; }
+    if (en) { en.style.background = l==='en'?'#0047CC':'transparent'; en.style.color = l==='en'?'white':'#718096'; }
+
+    // Nav links
+    var navLinks = document.querySelectorAll('.nav-links a');
+    if (navLinks[0]) navLinks[0].textContent = t.navHow;
+    if (navLinks[1]) navLinks[1].textContent = t.navModules;
+    if (navLinks[2]) navLinks[2].textContent = t.navTarifs;
+    if (navLinks[3]) navLinks[3].textContent = t.navTest;
+    var navCta = document.getElementById('navCta');
+    if (navCta) navCta.textContent = t.navCta;
+
+    // Hero
+    var heroSub = document.getElementById('heroSub');
+    if (heroSub) heroSub.textContent = t.heroSub;
+    var heroBtn = document.getElementById('heroBtn');
+    if (heroBtn) heroBtn.textContent = t.heroBtn;
+    var heroSub2 = document.getElementById('heroSub2');
+    if (heroSub2) heroSub2.textContent = t.heroSub2;
+
+    // Sections titles
+    var sectionTitles = document.querySelectorAll('.section-title');
+    if (sectionTitles[0]) sectionTitles[0].textContent = t.section1;
+    if (sectionTitles[1]) sectionTitles[1].textContent = t.section2;
+    if (sectionTitles[2]) sectionTitles[2].textContent = t.section3;
+
+    // CTA button
+    var ctaBtns = document.querySelectorAll('.cta-btn, .btn-cta');
+    ctaBtns.forEach(function(b) { b.textContent = t.ctaBtn; });
+
+    // Data attributes
+    document.querySelectorAll('[data-fr]').forEach(function(el) {
+      el.textContent = l==='fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+    });
+  }
+
+  window.setLang = applyLang;
+  document.addEventListener('DOMContentLoaded', function() { applyLang(lang); });
+})();
 </script>
 </body>
 </html>

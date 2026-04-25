@@ -96,6 +96,10 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Pl
   </a>
   <div class="topbar-right">
     <span class="user-nm" id="userNm">—</span>
+  <div style="display:flex;gap:4px;background:#F7F9FC;border-radius:20px;padding:3px;">
+    <button onclick="setLang('fr')" id="btn-fr" style="padding:4px 10px;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;background:#0047CC;color:white;">FR</button>
+    <button onclick="setLang('en')" id="btn-en" style="padding:4px 10px;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:#718096;">EN</button>
+  </div>
     <button class="btn-out" onclick="doLogout()">Sortir</button>
   </div>
 </div>
@@ -287,6 +291,31 @@ async function doLogout() {
   window.location.href = '/auth';
 }
 window.doLogout = doLogout;
+</script>
+
+<script>
+// ── BILINGUE FR/EN ──
+(function() {
+  var lang = localStorage.getItem('tracium-lang') || 'fr';
+  
+  function applyLang(l) {
+    lang = l;
+    localStorage.setItem('tracium-lang', l);
+    var fr = document.getElementById('btn-fr');
+    var en = document.getElementById('btn-en');
+    if (fr) { fr.style.background = l==='fr'?'#0047CC':'transparent'; fr.style.color = l==='fr'?'white':'#718096'; }
+    if (en) { en.style.background = l==='en'?'#0047CC':'transparent'; en.style.color = l==='en'?'white':'#718096'; }
+    document.querySelectorAll('[data-fr]').forEach(function(el) {
+      el.textContent = l==='fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+    });
+  }
+  
+  window.setLang = applyLang;
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    applyLang(lang);
+  });
+})();
 </script>
 </body>
 </html>

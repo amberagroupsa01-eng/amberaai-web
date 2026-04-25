@@ -1097,5 +1097,30 @@ window.doLogout = doLogout;
 window.requestPayout = requestPayout;
 window.showToast = showToast;
 </script>
+
+<script>
+// ── BILINGUE FR/EN ──
+(function() {
+  var lang = localStorage.getItem('tracium-lang') || 'fr';
+  
+  function applyLang(l) {
+    lang = l;
+    localStorage.setItem('tracium-lang', l);
+    var fr = document.getElementById('btn-fr');
+    var en = document.getElementById('btn-en');
+    if (fr) { fr.style.background = l==='fr'?'#0047CC':'transparent'; fr.style.color = l==='fr'?'white':'#718096'; }
+    if (en) { en.style.background = l==='en'?'#0047CC':'transparent'; en.style.color = l==='en'?'white':'#718096'; }
+    document.querySelectorAll('[data-fr]').forEach(function(el) {
+      el.textContent = l==='fr' ? el.getAttribute('data-fr') : el.getAttribute('data-en');
+    });
+  }
+  
+  window.setLang = applyLang;
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    applyLang(lang);
+  });
+})();
+</script>
 </body>
 </html>

@@ -353,16 +353,20 @@ if ('serviceWorker' in navigator) {
   </button>
 
   <!-- BLOC 3 : ACTIONS RAPIDES -->
-  <div class="actions-grid">
+  <div class="actions-grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="action-btn" id="btnBlock" onclick="confirmBlock()" style="border-color:var(--red);background:var(--red-light);">
+      <div class="action-icon">🔒</div>
+      <div class="action-label" id="btnBlockLabel" style="color:var(--red);">Bloquer</div>
+    </div>
     <div class="action-btn" id="btnLocate" onclick="locateVehicle()">
       <div class="action-icon">📍</div>
       <div class="action-label" id="btnLocateLabel">Localiser</div>
     </div>
     <div class="action-btn" id="btnLock" onclick="lockVehicle()">
-      <div class="action-icon">🔒</div>
-      <div class="action-label" id="btnLockLabel">Verrouiller</div>
+      <div class="action-icon">🚨</div>
+      <div class="action-label" id="btnLockLabel">Alarme</div>
     </div>
-    <div class="action-btn" onclick="window.location.href='/payment?type=subscription'">
+    <div class="action-btn" onclick="window.location.href='/payment'">
       <div class="action-icon">💳</div>
       <div class="action-label" id="btnRenewLabel">Renouveler</div>
     </div>
@@ -864,6 +868,26 @@ async function notifyEmergency(phone, location) {
 }
 
 window.sendWhatsAppNotification = sendWhatsAppNotification;
+function confirmBlock() {
+  if (confirm('🔒 Bloquer le moteur ?\n\nCette action empêchera le redémarrage du véhicule.\nSeulement si le véhicule est à l\'arrêt.')) {
+    showToast('🔒 Moteur bloqué — Commande envoyée');
+    document.getElementById('btnBlock').style.background = 'var(--red)';
+    document.getElementById('btnBlockLabel').style.color = 'white';
+    // Sauvegarder l'événement
+    if (currentUser) {
+      import("https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js").then(({ addDoc, collection, serverTimestamp }) => {
+        addDoc(collection(db, 'events'), {
+          userId: currentUser.uid,
+          type: 'BLOCAGE_MOTEUR',
+          timestamp: serverTimestamp()
+        }).catch(()=>{});
+      });
+    }
+  }
+}
+window.confirmBlock = confirmBlock;
+window.setLang = setLang;
+
 window.notifyEmergency = notifyEmergency;
 
 // ── SYSTÈME BILINGUE ──

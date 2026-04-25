@@ -754,7 +754,44 @@ async function deactivateEmergency() {
 // Localiser
 function locateVehicle() {
   showToast('📍 Localisation en cours...');
-  setTimeout(() => showToast('📍 Véhicule localisé — Yaoundé, Centre'), 1500);
+  if (!navigator.geolocation) {
+    showToast('❌ GPS non disponible sur cet appareil');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      const lat = pos.coords.latitude.toFixed(5);
+      const lng = pos.coords.longitude.toFixed(5);
+      const accuracy = Math.round(pos.coords.accuracy);
+      // Afficher dans le statut
+      const locEl = document.getElementById('lastLocation');
+      if (locEl) locEl.textContent = lat + ', ' + lng;
+      // Sauvegarder dans Firebase
+      if (currentUser && db) {
+        import("https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js").then(({ addDoc, collection, serverTimestamp, doc, setDoc }) => {
+          setDoc(doc(db, 'gps_logs', currentUser.uid), {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+            accuracy,
+            timestamp: serverTimestamp(),
+            userId: currentUser.uid
+          }).catch(()=>{});
+        });
+      }
+      // Ouvrir Google Maps
+      showToast('📍 Position trouvée — Précision : ' + accuracy + 'm');
+      setTimeout(() => {
+        if (confirm('📍 Position trouvée !\nLat: ' + lat + '\nLng: ' + lng + '\n\nOuvrir dans Google Maps ?')) {
+          window.open('https://www.google.com/maps?q=' + lat + ',' + lng, '_blank');
+        }
+      }, 500);
+    },
+    function(err) {
+      const msgs = {1:'Permission refusée — activez le GPS', 2:'GPS indisponible', 3:'Délai dépassé'};
+      showToast('❌ ' + (msgs[err.code] || 'Erreur GPS'));
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+  );
 }
 
 // Verrouiller

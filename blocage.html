@@ -126,8 +126,26 @@ function confirmAction(type) {
   }
 }
 function locateVehicle() {
-  alert('📍 Localisation en cours...');
-  setTimeout(() => alert('📍 Véhicule localisé : Yaoundé, Bastos\nMis à jour : maintenant'), 1500);
+  if (!navigator.geolocation) {
+    alert('GPS non disponible sur cet appareil');
+    return;
+  }
+  alert('📍 Localisation en cours...\nActivez le GPS si demandé.');
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      const lat = pos.coords.latitude.toFixed(5);
+      const lng = pos.coords.longitude.toFixed(5);
+      const accuracy = Math.round(pos.coords.accuracy);
+      if (confirm('📍 Position trouvée !\nLatitude: ' + lat + '\nLongitude: ' + lng + '\nPrécision: ' + accuracy + 'm\n\nOuvrir dans Google Maps ?')) {
+        window.open('https://www.google.com/maps?q=' + lat + ',' + lng, '_blank');
+      }
+    },
+    function(err) {
+      const msgs = {1:'Permission GPS refusée — activez la localisation', 2:'GPS indisponible', 3:'Délai dépassé'};
+      alert('❌ ' + (msgs[err.code] || 'Erreur GPS'));
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+  );
 }
 window.confirmAction = confirmAction;
 window.locateVehicle = locateVehicle;

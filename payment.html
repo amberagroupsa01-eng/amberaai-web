@@ -276,35 +276,68 @@ if ('serviceWorker' in navigator) {
 
       <!-- ABONNEMENTS -->
       <div id="section-sub" style="display:none;">
-        <!-- Toggle Mensuel / Annuel -->
-        <div class="billing-toggle" style="margin-bottom:16px;">
-          <button class="billing-btn active" id="btn-monthly" onclick="switchBilling('monthly')"><span id="btnMonthlyLabel">Mensuel</span></button>
-          <button class="billing-btn" id="btn-yearly" onclick="switchBilling('yearly')">Annuel <span class="billing-badge">-17%</span></button>
+
+        <!-- Abonnement Annuel uniquement -->
+        <div style="background:#F0FFF6;border:1px solid rgba(0,165,80,0.2);border-radius:12px;padding:14px;margin-bottom:16px;">
+          <div style="font-size:15px;font-weight:800;color:var(--green);margin-bottom:4px;">📅 Abonnement Annuel uniquement</div>
+          <div style="font-size:13px;color:var(--text2);">Paiement unique · 2 mois offerts · Protection garantie 12 mois</div>
         </div>
+
         <div class="kits-grid">
+          <!-- BASIC -->
           <div class="kit-card" id="sub-basic" onclick="selectSub('basic')">
             <div class="kit-header">
               <div class="kit-name">🔰 Basic</div>
-              <div class="kit-price" id="price-basic">3 000 FCFA<span style="font-size:12px;font-weight:400;">/mois</span></div>
+              <div class="kit-price" id="price-basic">30 000 FCFA<span style="font-size:12px;font-weight:400;">/an</span></div>
             </div>
             <div class="kit-features">GPS · Historique · Alertes simples</div>
+            <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+              <div style="font-size:12px;color:var(--text3);">Coût opérationnel : 2 000 FCFA/mois</div>
+              <div style="font-size:12px;color:var(--green);font-weight:700;">Bénéfice net : 1 000 FCFA/mois</div>
+            </div>
+            <div id="savings-basic" style="display:block;margin-top:8px;background:var(--green-light);border-radius:8px;padding:8px;text-align:center;">
+              <div style="font-size:13px;font-weight:800;color:var(--green);">30 000 FCFA/an</div>
+              <div style="font-size:11px;color:var(--text3);">Économie : 6 000 FCFA</div>
+            </div>
           </div>
+
+          <!-- PRO -->
           <div class="kit-card recommended" id="sub-pro" onclick="selectSub('pro')">
             <div class="kit-header">
               <div class="kit-name">⚡ Pro</div>
-              <div class="kit-price" id="price-pro">5 000 FCFA<span style="font-size:12px;font-weight:400;">/mois</span></div>
+              <div class="kit-price" id="price-pro">50 000 FCFA<span style="font-size:12px;font-weight:400;">/an</span></div>
             </div>
             <div class="kit-features">Tout Basic + Blocage moteur · Alertes sabotage · Monitoring</div>
+            <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+              <div style="font-size:12px;color:var(--text3);">Coût opérationnel : 2 200 FCFA/mois</div>
+              <div style="font-size:12px;color:var(--green);font-weight:700;">Bénéfice net : 2 800 FCFA/mois</div>
+            </div>
+            <div id="savings-pro" style="display:block;margin-top:8px;background:var(--green-light);border-radius:8px;padding:8px;text-align:center;">
+              <div style="font-size:13px;font-weight:800;color:var(--green);">50 000 FCFA/an</div>
+              <div style="font-size:11px;color:var(--text3);">Économie : 10 000 FCFA</div>
+            </div>
           </div>
+
+          <!-- PREMIUM -->
           <div class="kit-card" id="sub-premium" onclick="selectSub('premium')">
             <div class="kit-header">
               <div class="kit-name">🔥 Premium</div>
-              <div class="kit-price" id="price-premium">10 000 FCFA<span style="font-size:12px;font-weight:400;">/mois</span></div>
+              <div class="kit-price" id="price-premium">100 000 FCFA<span style="font-size:12px;font-weight:400;">/an</span></div>
             </div>
             <div class="kit-features">Tout Pro + IA avancée · Alertes prioritaires · Support 24h/7j</div>
+            <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+              <div style="font-size:12px;color:var(--text3);">Coût opérationnel : 3 100 FCFA/mois</div>
+              <div style="font-size:12px;color:var(--green);font-weight:700;">Bénéfice net : 6 900 FCFA/mois</div>
+            </div>
+            <div id="savings-premium" style="display:block;margin-top:8px;background:var(--green-light);border-radius:8px;padding:8px;text-align:center;">
+              <div style="font-size:13px;font-weight:800;color:var(--green);">100 000 FCFA/an</div>
+              <div style="font-size:11px;color:var(--text3);">Économie : 20 000 FCFA</div>
+            </div>
           </div>
         </div>
       </div>
+
+</div>
 
       <!-- Résumé commande -->
       <div class="order-summary" id="orderSummary">
@@ -472,12 +505,12 @@ const PLANS = {
   kit_basic: { name: 'Basic Kit + Installation', price: 100000, type: 'kit_basic', label: 'Kit complet · Matériel + Installation inclus' },
   kit_pro: { name: 'Pro Kit + Installation', price: 120000, type: 'kit_pro', label: 'Kit complet · Matériel + Installation inclus' },
   kit_premium: { name: 'Premium Kit + Installation', price: 200000, type: 'kit_premium', label: 'Kit complet · Matériel + Installation inclus' },
-  basic: { name: 'Abonnement Basic', price: 3000, type: 'basic', label: 'Mensuel' },
-  pro: { name: 'Abonnement Pro', price: 5000, type: 'pro', label: 'Mensuel' },
-  premium: { name: 'Abonnement Premium', price: 10000, type: 'premium', label: 'Mensuel' },
-  basic_yearly: { name: 'Abonnement Basic Annuel', price: 30000, type: 'basic', label: 'Annuel (2 mois offerts)' },
-  pro_yearly: { name: 'Abonnement Pro Annuel', price: 50000, type: 'pro', label: 'Annuel (2 mois offerts)' },
-  premium_yearly: { name: 'Abonnement Premium Annuel', price: 100000, type: 'premium', label: 'Annuel (2 mois offerts)' },
+  basic: { name: 'Abonnement Basic Annuel', price: 30000, type: 'basic', label: 'Annuel · 2 mois offerts' },
+  pro: { name: 'Abonnement Pro Annuel', price: 50000, type: 'pro', label: 'Annuel · 2 mois offerts' },
+  premium: { name: 'Abonnement Premium Annuel', price: 100000, type: 'premium', label: 'Annuel · 2 mois offerts' },
+  basic_yearly: { name: 'Abonnement Basic — 12 mois', price: 30000, type: 'basic', label: 'Annuel · 2 mois offerts · Économie 6 000 FCFA' },
+  pro_yearly: { name: 'Abonnement Pro — 12 mois', price: 50000, type: 'pro', label: 'Annuel · 2 mois offerts · Économie 10 000 FCFA' },
+  premium_yearly: { name: 'Abonnement Premium — 12 mois', price: 100000, type: 'premium', label: 'Annuel · 2 mois offerts · Économie 20 000 FCFA' },
   kit: { name: 'Pro Kit + Installation', price: 120000, type: 'kit_pro', label: 'Kit complet · Matériel + Installation inclus' },
   subscription: { name: 'Abonnement Pro', price: 5000, type: 'pro', label: 'Mensuel' }
 };
@@ -498,14 +531,22 @@ function switchBilling(mode) {
   document.getElementById('btn-monthly').classList.toggle('active', mode === 'monthly');
   document.getElementById('btn-yearly').classList.toggle('active', mode === 'yearly');
   
+  const yearlyInfo = document.getElementById('yearly-info');
+  if (yearlyInfo) yearlyInfo.style.display = mode === 'yearly' ? 'block' : 'none';
+  
+  ['basic','pro','premium'].forEach(p => {
+    const el = document.getElementById('savings-'+p);
+    if (el) el.style.display = mode === 'yearly' ? 'block' : 'none';
+  });
+
   if (mode === 'monthly') {
     document.getElementById('price-basic').innerHTML = '3 000 FCFA<span style="font-size:12px;font-weight:400;">/mois</span>';
     document.getElementById('price-pro').innerHTML = '5 000 FCFA<span style="font-size:12px;font-weight:400;">/mois</span>';
     document.getElementById('price-premium').innerHTML = '10 000 FCFA<span style="font-size:12px;font-weight:400;">/mois</span>';
   } else {
-    document.getElementById('price-basic').innerHTML = '30 000 FCFA<span style="font-size:12px;font-weight:400;">/an ✨</span>';
-    document.getElementById('price-pro').innerHTML = '50 000 FCFA<span style="font-size:12px;font-weight:400;">/an ✨</span>';
-    document.getElementById('price-premium').innerHTML = '100 000 FCFA<span style="font-size:12px;font-weight:400;">/an ✨</span>';
+    document.getElementById('price-basic').innerHTML = '30 000 FCFA<span style="font-size:12px;font-weight:400;">/an</span>';
+    document.getElementById('price-pro').innerHTML = '50 000 FCFA<span style="font-size:12px;font-weight:400;">/an</span>';
+    document.getElementById('price-premium').innerHTML = '100 000 FCFA<span style="font-size:12px;font-weight:400;">/an</span>';
   }
 }
 
@@ -516,7 +557,7 @@ function selectKit(planId) {
 }
 
 function selectSub(planId) {
-  const fullId = billingMode === 'yearly' ? planId + '_yearly' : planId;
+  const fullId = planId + '_yearly';
   document.querySelectorAll('#section-sub .kit-card').forEach(c => c.classList.remove('selected'));
   document.getElementById('sub-' + planId).classList.add('selected');
   selectPlan(fullId);

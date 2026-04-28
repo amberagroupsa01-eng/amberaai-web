@@ -880,14 +880,16 @@ async function checkSubscriptionAndNotify(userId, phone, userName) {
     const daysLeft = Math.ceil((endDate - today) / (1000*60*60*24));
     
     let message = '';
-    if (daysLeft === 5) {
-      message = `Bonjour ${userName}, votre abonnement Tracium expire dans 5 jours. Renouvelez ici: https://amberaai-web.vercel.app/payment`;
-    } else if (daysLeft === 2) {
-      message = `Rappel ${userName}: votre abonnement Tracium expire dans 2 jours! Renouvelez: https://amberaai-web.vercel.app/payment`;
+    if (daysLeft === 30) {
+      message = `Bonjour ${userName}, votre abonnement Tracium annuel expire dans 30 jours. Renouvelez avant expiration: https://amberaai-web.vercel.app/payment`;
+    } else if (daysLeft === 7) {
+      message = `⚠️ Rappel urgent ${userName}: votre abonnement Tracium expire dans 7 jours! Renouvelez maintenant: https://amberaai-web.vercel.app/payment`;
+    } else if (daysLeft === 1) {
+      message = `🚨 DERNIER JOUR! ${userName}, votre abonnement expire demain. Renouvelez immédiatement: https://amberaai-web.vercel.app/payment`;
     } else if (daysLeft === 0) {
-      message = `${userName}, votre abonnement Tracium expire AUJOURD'HUI! Renouvelez maintenant: https://amberaai-web.vercel.app/payment`;
+      message = `🔴 ${userName}, votre abonnement Tracium a expiré aujourd'hui. Service suspendu. Renouvelez: https://amberaai-web.vercel.app/payment`;
     } else if (daysLeft < 0) {
-      message = `${userName}, votre abonnement Tracium a expiré. Service suspendu. Renouvelez: https://amberaai-web.vercel.app/payment`;
+      message = `🔴 ${userName}, abonnement expiré depuis ${Math.abs(daysLeft)} jours. Véhicule non protégé. Renouvelez: https://amberaai-web.vercel.app/payment`;
     }
     
     if (message && phone) {

@@ -246,6 +246,10 @@ if ('serviceWorker' in navigator) {
 
       <!-- KITS -->
       <div id="section-kit">
+        <div style="background:#FFF7F0;border:1px solid rgba(255,140,0,0.3);border-radius:12px;padding:14px;margin-bottom:16px;">
+          <div style="font-size:15px;font-weight:800;color:var(--orange);margin-bottom:4px;">⚠️ Kit + Abonnement annuel obligatoire</div>
+          <div style="font-size:13px;color:var(--text2);">Chaque kit inclut automatiquement un abonnement annuel. Le kit seul ne peut pas être vendu sans abonnement.</div>
+        </div>
         <div class="kits-grid">
           <div class="kit-card" id="kit-basic" onclick="selectKit('kit_basic')">
             <div class="kit-header">
@@ -253,7 +257,7 @@ if ('serviceWorker' in navigator) {
               <div class="kit-price">100 000 FCFA</div>
             </div>
             <div class="kit-features">GPS + GSM · Relais moteur · Batterie secours</div>
-            <div class="kit-free">1 mois offert</div>
+            <div class="kit-free">Abonnement annuel obligatoire · 1 mois offert</div>
           </div>
           <div class="kit-card recommended" id="kit-pro" onclick="selectKit('kit_pro')">
             <div class="kit-header">
@@ -261,7 +265,7 @@ if ('serviceWorker' in navigator) {
               <div class="kit-price">120 000 FCFA</div>
             </div>
             <div class="kit-features">Tout Basic + Anti-sabotage · Capteurs · Sirène · GPS amélioré</div>
-            <div class="kit-free">1 mois offert</div>
+            <div class="kit-free">Abonnement annuel obligatoire · 1 mois offert</div>
           </div>
           <div class="kit-card" id="kit-premium" onclick="selectKit('kit_premium')">
             <div class="kit-header">
@@ -269,8 +273,9 @@ if ('serviceWorker' in navigator) {
               <div class="kit-price">200 000 FCFA</div>
             </div>
             <div class="kit-features">Tout Pro + Couche cachée · GPS secondaire · Installation renforcée</div>
-            <div class="kit-free">3 mois offerts</div>
+            <div class="kit-free">Abonnement annuel obligatoire · 3 mois offerts</div>
           </div>
+        </div>
         </div>
       </div>
 

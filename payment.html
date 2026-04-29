@@ -475,7 +475,24 @@ if ('serviceWorker' in navigator) {
         </div>
       </div>
 
-      <button class="pay-btn" onclick="window.location.href='/dashboard'">
+      <!-- Auto-redirect countdown -->
+      <div id="redirectCountdown" style="
+        text-align:center;margin-bottom:16px;
+        padding:12px;background:var(--blue-light);
+        border-radius:10px;font-size:14px;color:var(--blue);font-weight:600;
+      ">
+        🚀 Redirection vers l'application dans <span id="countdownNum">5</span>s...
+      </div>
+
+      <button class="pay-btn" onclick="window.location.href='/app'">
+        🚀 Accéder à l'application
+      </button>
+      <button onclick="window.location.href='/dashboard'" style="
+        display:block;width:100%;margin-top:10px;padding:12px;
+        background:none;border:1px solid var(--border);border-radius:10px;
+        font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;
+        color:var(--text2);cursor:pointer;
+      ">
         🏠 Aller au tableau de bord
       </button>
     </div>
@@ -660,10 +677,26 @@ function selectOp(op) {
 }
 
 // Navigation
+let redirectTimer = null;
 function goTo(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(pageId).classList.add('active');
   window.scrollTo(0, 0);
+
+  // Auto-redirect vers /app après paiement réussi
+  if (pageId === 'page-success') {
+    if (redirectTimer) clearInterval(redirectTimer);
+    let count = 5;
+    document.getElementById('countdownNum').textContent = count;
+    redirectTimer = setInterval(() => {
+      count--;
+      document.getElementById('countdownNum').textContent = count;
+      if (count <= 0) {
+        clearInterval(redirectTimer);
+        window.location.href = '/app';
+      }
+    }, 1000);
+  }
 }
 
 // Payer

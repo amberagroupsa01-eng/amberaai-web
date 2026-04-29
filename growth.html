@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Tracium — Growth Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(r=>r.forEach(s=>s.unregister()));}</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --blue:#0047CC;--blue-light:#EEF3FF;
+  --green:#00A550;--green-light:#F0FFF6;
+  --orange:#FF8C00;--orange-light:#FFF7F0;
+  --red:#E8001C;--red-light:#FFF0F0;
+  --text:#0D1117;--text2:#4A5568;--text3:#718096;
+  --bg:#F7F9FC;--white:#FFFFFF;--border:#E2E8F0;
+}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-ico{width:36px;height:36px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:white;}
+.logo-nm{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--text);}
+.lang-box{display:flex;gap:4px;background:var(--bg);border-radius:20px;padding:3px;}
+.btn-fr{padding:4px 10px;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;background:var(--blue);color:white;}
+.btn-en{padding:4px 10px;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:var(--text3);}
+.wrap{padding:16px;padding-bottom:100px;}
+.card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px;}
+.card-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:16px;}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.kpi{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center;}
+.kpi-n{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:800;}
+.kpi-l{font-size:12px;color:var(--text3);margin-top:4px;}
+.kpi-trend{font-size:12px;font-weight:700;margin-top:6px;}
+.up{color:var(--green);}
+.down{color:var(--red);}
+
+/* FUNNEL */
+.funnel{display:grid;gap:8px;}
+.funnel-row{display:flex;align-items:center;gap:12px;}
+.funnel-label{font-size:14px;font-weight:600;color:var(--text2);width:80px;flex-shrink:0;}
+.funnel-bar-wrap{flex:1;background:var(--bg);border-radius:50px;height:32px;overflow:hidden;}
+.funnel-bar{height:100%;border-radius:50px;display:flex;align-items:center;padding-left:12px;font-size:13px;font-weight:700;color:white;transition:width 1s;}
+.funnel-pct{font-size:13px;font-weight:700;color:var(--text2);width:40px;text-align:right;}
+
+/* SOURCES */
+.source-list{display:grid;gap:10px;}
+.source-item{display:flex;align-items:center;gap:12px;}
+.source-ico{font-size:20px;width:32px;text-align:center;}
+.source-info{flex:1;}
+.source-name{font-size:14px;font-weight:700;color:var(--text);}
+.source-bar-wrap{height:6px;background:var(--bg);border-radius:3px;margin-top:4px;}
+.source-bar{height:100%;border-radius:3px;background:var(--blue);}
+.source-pct{font-size:13px;font-weight:700;color:var(--blue);}
+
+/* SCORE DIST */
+.score-dist{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.score-box{border-radius:12px;padding:14px;text-align:center;}
+.score-box.hot{background:var(--red-light);}
+.score-box.warm{background:var(--orange-light);}
+.score-box.cold{background:var(--bg);}
+.score-box-n{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:800;}
+.score-box.hot .score-box-n{color:var(--red);}
+.score-box.warm .score-box-n{color:var(--orange);}
+.score-box.cold .score-box-n{color:var(--text3);}
+.score-box-l{font-size:12px;font-weight:700;margin-top:4px;}
+.score-box.hot .score-box-l{color:var(--red);}
+.score-box.warm .score-box-l{color:var(--orange);}
+.score-box.cold .score-box-l{color:var(--text3);}
+.score-box-sub{font-size:11px;color:var(--text3);margin-top:2px;}
+
+/* INSIGHT */
+.insight-list{display:grid;gap:10px;}
+.insight{display:flex;align-items:flex-start;gap:12px;padding:14px;background:var(--bg);border-radius:12px;}
+.insight-ico{font-size:22px;flex-shrink:0;}
+.insight-text{flex:1;}
+.insight-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.insight-desc{font-size:13px;color:var(--text2);}
+.insight.alert{background:var(--red-light);}
+.insight.success{background:var(--green-light);}
+.insight.tip{background:var(--blue-light);}
+
+/* WHATSAPP BOT */
+.bot-flow{display:grid;gap:10px;}
+.bot-step{display:flex;gap:12px;align-items:flex-start;}
+.bot-num{width:28px;height:28px;background:var(--blue);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;}
+.bot-content{flex:1;}
+.bot-msg{background:var(--blue-light);border-radius:0 12px 12px 12px;padding:12px;font-size:14px;color:var(--text);margin-bottom:4px;}
+.bot-action{font-size:12px;color:var(--text3);font-style:italic;}
+.bot-arrow{text-align:center;font-size:18px;color:var(--text3);}
+
+/* CTA */
+.cta-box{background:linear-gradient(135deg,#0D1B40,#0047CC);border-radius:16px;padding:24px;text-align:center;color:white;margin-bottom:16px;}
+.cta-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:800;margin-bottom:8px;}
+.cta-sub{font-size:14px;opacity:0.8;margin-bottom:16px;}
+.cta-btn{background:white;color:var(--blue);border:none;border-radius:10px;padding:12px 24px;font-size:15px;font-weight:700;cursor:pointer;}
+
+/* PERIOD SELECTOR */
+.period-sel{display:flex;gap:6px;margin-bottom:16px;}
+.period-btn{padding:6px 14px;border:1px solid var(--border);border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;background:var(--white);color:var(--text2);}
+.period-btn.active{background:var(--blue);color:white;border-color:var(--blue);}
+
+/* BOTNAV */
+.botnav{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);display:flex;padding:10px 0 18px;z-index:50;}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;}
+.bni-ico{font-size:22px;}
+.bni-lbl{font-size:11px;font-weight:600;color:var(--text3);}
+.bni.active .bni-lbl{color:var(--blue);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="/app" class="logo">
+    <div class="logo-ico"><img src="https://raw.githubusercontent.com/amberagroupsa01-eng/amberaai-web/main/tracium.png" style="width:100%;height:100%;border-radius:10px;object-fit:cover;" onerror="this.style.display='none'"></div>
+    <span class="logo-nm">Tracium</span>
+  </a>
+  <div class="lang-box">
+    <button class="btn-fr" onclick="setLang('fr')">FR</button>
+    <button class="btn-en" onclick="setLang('en')">EN</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="cta-box">
+    <div class="cta-title">📈 Growth Intelligence</div>
+    <div class="cta-sub">Analysez vos leads, optimisez vos campagnes, convertissez plus.</div>
+    <button class="cta-btn" onclick="window.location.href='/leads'">👥 Voir les leads →</button>
+  </div>
+
+  <!-- PERIOD -->
+  <div class="period-sel">
+    <button class="period-btn active" onclick="setPeriod('7j', this)">7 jours</button>
+    <button class="period-btn" onclick="setPeriod('30j', this)">30 jours</button>
+    <button class="period-btn" onclick="setPeriod('90j', this)">90 jours</button>
+    <button class="period-btn" onclick="setPeriod('total', this)">Total</button>
+  </div>
+
+  <!-- KPI -->
+  <div class="kpi-grid">
+    <div class="kpi">
+      <div class="kpi-n" id="kpiLeads" style="color:var(--blue);">24</div>
+      <div class="kpi-l">Leads générés</div>
+      <div class="kpi-trend up">↑ +18% vs semaine passée</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-n" id="kpiHot" style="color:var(--red);">8</div>
+      <div class="kpi-l">Leads HOT 🔥</div>
+      <div class="kpi-trend up">↑ 33% du total</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-n" id="kpiConv" style="color:var(--green);">12%</div>
+      <div class="kpi-l">Taux conversion</div>
+      <div class="kpi-trend up">↑ +3% ce mois</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-n" id="kpiCPL" style="color:var(--orange);">2 500</div>
+      <div class="kpi-l">Coût par lead (FCFA)</div>
+      <div class="kpi-trend down">↓ Optimiser</div>
+    </div>
+  </div>
+
+  <!-- DISTRIBUTION SCORES -->
+  <div class="card">
+    <div class="card-title">🎯 Distribution des scores</div>
+    <div class="score-dist">
+      <div class="score-box hot">
+        <div class="score-box-n" id="hotPct">33%</div>
+        <div class="score-box-l">🔥 HOT</div>
+        <div class="score-box-sub">Score 6-7</div>
+      </div>
+      <div class="score-box warm">
+        <div class="score-box-n" id="warmPct">45%</div>
+        <div class="score-box-l">⚡ WARM</div>
+        <div class="score-box-sub">Score 3-5</div>
+      </div>
+      <div class="score-box cold">
+        <div class="score-box-n" id="coldPct">22%</div>
+        <div class="score-box-l">❄️ COLD</div>
+        <div class="score-box-sub">Score 0-2</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FUNNEL -->
+  <div class="card">
+    <div class="card-title">🔽 Funnel de conversion</div>
+    <div class="funnel">
+      <div class="funnel-row">
+        <div class="funnel-label">Leads</div>
+        <div class="funnel-bar-wrap">
+          <div class="funnel-bar" style="width:100%;background:#0047CC;">100 leads</div>
+        </div>
+        <div class="funnel-pct">100%</div>
+      </div>
+      <div class="funnel-row">
+        <div class="funnel-label">Contactés</div>
+        <div class="funnel-bar-wrap">
+          <div class="funnel-bar" style="width:72%;background:#2563EB;">72 leads</div>
+        </div>
+        <div class="funnel-pct">72%</div>
+      </div>
+      <div class="funnel-row">
+        <div class="funnel-label">HOT</div>
+        <div class="funnel-bar-wrap">
+          <div class="funnel-bar" style="width:33%;background:var(--red);">33 leads</div>
+        </div>
+        <div class="funnel-pct">33%</div>
+      </div>
+      <div class="funnel-row">
+        <div class="funnel-label">RDV</div>
+        <div class="funnel-bar-wrap">
+          <div class="funnel-bar" style="width:20%;background:var(--orange);">20 leads</div>
+        </div>
+        <div class="funnel-pct">20%</div>
+      </div>
+      <div class="funnel-row">
+        <div class="funnel-label">Installés</div>
+        <div class="funnel-bar-wrap">
+          <div class="funnel-bar" style="width:12%;background:var(--green);">12 leads</div>
+        </div>
+        <div class="funnel-pct">12%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOURCES -->
+  <div class="card">
+    <div class="card-title">📣 Sources de leads</div>
+    <div class="source-list">
+      <div class="source-item">
+        <div class="source-ico">📘</div>
+        <div class="source-info">
+          <div class="source-name">Facebook Ads</div>
+          <div class="source-bar-wrap"><div class="source-bar" style="width:65%;background:#1877F2;"></div></div>
+        </div>
+        <div class="source-pct" style="color:#1877F2;">65%</div>
+      </div>
+      <div class="source-item">
+        <div class="source-ico">📱</div>
+        <div class="source-info">
+          <div class="source-name">WhatsApp direct</div>
+          <div class="source-bar-wrap"><div class="source-bar" style="width:20%;background:#25D366;"></div></div>
+        </div>
+        <div class="source-pct" style="color:#25D366;">20%</div>
+      </div>
+      <div class="source-item">
+        <div class="source-ico">🤝</div>
+        <div class="source-info">
+          <div class="source-name">Référence client</div>
+          <div class="source-bar-wrap"><div class="source-bar" style="width:10%;background:var(--green);"></div></div>
+        </div>
+        <div class="source-pct" style="color:var(--green);">10%</div>
+      </div>
+      <div class="source-item">
+        <div class="source-ico">📸</div>
+        <div class="source-info">
+          <div class="source-name">Instagram</div>
+          <div class="source-bar-wrap"><div class="source-bar" style="width:5%;background:#E4405F;"></div></div>
+        </div>
+        <div class="source-pct" style="color:#E4405F;">5%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLOW WHATSAPP BOT -->
+  <div class="card">
+    <div class="card-title">🤖 Flow Bot WhatsApp</div>
+    <div class="bot-flow">
+      <div class="bot-step">
+        <div class="bot-num">1</div>
+        <div class="bot-content">
+          <div class="bot-msg">👋 Bonjour ! Merci pour votre intérêt pour Tracium.<br><br>Pour vous proposer la meilleure solution :<br><br>1️⃣ Quel est le type de votre voiture ?<br><em>Berline / SUV / Taxi / Camion / Pickup</em></div>
+          <div class="bot-action">→ Stocke : car_type</div>
+        </div>
+      </div>
+      <div class="bot-arrow">↓</div>
+      <div class="bot-step">
+        <div class="bot-num">2</div>
+        <div class="bot-content">
+          <div class="bot-msg">2️⃣ Quelle est la valeur estimée de votre véhicule ?<br><br>• Moins de 2M FCFA<br>• Entre 2M et 5M FCFA<br>• Plus de 5M FCFA</div>
+          <div class="bot-action">→ Stocke : car_value → déclenche scoring</div>
+        </div>
+      </div>
+      <div class="bot-arrow">↓</div>
+      <div class="bot-step">
+        <div class="bot-num">3</div>
+        <div class="bot-content">
+          <div class="bot-msg">3️⃣ Avez-vous déjà un GPS installé sur votre véhicule ?<br><br>✅ Oui &nbsp;&nbsp;&nbsp; ❌ Non</div>
+          <div class="bot-action">→ Stocke : has_gps → calcule score final</div>
+        </div>
+      </div>
+      <div class="bot-arrow">↓</div>
+      <div class="bot-step">
+        <div class="bot-num">4</div>
+        <div class="bot-content">
+          <div class="bot-msg" style="background:var(--red-light);">🔥 Score HOT (6-7) :<br><em>"Votre véhicule est éligible à une installation prioritaire. Êtes-vous disponible aujourd'hui ou demain ?"</em></div>
+          <div class="bot-action">→ Notification équipe + assignation automatique</div>
+        </div>
+      </div>
+      <div class="bot-arrow">↓</div>
+      <div class="bot-step">
+        <div class="bot-num">5</div>
+        <div class="bot-content">
+          <div class="bot-msg" style="background:var(--orange-light);">⚡ Score WARM (3-5) :<br><em>"Souhaitez-vous plus d'informations ou planifier un rendez-vous ?"</em></div>
+          <div class="bot-action">→ Relance après 1h puis 24h</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSIGHTS IA -->
+  <div class="card">
+    <div class="card-title">🧠 Insights Growth Intelligence</div>
+    <div class="insight-list">
+      <div class="insight success">
+        <div class="insight-ico">🏆</div>
+        <div class="insight-text">
+          <div class="insight-title">Meilleure source : Facebook Ads</div>
+          <div class="insight-desc">65% des leads viennent de Facebook. Augmentez le budget sur les pubs qui ciblent les propriétaires SUV &gt; 5M FCFA à Yaoundé.</div>
+        </div>
+      </div>
+      <div class="insight tip">
+        <div class="insight-ico">💡</div>
+        <div class="insight-text">
+          <div class="insight-title">Profil HOT idéal</div>
+          <div class="insight-desc">SUV ou Pickup, valeur &gt;5M FCFA, pas de GPS. Taux de conversion : 42%. Ciblez ce profil en priorité.</div>
+        </div>
+      </div>
+      <div class="insight alert">
+        <div class="insight-ico">⚠️</div>
+        <div class="insight-text">
+          <div class="insight-title">Temps de réponse trop long</div>
+          <div class="insight-desc">Les leads HOT non contactés dans les 5 minutes ont 60% moins de chances de convertir. Activez les notifications immédiates.</div>
+        </div>
+      </div>
+      <div class="insight tip">
+        <div class="insight-ico">📈</div>
+        <div class="insight-text">
+          <div class="insight-title">Recommandation A/B test</div>
+          <div class="insight-desc">Testez 2 messages d'accroche différents sur Facebook : "Votre voiture est-elle vraiment sécurisée ?" vs "Un seul bouton protège votre véhicule".</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCORING ENGINE EXPLIQUÉ -->
+  <div class="card">
+    <div class="card-title">⚙️ Scoring Engine — Règles actuelles</div>
+    <div style="display:grid;gap:10px;">
+      <div style="display:flex;justify-content:space-between;padding:12px;background:var(--bg);border-radius:10px;">
+        <span style="font-size:14px;color:var(--text2);">Véhicule &gt; 5M FCFA</span>
+        <span style="font-weight:800;color:var(--green);">+3 pts</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:12px;background:var(--bg);border-radius:10px;">
+        <span style="font-size:14px;color:var(--text2);">Véhicule 2M–5M FCFA</span>
+        <span style="font-weight:800;color:var(--blue);">+2 pts</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:12px;background:var(--bg);border-radius:10px;">
+        <span style="font-size:14px;color:var(--text2);">A déjà un GPS (à convaincre)</span>
+        <span style="font-weight:800;color:var(--orange);">+2 pts</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:12px;background:var(--bg);border-radius:10px;">
+        <span style="font-size:14px;color:var(--text2);">Pas de GPS (facile à convaincre)</span>
+        <span style="font-weight:800;color:var(--blue);">+1 pt</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:12px;background:var(--bg);border-radius:10px;">
+        <span style="font-size:14px;color:var(--text2);">Source : Référence client</span>
+        <span style="font-weight:800;color:var(--green);">+2 pts</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:12px;background:var(--bg);border-radius:10px;">
+        <span style="font-size:14px;color:var(--text2);">Source : Facebook Ads</span>
+        <span style="font-weight:800;color:var(--blue);">+1 pt</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px;">
+        <div style="background:var(--red-light);padding:10px;border-radius:10px;text-align:center;">
+          <div style="font-weight:800;color:var(--red);font-size:15px;">6-7 pts</div>
+          <div style="font-size:11px;color:var(--red);">🔥 HOT</div>
+        </div>
+        <div style="background:var(--orange-light);padding:10px;border-radius:10px;text-align:center;">
+          <div style="font-weight:800;color:var(--orange);font-size:15px;">3-5 pts</div>
+          <div style="font-size:11px;color:var(--orange);">⚡ WARM</div>
+        </div>
+        <div style="background:var(--bg);padding:10px;border-radius:10px;text-align:center;">
+          <div style="font-weight:800;color:var(--text3);font-size:15px;">0-2 pts</div>
+          <div style="font-size:11px;color:var(--text3);">❄️ COLD</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIEN WHATSAPP ADS -->
+  <div class="card">
+    <div class="card-title">📣 Lien d'acquisition Facebook Ads</div>
+    <div style="background:var(--bg);border-radius:10px;padding:14px;margin-bottom:12px;">
+      <div style="font-size:12px;color:var(--text3);margin-bottom:6px;">Lien à mettre dans vos publicités Facebook :</div>
+      <div style="font-size:13px;font-weight:600;color:var(--blue);word-break:break-all;" id="waLink">https://wa.me/237678658152?text=Bonjour%20je%20souhaite%20sécuriser%20mon%20véhicule%20avec%20Tracium</div>
+    </div>
+    <button style="width:100%;padding:12px;background:#25D366;color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;" onclick="copyLink()">📋 Copier le lien</button>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="botnav">
+  <a href="/app" class="bni"><div class="bni-ico">🏠</div><div class="bni-lbl">Accueil</div></a>
+  <a href="/leads" class="bni"><div class="bni-ico">👥</div><div class="bni-lbl">Leads</div></a>
+  <a href="/growth" class="bni active"><div class="bni-ico">📈</div><div class="bni-lbl">Growth</div></a>
+  <a href="/installer" class="bni"><div class="bni-ico">🔧</div><div class="bni-lbl">Installer</div></a>
+  <a href="/dashboard" class="bni"><div class="bni-ico">📊</div><div class="bni-lbl">Dashboard</div></a>
+</div>
+
+<script>
+function setPeriod(p, btn) {
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const data = {
+    '7j':  {leads:24, hot:8, conv:'12%', cpl:2500, hotP:'33%', warmP:'45%', coldP:'22%'},
+    '30j': {leads:89, hot:28, conv:'15%', cpl:2100, hotP:'31%', warmP:'48%', coldP:'21%'},
+    '90j': {leads:247, hot:72, conv:'18%', cpl:1800, hotP:'29%', warmP:'50%', coldP:'21%'},
+    'total':{leads:312, hot:95, conv:'19%', cpl:1650, hotP:'30%', warmP:'49%', coldP:'21%'},
+  };
+  const d = data[p];
+  document.getElementById('kpiLeads').textContent = d.leads;
+  document.getElementById('kpiHot').textContent = d.hot;
+  document.getElementById('kpiConv').textContent = d.conv;
+  document.getElementById('kpiCPL').textContent = d.cpl.toLocaleString();
+  document.getElementById('hotPct').textContent = d.hotP;
+  document.getElementById('warmPct').textContent = d.warmP;
+  document.getElementById('coldPct').textContent = d.coldP;
+}
+
+function copyLink() {
+  const link = document.getElementById('waLink').textContent;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(link).then(() => alert('✅ Lien copié !'));
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = link;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    alert('✅ Lien copié !');
+  }
+}
+
+window.setPeriod = setPeriod;
+window.copyLink = copyLink;
+
+window.setLang = function(l) {
+  localStorage.setItem('tracium-lang', l);
+  document.querySelector('.btn-fr').style.background = l==='fr'?'#0047CC':'transparent';
+  document.querySelector('.btn-fr').style.color = l==='fr'?'white':'#718096';
+  document.querySelector('.btn-en').style.background = l==='en'?'#0047CC':'transparent';
+  document.querySelector('.btn-en').style.color = l==='en'?'white':'#718096';
+};
+
+// Appliquer langue sauvegardée
+const savedLang = localStorage.getItem('tracium-lang') || 'fr';
+window.setLang(savedLang);
+</script>
+</body>
+</html>

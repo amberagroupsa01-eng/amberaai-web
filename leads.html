@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Tracium — CRM Leads</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;800&display=swap" rel="stylesheet">
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(r=>r.forEach(s=>s.unregister()));}</script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --blue:#0047CC;--blue-light:#EEF3FF;
+  --green:#00A550;--green-light:#F0FFF6;
+  --orange:#FF8C00;--orange-light:#FFF7F0;
+  --red:#E8001C;--red-light:#FFF0F0;
+  --hot:#E8001C;--warm:#FF8C00;--cold:#718096;
+  --text:#0D1117;--text2:#4A5568;--text3:#718096;
+  --bg:#F7F9FC;--white:#FFFFFF;--border:#E2E8F0;
+}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:16px;}
+
+/* TOPBAR */
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-ico{width:36px;height:36px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;color:white;}
+.logo-nm{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--text);}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.btn-add{background:var(--blue);color:white;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;}
+.btn-fr{padding:4px 10px;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;background:var(--blue);color:white;}
+.btn-en{padding:4px 10px;border:none;border-radius:16px;font-size:13px;font-weight:700;cursor:pointer;background:transparent;color:var(--text3);}
+.lang-box{display:flex;gap:4px;background:var(--bg);border-radius:20px;padding:3px;}
+
+/* STATS */
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:16px;background:var(--white);border-bottom:1px solid var(--border);}
+.stat{text-align:center;padding:12px;background:var(--bg);border-radius:12px;}
+.stat-n{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:800;}
+.stat-l{font-size:11px;color:var(--text3);margin-top:4px;}
+
+/* FILTERS */
+.filters{display:flex;gap:8px;padding:12px 16px;overflow-x:auto;border-bottom:1px solid var(--border);background:var(--white);}
+.filter-btn{white-space:nowrap;padding:6px 14px;border:2px solid var(--border);border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;background:var(--white);color:var(--text2);}
+.filter-btn.active{border-color:var(--blue);background:var(--blue-light);color:var(--blue);}
+.filter-btn.hot{border-color:var(--red);}
+.filter-btn.hot.active{border-color:var(--red);background:var(--red-light);color:var(--red);}
+.filter-btn.warm{border-color:var(--orange);}
+.filter-btn.warm.active{border-color:var(--orange);background:var(--orange-light);color:var(--orange);}
+
+/* SEARCH */
+.search-wrap{padding:12px 16px;background:var(--white);border-bottom:1px solid var(--border);}
+.search-input{width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:10px;font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;outline:none;}
+.search-input:focus{border-color:var(--blue);}
+
+/* LEADS LIST */
+.wrap{padding:12px 16px;padding-bottom:100px;}
+.lead-card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:10px;cursor:pointer;transition:all 0.2s;}
+.lead-card:active{transform:scale(0.99);}
+.lead-card.hot{border-left:4px solid var(--red);}
+.lead-card.warm{border-left:4px solid var(--orange);}
+.lead-card.cold{border-left:4px solid var(--text3);}
+.lead-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.lead-name{font-size:16px;font-weight:700;color:var(--text);}
+.lead-score{display:flex;align-items:center;gap:6px;}
+.badge{font-size:11px;font-weight:800;padding:3px 10px;border-radius:50px;}
+.badge-hot{background:var(--red-light);color:var(--red);}
+.badge-warm{background:var(--orange-light);color:var(--orange);}
+.badge-cold{background:#F7F9FC;color:var(--text3);}
+.score-num{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:800;}
+.lead-info{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;}
+.lead-info span{font-size:13px;color:var(--text2);}
+.lead-bottom{display:flex;align-items:center;justify-content:space-between;}
+.lead-status{font-size:12px;font-weight:700;padding:3px 10px;border-radius:50px;}
+.status-new{background:var(--blue-light);color:var(--blue);}
+.status-contacted{background:#FFF7F0;color:var(--orange);}
+.status-rdv{background:var(--green-light);color:var(--green);}
+.status-installed{background:var(--green-light);color:var(--green);}
+.status-lost{background:var(--red-light);color:var(--red);}
+.lead-time{font-size:11px;color:var(--text3);}
+.lead-actions{display:flex;gap:8px;margin-top:10px;}
+.btn-sm{padding:6px 14px;border:none;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;}
+.btn-call{background:var(--green-light);color:var(--green);}
+.btn-wa{background:#25D366;color:white;}
+.btn-rdv{background:var(--blue-light);color:var(--blue);}
+.btn-note{background:var(--bg);color:var(--text2);}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;align-items:flex-end;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--white);border-radius:20px 20px 0 0;padding:24px;width:100%;max-height:85vh;overflow-y:auto;}
+.modal-title{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;margin-bottom:16px;}
+.modal-close{float:right;font-size:20px;cursor:pointer;color:var(--text3);}
+.field{margin-bottom:14px;}
+.field label{font-size:13px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px;}
+.field input,.field select,.field textarea{width:100%;padding:12px 14px;border:2px solid var(--border);border-radius:8px;font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;outline:none;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);}
+
+/* EMPTY */
+.empty{text-align:center;padding:48px 20px;color:var(--text3);}
+.empty-ico{font-size:48px;margin-bottom:12px;}
+
+/* BOTNAV */
+.botnav{position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);display:flex;padding:10px 0 18px;z-index:50;}
+.bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;}
+.bni-ico{font-size:22px;}
+.bni-lbl{font-size:11px;font-weight:600;color:var(--text3);}
+.bni.active .bni-lbl{color:var(--blue);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="/app" class="logo">
+    <div class="logo-ico"><img src="https://raw.githubusercontent.com/amberagroupsa01-eng/amberaai-web/main/tracium.png" style="width:100%;height:100%;border-radius:10px;object-fit:cover;" onerror="this.style.display='none'"></div>
+    <span class="logo-nm">Tracium</span>
+  </a>
+  <div class="topbar-right">
+    <div class="lang-box">
+      <button class="btn-fr" onclick="setLang('fr')">FR</button>
+      <button class="btn-en" onclick="setLang('en')">EN</button>
+    </div>
+    <button class="btn-add" onclick="openModal()">+ Lead</button>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-n" id="totalLeads">0</div>
+    <div class="stat-l">Total leads</div>
+  </div>
+  <div class="stat">
+    <div class="stat-n" style="color:var(--red);" id="hotCount">0</div>
+    <div class="stat-l">🔥 HOT</div>
+  </div>
+  <div class="stat">
+    <div class="stat-n" style="color:var(--orange);" id="warmCount">0</div>
+    <div class="stat-l">⚡ WARM</div>
+  </div>
+  <div class="stat">
+    <div class="stat-n" style="color:var(--green);" id="rdvCount">0</div>
+    <div class="stat-l">📅 RDV</div>
+  </div>
+</div>
+
+<!-- FILTERS -->
+<div class="filters">
+  <button class="filter-btn active" onclick="filterLeads('all', this)">Tous</button>
+  <button class="filter-btn hot" onclick="filterLeads('HOT', this)">🔥 HOT</button>
+  <button class="filter-btn warm" onclick="filterLeads('WARM', this)">⚡ WARM</button>
+  <button class="filter-btn" onclick="filterLeads('COLD', this)">❄️ COLD</button>
+  <button class="filter-btn" onclick="filterLeads('NEW', this)">🆕 Nouveau</button>
+  <button class="filter-btn" onclick="filterLeads('RDV', this)">📅 RDV</button>
+  <button class="filter-btn" onclick="filterLeads('INSTALLED', this)">✅ Installé</button>
+</div>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <input class="search-input" id="searchInput" placeholder="🔍 Rechercher un lead..." oninput="searchLeads(this.value)">
+</div>
+
+<!-- LEADS LIST -->
+<div class="wrap" id="leadsList">
+  <div class="empty">
+    <div class="empty-ico">📋</div>
+    <div>Chargement des leads...</div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="botnav">
+  <a href="/app" class="bni"><div class="bni-ico">🏠</div><div class="bni-lbl">Accueil</div></a>
+  <a href="/leads" class="bni active"><div class="bni-ico">👥</div><div class="bni-lbl">Leads</div></a>
+  <a href="/growth" class="bni"><div class="bni-ico">📈</div><div class="bni-lbl">Growth</div></a>
+  <a href="/installer" class="bni"><div class="bni-ico">🔧</div><div class="bni-lbl">Installer</div></a>
+  <a href="/dashboard" class="bni"><div class="bni-ico">📊</div><div class="bni-lbl">Dashboard</div></a>
+</div>
+
+<!-- MODAL NOUVEAU LEAD -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-title">
+      ➕ Nouveau Lead
+      <span class="modal-close" onclick="closeModal()">✕</span>
+    </div>
+    <div class="field">
+      <label>Nom / Prénom</label>
+      <input type="text" id="fName" placeholder="Ex: Jean Dupont">
+    </div>
+    <div class="field">
+      <label>Téléphone WhatsApp</label>
+      <input type="tel" id="fPhone" placeholder="Ex: 237678000000">
+    </div>
+    <div class="field">
+      <label>Type de voiture</label>
+      <select id="fCarType">
+        <option value="">Sélectionner...</option>
+        <option>Berline</option>
+        <option>SUV / 4x4</option>
+        <option>Camion</option>
+        <option>Taxi</option>
+        <option>Pickup</option>
+        <option>Minibus</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Valeur estimée du véhicule</label>
+      <select id="fCarValue">
+        <option value="">Sélectionner...</option>
+        <option value="<2M">Moins de 2M FCFA</option>
+        <option value="2M-5M">Entre 2M et 5M FCFA</option>
+        <option value=">5M">Plus de 5M FCFA</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Déjà un GPS ?</label>
+      <select id="fHasGPS">
+        <option value="false">Non</option>
+        <option value="true">Oui</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Source</label>
+      <select id="fSource">
+        <option value="facebook_ads">Facebook Ads</option>
+        <option value="whatsapp">WhatsApp direct</option>
+        <option value="referral">Référence client</option>
+        <option value="instagram">Instagram</option>
+        <option value="terrain">Terrain</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Note</label>
+      <textarea id="fNote" placeholder="Notes sur ce prospect..." rows="3"></textarea>
+    </div>
+    <button style="width:100%;padding:14px;background:var(--blue);color:white;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px;" onclick="saveLead()">💾 Enregistrer le lead</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyATWUfF5OFw860JXw76Uo9G_0jAI6hF6WE",
+  authDomain:"ambera-ai.firebaseapp.com",
+  projectId:"ambera-ai",
+  storageBucket:"ambera-ai.firebasestorage.app",
+  messagingSenderId:"581529826084",
+  appId:"1:581529826084:web:144a6ce179e0d8286979b1"
+});
+
+const auth = getAuth(app);
+const db = getFirestore(app);
+let allLeads = [];
+let currentFilter = 'all';
+
+setPersistence(auth, browserLocalPersistence).catch(()=>{});
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { window.location.href = '/auth'; return; }
+  await loadLeads();
+});
+
+// ── SCORING ENGINE ──
+function scoreLeads(lead) {
+  let score = 0;
+  if (lead.carValue === '>5M') score += 3;
+  else if (lead.carValue === '2M-5M') score += 2;
+  else score += 1;
+  if (lead.hasGPS === 'true' || lead.hasGPS === true) score += 2;
+  else score += 1;
+  if (lead.source === 'facebook_ads') score += 1;
+  if (lead.source === 'referral') score += 2;
+  let level = score >= 6 ? 'HOT' : score >= 3 ? 'WARM' : 'COLD';
+  return { score, level };
+}
+
+// ── CHARGER LEADS ──
+async function loadLeads() {
+  try {
+    const q = query(collection(db, 'leads'), orderBy('createdAt', 'desc'));
+    const snap = await getDocs(q);
+    allLeads = [];
+    snap.forEach(d => allLeads.push({ id: d.id, ...d.data() }));
+    renderLeads(allLeads);
+    updateStats(allLeads);
+  } catch(e) {
+    // Demo leads si Firebase vide
+    allLeads = [
+      { id:'1', name:'Alain Mbarga', phone:'237677123456', carType:'SUV / 4x4', carValue:'>5M', hasGPS:'true', source:'facebook_ads', status:'NEW', note:'Intéressé par Pro Kit', createdAt: new Date() },
+      { id:'2', name:'Marie Kamto', phone:'237691234567', carType:'Berline', carValue:'2M-5M', hasGPS:'false', source:'whatsapp', status:'CONTACTED', note:'Rappeler vendredi', createdAt: new Date(Date.now()-3600000) },
+      { id:'3', name:'Paul Nkomo', phone:'237678901234', carType:'Taxi', carValue:'<2M', hasGPS:'false', source:'terrain', status:'RDV', note:'RDV samedi 10h', createdAt: new Date(Date.now()-7200000) },
+      { id:'4', name:'Sophie Essomba', phone:'237655443322', carType:'Pickup', carValue:'>5M', hasGPS:'false', source:'facebook_ads', status:'INSTALLED', note:'Kit Premium installé', createdAt: new Date(Date.now()-86400000) },
+      { id:'5', name:'Robert Atangana', phone:'237699887766', carType:'Berline', carValue:'<2M', hasGPS:'true', source:'instagram', status:'LOST', note:'Budget insuffisant', createdAt: new Date(Date.now()-172800000) },
+    ];
+    renderLeads(allLeads);
+    updateStats(allLeads);
+  }
+}
+
+// ── RENDER ──
+function renderLeads(leads) {
+  const container = document.getElementById('leadsList');
+  if (!leads.length) {
+    container.innerHTML = '<div class="empty"><div class="empty-ico">📋</div><div>Aucun lead trouvé</div></div>';
+    return;
+  }
+
+  container.innerHTML = leads.map(lead => {
+    const { score, level } = scoreLeads(lead);
+    const levelClass = level.toLowerCase();
+    const badgeClass = `badge-${levelClass}`;
+    const statusClass = `status-${(lead.status||'new').toLowerCase()}`;
+    const statusLabels = {NEW:'🆕 Nouveau', CONTACTED:'📞 Contacté', RDV:'📅 RDV', INSTALLED:'✅ Installé', LOST:'❌ Perdu'};
+    const time = lead.createdAt?.toDate ? lead.createdAt.toDate().toLocaleDateString('fr-FR') : 'Récent';
+    const waLink = `https://wa.me/${lead.phone}?text=Bonjour ${lead.name}, nous revenons vers vous concernant la sécurisation de votre véhicule avec Tracium.`;
+    
+    return `<div class="lead-card ${levelClass}" onclick="toggleActions('${lead.id}')">
+      <div class="lead-top">
+        <div class="lead-name">${lead.name || '—'}</div>
+        <div class="lead-score">
+          <span class="badge ${badgeClass}">${level}</span>
+          <span class="score-num" style="color:${level==='HOT'?'var(--red)':level==='WARM'?'var(--orange)':'var(--text3)'}">${score}/7</span>
+        </div>
+      </div>
+      <div class="lead-info">
+        <span>📱 ${lead.phone || '—'}</span>
+        <span>🚗 ${lead.carType || '—'}</span>
+        <span>💰 ${lead.carValue || '—'}</span>
+        <span>📡 GPS: ${lead.hasGPS==='true'||lead.hasGPS===true ? 'Oui' : 'Non'}</span>
+      </div>
+      ${lead.note ? `<div style="font-size:13px;color:var(--text3);margin-bottom:8px;">💬 ${lead.note}</div>` : ''}
+      <div class="lead-bottom">
+        <span class="lead-status ${statusClass}">${statusLabels[lead.status] || '🆕 Nouveau'}</span>
+        <span class="lead-time">${time} · ${lead.source || '—'}</span>
+      </div>
+      <div class="lead-actions" id="actions-${lead.id}" style="display:none;">
+        <button class="btn-sm btn-wa" onclick="contactWA('${lead.phone}', '${lead.name}', event)">📱 WhatsApp</button>
+        <button class="btn-sm btn-rdv" onclick="changeStatus('${lead.id}', 'RDV', event)">📅 RDV</button>
+        <button class="btn-sm btn-call" onclick="changeStatus('${lead.id}', 'INSTALLED', event)">✅ Installé</button>
+        <button class="btn-sm btn-note" onclick="changeStatus('${lead.id}', 'LOST', event)">❌ Perdu</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleActions(id) {
+  const el = document.getElementById('actions-' + id);
+  if (el) el.style.display = el.style.display === 'none' ? 'flex' : 'none';
+}
+
+function updateStats(leads) {
+  document.getElementById('totalLeads').textContent = leads.length;
+  document.getElementById('hotCount').textContent = leads.filter(l => scoreLeads(l).level === 'HOT').length;
+  document.getElementById('warmCount').textContent = leads.filter(l => scoreLeads(l).level === 'WARM').length;
+  document.getElementById('rdvCount').textContent = leads.filter(l => l.status === 'RDV').length;
+}
+
+// ── FILTER ──
+function filterLeads(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = filter === 'all' ? allLeads : 
+    allLeads.filter(l => {
+      if (['HOT','WARM','COLD'].includes(filter)) return scoreLeads(l).level === filter;
+      return l.status === filter;
+    });
+  renderLeads(filtered);
+}
+
+// ── SEARCH ──
+function searchLeads(q) {
+  const filtered = allLeads.filter(l => 
+    (l.name||'').toLowerCase().includes(q.toLowerCase()) ||
+    (l.phone||'').includes(q) ||
+    (l.carType||'').toLowerCase().includes(q.toLowerCase())
+  );
+  renderLeads(filtered);
+}
+
+// ── SAVE LEAD ──
+async function saveLead() {
+  const name = document.getElementById('fName').value.trim();
+  const phone = document.getElementById('fPhone').value.trim();
+  if (!name || !phone) { alert('Nom et téléphone obligatoires'); return; }
+  
+  const lead = {
+    name,
+    phone,
+    carType: document.getElementById('fCarType').value,
+    carValue: document.getElementById('fCarValue').value,
+    hasGPS: document.getElementById('fHasGPS').value,
+    source: document.getElementById('fSource').value,
+    note: document.getElementById('fNote').value,
+    status: 'NEW',
+    createdAt: serverTimestamp()
+  };
+
+  const { score, level } = scoreLeads(lead);
+  lead.score = score;
+  lead.level = level;
+
+  try {
+    await addDoc(collection(db, 'leads'), lead);
+  } catch(e) {}
+
+  allLeads.unshift({ id: Date.now().toString(), ...lead, createdAt: new Date() });
+  renderLeads(allLeads);
+  updateStats(allLeads);
+  closeModal();
+
+  // Si HOT → notification WhatsApp automatique
+  if (level === 'HOT') {
+    setTimeout(() => {
+      alert(`🔥 Lead HOT détecté!\n${name} — Score: ${score}/7\n\nMessage WhatsApp automatique envoyé!`);
+    }, 500);
+  }
+}
+
+// ── CHANGE STATUS ──
+async function changeStatus(id, status, e) {
+  e.stopPropagation();
+  const lead = allLeads.find(l => l.id === id);
+  if (lead) { lead.status = status; }
+  try { await updateDoc(doc(db, 'leads', id), { status }); } catch(e) {}
+  renderLeads(currentFilter === 'all' ? allLeads : allLeads.filter(l => {
+    if (['HOT','WARM','COLD'].includes(currentFilter)) return scoreLeads(l).level === currentFilter;
+    return l.status === currentFilter;
+  }));
+  updateStats(allLeads);
+}
+
+function contactWA(phone, name, e) {
+  e.stopPropagation();
+  window.open(`https://wa.me/${phone}?text=Bonjour ${name}! Je vous contacte de la part de Tracium pour la sécurisation de votre véhicule. Êtes-vous toujours intéressé?`, '_blank');
+}
+
+function openModal() { document.getElementById('modalOverlay').classList.add('open'); }
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+window.filterLeads = filterLeads;
+window.searchLeads = searchLeads;
+window.saveLead = saveLead;
+window.changeStatus = changeStatus;
+window.contactWA = contactWA;
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.toggleActions = toggleActions;
+
+// Bilingue
+window.setLang = function(l) {
+  localStorage.setItem('tracium-lang', l);
+  document.querySelector('.btn-fr').style.background = l==='fr'?'#0047CC':'transparent';
+  document.querySelector('.btn-fr').style.color = l==='fr'?'white':'#718096';
+  document.querySelector('.btn-en').style.background = l==='en'?'#0047CC':'transparent';
+  document.querySelector('.btn-en').style.color = l==='en'?'white':'#718096';
+};
+</script>
+</body>
+</html>

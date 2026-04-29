@@ -2,7 +2,7 @@
   "name": "Tracium",
   "short_name": "Tracium",
   "description": "One-Click Security",
-  "start_url": "/",
+  "start_url": "/app",
   "display": "standalone",
   "background_color": "#07070f",
   "theme_color": "#ffb432",

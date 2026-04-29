@@ -3,1177 +3,671 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GrowthAI Africa — Agent Commercial Autonome</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>GrowthAI Africa — Vendez plus automatiquement</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --ink:#0d1117;--ink2:#161b22;--ink3:#21262d;
-  --g:#10b981;--g2:#059669;--gd:rgba(16,185,129,.12);--gl:rgba(16,185,129,.06);
-  --r:#f43f5e;--rd:rgba(244,63,94,.12);
-  --o:#f59e0b;--od:rgba(245,158,11,.12);
-  --b:#3b82f6;--bd:rgba(59,130,246,.12);
-  --p:#8b5cf6;--pd:rgba(139,92,246,.12);
-  --text:#e6edf3;--text2:#8b949e;--text3:#484f58;
-  --br:#21262d;--br2:#30363d;
-  --sh:0 0 0 1px rgba(240,246,252,.06);
-  --sh2:0 8px 32px rgba(0,0,0,.5);
-}
+:root{--g:#16a34a;--g2:#15803d;--gd:rgba(22,163,74,.1);--o:#d97706;--od:rgba(217,119,6,.1);--r:#dc2626;--rd:rgba(220,38,38,.1);--b:#2563eb;--bd:rgba(37,99,235,.1);--bg:#f8fafb;--s:#fff;--s2:#f0f4f8;--br:#e2e8f0;--t:#0f172a;--t2:#475569;--t3:#94a3b8;--sh:0 1px 3px rgba(0,0,0,.08);--sh2:0 4px 8px rgba(0,0,0,.08)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{font-family:'Space Grotesk',sans-serif;background:var(--ink);color:var(--text);max-width:430px;margin:0 auto;min-height:100vh;overflow-x:hidden}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--t);max-width:430px;margin:0 auto;min-height:100vh;overflow-x:hidden}
 .pg{display:none;min-height:100vh;flex-direction:column}
-.pg.on{display:flex;animation:pgIn .2s ease}
-@keyframes pgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-/* NAV */
-.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(13,17,23,.97);border-top:1px solid var(--br);display:flex;z-index:300;backdrop-filter:blur(20px)}
+.pg.on{display:flex;animation:fi .25s ease}
+@keyframes fi{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--s);border-top:1px solid var(--br);display:flex;z-index:300;box-shadow:0 -2px 10px rgba(0,0,0,.06)}
 .bni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;padding:7px 0 14px;position:relative}
-.bni-i{font-size:18px;filter:grayscale(1);opacity:.4;transition:all .2s}
-.bni-l{font-size:9px;font-weight:600;color:var(--text3);transition:color .2s}
-.bni.on .bni-i{filter:none;opacity:1}
+.bni-i{font-size:19px}.bni-l{font-size:9px;font-weight:600;color:var(--t3)}
 .bni.on .bni-l{color:var(--g)}
-.bni-b{position:absolute;top:3px;right:calc(50% - 18px);background:var(--r);color:#fff;font-size:8px;font-weight:700;min-width:14px;height:14px;border-radius:7px;display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid var(--ink)}
-
-/* HEADER */
-.hdr{background:rgba(13,17,23,.95);border-bottom:1px solid var(--br);padding:13px 18px 11px;position:sticky;top:0;z-index:200;backdrop-filter:blur(20px)}
+.bni-b{position:absolute;top:3px;right:calc(50% - 17px);background:var(--r);color:#fff;font-size:8px;font-weight:800;width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg)}
+.hdr{background:var(--s);border-bottom:1px solid var(--br);padding:13px 20px 11px;position:sticky;top:0;z-index:200;box-shadow:var(--sh)}
 .hrow{display:flex;align-items:center;justify-content:space-between}
 .logo{display:flex;align-items:center;gap:8px}
-.logo img{height:26px;object-fit:contain}
-.logo-t{font-size:16px;font-weight:700;color:var(--text)}
-.logo-t span{color:var(--g)}
-.chip{display:inline-flex;align-items:center;gap:5px;border-radius:20px;padding:3px 10px;font-size:10px;font-weight:600}
-.chip-g{background:var(--gd);border:1px solid rgba(16,185,129,.25);color:var(--g)}
-.chip-r{background:var(--rd);border:1px solid rgba(244,63,94,.25);color:var(--r)}
-.chip-o{background:var(--od);border:1px solid rgba(245,158,11,.25);color:var(--o)}
-.live-dot{width:6px;height:6px;border-radius:50%;animation:pulse 1.5s ease-in-out infinite}
-.ld-g{background:var(--g)}
-.ld-r{background:var(--r)}
-.ld-o{background:var(--o)}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
-
-/* SCROLL */
+.logo img{height:28px;object-fit:contain}
+.ltxt{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--t)}
+.ltxt span{color:var(--g)}
+.hbtn{width:34px;height:34px;border-radius:50%;background:var(--s2);border:1px solid var(--br);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;position:relative}
+.hdot{width:8px;height:8px;background:var(--r);border-radius:50%;position:absolute;top:4px;right:4px;border:2px solid var(--s)}
 .scr{flex:1;overflow-y:auto;padding:16px 16px 88px}
-
-/* INNER TABS */
-.itabs{display:flex;background:var(--ink);border-bottom:1px solid var(--br);position:sticky;top:62px;z-index:150;overflow-x:auto;scrollbar-width:none}
+.itabs{display:flex;background:var(--s);border-bottom:1px solid var(--br);position:sticky;top:64px;z-index:150;overflow-x:auto;scrollbar-width:none}
 .itabs::-webkit-scrollbar{display:none}
-.itab{flex-shrink:0;padding:10px 14px;font-size:11px;font-weight:600;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .15s}
+.itab{flex-shrink:0;padding:10px 14px;font-size:11px;font-weight:700;color:var(--t3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
 .itab.on{color:var(--g);border-bottom-color:var(--g)}
 .ipane{display:none;padding:14px 16px}.ipane.on{display:block}
-
-/* CARDS */
-.card{background:var(--ink2);border:1px solid var(--br);border-radius:12px;padding:14px;box-shadow:var(--sh)}
-.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.kpi{background:var(--ink2);border:1px solid var(--br);border-radius:12px;padding:14px;cursor:pointer;transition:border-color .15s}
-.kpi:hover{border-color:var(--g)}
-.kv{font-family:'DM Mono',monospace;font-size:24px;font-weight:500;line-height:1}
-.kl{font-size:11px;color:var(--text2);margin-top:4px}
-.kc{font-size:10px;font-weight:600;color:var(--g);margin-top:5px}
-.kc.r{color:var(--r)}.kc.o{color:var(--o)}
-.vg{color:var(--g)}.vr{color:var(--r)}.vb{color:var(--b)}.vo{color:var(--o)}.vp{color:var(--p)}
-
-/* AGENT CARD */
-.agent-card{background:linear-gradient(135deg,rgba(16,185,129,.08),rgba(59,130,246,.04));border:1px solid rgba(16,185,129,.2);border-radius:14px;padding:16px;margin-bottom:12px}
-.agent-av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--g),var(--b));display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 20px rgba(16,185,129,.3)}
-.agent-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}
-.am{background:rgba(0,0,0,.3);border-radius:10px;padding:10px;text-align:center;border:1px solid var(--br2)}
-.am-v{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--g)}
-.am-l{font-size:9px;color:var(--text3);margin-top:3px}
-
-/* PIPELINE */
-.pipeline{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
-.pipeline::-webkit-scrollbar{display:none}
-.pl-s{flex-shrink:0;background:var(--ink2);border:1px solid var(--br);border-radius:10px;padding:10px 12px;min-width:78px;text-align:center;cursor:pointer;transition:all .15s}
-.pl-s.on{border-color:var(--g);background:var(--gd)}
-.pl-n{font-family:'DM Mono',monospace;font-size:20px;font-weight:500}
-.pl-l{font-size:9px;color:var(--text3);margin-top:3px}
-
-/* LEAD CARD */
-.lead{background:var(--ink2);border:1px solid var(--br);border-radius:11px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start;margin-bottom:8px;cursor:pointer;transition:border-color .15s}
-.lead:hover{border-color:var(--g)}
-.lav{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;font-weight:700;font-family:'DM Mono',monospace}
-.badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:6px}
-.bh{background:var(--rd);color:var(--r);border:1px solid rgba(244,63,94,.2)}
-.bw2{background:var(--od);color:var(--o);border:1px solid rgba(245,158,11,.2)}
-.bk{background:var(--gd);color:var(--g);border:1px solid rgba(16,185,129,.2)}
-.bc{background:var(--bd);color:var(--b);border:1px solid rgba(59,130,246,.2)}
-.score-bar{height:3px;background:var(--br2);border-radius:2px;overflow:hidden;margin-top:5px}
-.score-fill{height:100%;border-radius:2px;transition:width .5s ease}
-.sf-hot{background:linear-gradient(90deg,var(--o),var(--r))}
-.sf-warm{background:linear-gradient(90deg,var(--g),var(--o))}
-.sf-cold{background:var(--br2)}
-
-/* SENTIMENT INDICATOR */
-.sent{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:8px;font-size:10px;font-weight:600;margin-top:6px}
-.sent-pos{background:var(--gd);color:var(--g);border:1px solid rgba(16,185,129,.2)}
-.sent-neu{background:var(--bd);color:var(--b);border:1px solid rgba(59,130,246,.2)}
-.sent-neg{background:var(--rd);color:var(--r);border:1px solid rgba(244,63,94,.2)}
-.sent-hes{background:var(--od);color:var(--o);border:1px solid rgba(245,158,11,.2)}
-
-/* CHAT */
-.chat-hdr{background:#0a1f18;border-bottom:1px solid #1a3328;padding:10px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:200}
-.chat-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--g),var(--b));display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;box-shadow:0 0 15px rgba(16,185,129,.3)}
-.chat-area{overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:6px;background:var(--ink);max-height:calc(100vh - 300px);min-height:200px}
-.msg{display:flex;align-items:flex-end;gap:6px}
-.msg.out{flex-direction:row-reverse}
-.bubble{max-width:78%;padding:9px 12px 7px;border-radius:14px;font-size:13px;line-height:1.55}
-.b-ai{background:linear-gradient(135deg,rgba(16,185,129,.15),rgba(59,130,246,.08));border:1px solid rgba(16,185,129,.25);border-radius:0 14px 14px 14px;color:var(--text)}
-.b-out{background:var(--gd);border:1px solid rgba(16,185,129,.2);border-radius:14px 14px 0 14px;color:var(--text)}
-.b-sys{background:var(--ink2);border:1px solid var(--br);border-radius:10px;color:var(--text2);font-size:11px;text-align:center;padding:6px 12px;margin:4px auto;max-width:90%}
-.ai-chip{font-size:9px;font-weight:700;color:var(--g);font-family:'DM Mono',monospace;margin-bottom:3px;display:flex;align-items:center;gap:4px}
-.msg-meta{font-size:9px;color:var(--text3);text-align:right;margin-top:3px;display:flex;align-items:center;justify-content:flex-end;gap:4px}
-.tick{color:var(--g)}
-.typing{display:none}
-.typing-b{background:var(--ink2);border:1px solid var(--br);border-radius:0 14px 14px 14px;padding:10px 14px;display:inline-flex;gap:4px}
-.td{width:6px;height:6px;background:var(--text3);border-radius:50%;animation:td 1.4s ease-in-out infinite}
-.td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
-@keyframes td{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-4px);opacity:1}}
-
-/* COPILOT PANEL */
-.copilot{background:linear-gradient(135deg,rgba(139,92,246,.1),rgba(59,130,246,.06));border:1px solid rgba(139,92,246,.25);border-radius:12px;padding:12px;margin:0 14px 8px}
-.cop-title{font-size:10px;font-weight:700;color:var(--p);font-family:'DM Mono',monospace;margin-bottom:8px;display:flex;align-items:center;gap:5px}
-.cop-sugg{background:rgba(0,0,0,.3);border:1px solid rgba(139,92,246,.2);border-radius:8px;padding:8px 10px;font-size:11px;color:var(--text);cursor:pointer;margin-bottom:6px;transition:border-color .15s;display:flex;align-items:center;gap:8px}
-.cop-sugg:hover{border-color:var(--p)}
-.cop-sugg:last-child{margin-bottom:0}
-.cop-tag{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;flex-shrink:0}
-.ct-close{background:var(--gd);color:var(--g)}
-.ct-obj{background:var(--od);color:var(--o)}
-.ct-qual{background:var(--bd);color:var(--b)}
-
-/* SIGNAL ALERT */
-.signal-alert{background:linear-gradient(135deg,rgba(244,63,94,.12),rgba(245,158,11,.06));border:1px solid rgba(244,63,94,.3);border-radius:12px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;cursor:pointer;animation:signalPulse 2s ease-in-out infinite}
-@keyframes signalPulse{0%,100%{border-color:rgba(244,63,94,.3)}50%{border-color:rgba(244,63,94,.6)}}
-
-/* CADENCE */
-.cadence-step{display:flex;gap:12px;padding-bottom:16px;position:relative}
-.cadence-step::after{content:'';position:absolute;left:15px;top:36px;bottom:0;width:2px;background:var(--br2)}
-.cadence-step:last-child::after{display:none}
-.cad-num{width:30px;height:30px;border-radius:8px;background:var(--ink2);border:1px solid var(--br2);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--text2);flex-shrink:0;z-index:1}
-.cad-num.done{background:var(--gd);border-color:rgba(16,185,129,.3);color:var(--g)}
-.cad-num.active{background:var(--od);border-color:rgba(245,158,11,.3);color:var(--o);animation:pulse 1.5s ease-in-out infinite}
-.cad-title{font-size:13px;font-weight:600;padding-top:4px}
-.cad-desc{font-size:11px;color:var(--text2);margin-top:2px}
-.cad-time{font-size:10px;font-family:'DM Mono',monospace;color:var(--text3);margin-top:3px}
-
-/* ANALYTICS */
-.rev-hero{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(59,130,246,.05));border:1px solid rgba(16,185,129,.2);border-radius:14px;padding:18px;margin-bottom:14px;text-align:center}
-.rev-val{font-family:'DM Mono',monospace;font-size:36px;font-weight:500;color:var(--g);line-height:1}
-.bar-chart{background:var(--ink2);border:1px solid var(--br);border-radius:12px;padding:14px;margin-bottom:10px}
-.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.bar-row:last-child{margin-bottom:0}
-.bar-lbl{font-size:11px;color:var(--text2);width:75px;flex-shrink:0}
-.bar-track{flex:1;height:6px;background:var(--br2);border-radius:3px;overflow:hidden}
-.bar-fill{height:100%;border-radius:3px;transition:width .8s ease}
-.bar-val{font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);width:60px;text-align:right;flex-shrink:0}
-
-/* SCORE 0-100 */
-.score-100{position:relative;width:100%;height:8px;background:var(--br2);border-radius:4px;overflow:hidden;margin:8px 0}
-.score-100-fill{height:100%;border-radius:4px;transition:width .8s ease;background:linear-gradient(90deg,var(--b),var(--g),var(--o),var(--r))}
-.score-100-mark{position:absolute;top:-2px;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid var(--r);transition:left .8s ease;transform:translateX(-50%)}
-
-/* PITCH ROOM */
-.pitch-scenario{background:var(--ink2);border:2px solid var(--br);border-radius:12px;padding:14px;margin-bottom:10px;cursor:pointer;transition:all .15s}
-.pitch-scenario:hover{border-color:var(--br2)}
-.pitch-scenario.on{border-color:var(--g);background:var(--gd)}
-.pitch-result{background:var(--ink2);border:1px solid var(--br);border-radius:12px;padding:14px;margin-top:12px;display:none}
-.pitch-result.on{display:block;animation:pgIn .3s ease}
-.score-circle{width:80px;height:80px;border-radius:50%;background:conic-gradient(var(--g) var(--pct), var(--br2) 0);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;position:relative}
-.score-circle::before{content:'';position:absolute;inset:8px;border-radius:50%;background:var(--ink2)}
-.score-circle-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--g);position:relative;z-index:1}
-.feedback-item{display:flex;gap:8px;padding:8px 10px;border-radius:8px;font-size:12px;margin-bottom:6px}
-.fi-good{background:var(--gd);color:var(--g);border:1px solid rgba(16,185,129,.15)}
-.fi-bad{background:var(--rd);color:var(--r);border:1px solid rgba(244,63,94,.15)}
-.fi-tip{background:var(--bd);color:var(--b);border:1px solid rgba(59,130,246,.15)}
-
-/* SECTOR */
-.sect-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.sect-card{background:var(--ink2);border:2px solid var(--br);border-radius:12px;padding:12px;cursor:pointer;transition:all .15s;text-align:center}
-.sect-card.on{border-color:var(--g);background:var(--gd)}
-.sect-icon{font-size:22px;margin-bottom:5px}
-.sect-lbl{font-size:11px;font-weight:600;color:var(--text2)}
-.sect-card.on .sect-lbl{color:var(--g)}
-
-/* SETTINGS */
-.scard{background:var(--ink2);border:1px solid var(--br);border-radius:12px;overflow:hidden;margin-bottom:12px}
-.si{padding:13px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--br);cursor:pointer;transition:background .1s}
-.si:last-child{border-bottom:none}.si:hover{background:rgba(255,255,255,.02)}
-.tgl{width:38px;height:20px;border-radius:10px;position:relative;cursor:pointer;flex-shrink:0;transition:background .2s}
-.tgl.on{background:var(--g)}.tgl.off{background:var(--br2)}
-.tgl::after{content:'';position:absolute;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .2s}
-.tgl.off::after{left:3px}.tgl.on::after{left:21px}
-
-/* QR */
-.qr-wrap{display:flex;gap:5px;padding:7px 12px;background:rgba(13,17,23,.9);border-top:1px solid var(--br);overflow-x:auto;scrollbar-width:none}
-.qr-wrap::-webkit-scrollbar{display:none}
-.qr{padding:5px 12px;border-radius:10px;font-size:11px;font-weight:600;background:var(--ink2);border:1px solid var(--br2);color:var(--text2);cursor:pointer;white-space:nowrap;transition:all .15s}
-.qr:hover{border-color:var(--g);color:var(--g)}
-
-/* CHAT INPUT */
-.chat-iw{padding:8px 12px 16px;background:rgba(13,17,23,.95);border-top:1px solid var(--br);backdrop-filter:blur(10px)}
-.mode-row{display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--ink2);border-radius:10px;border:1px solid var(--br2);margin-bottom:8px}
-.cin-row{display:flex;gap:8px;align-items:flex-end}
-.cin{flex:1;background:var(--ink2);border:1px solid var(--br2);border-radius:11px;padding:10px 14px;font-size:13px;color:var(--text);font-family:'Space Grotesk',sans-serif;outline:none;resize:none;min-height:40px;max-height:100px;transition:border-color .2s}
-.cin:focus{border-color:var(--g)}
-.cin::placeholder{color:var(--text3)}
-.csnd{width:40px;height:40px;border-radius:50%;background:var(--g);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#fff;box-shadow:0 0 20px rgba(16,185,129,.4);transition:all .2s}
-.csnd:hover{background:var(--g2);transform:scale(1.05)}
-
-/* NOTIFICATION POPUP */
-.notif-pop{position:fixed;top:-90px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:398px;background:var(--ink2);border:1px solid rgba(16,185,129,.3);border-radius:12px;padding:12px 16px;z-index:400;box-shadow:var(--sh2);transition:top .35s cubic-bezier(.16,1,.3,1);display:flex;align-items:center;gap:12px}
-.notif-pop.show{top:16px}
-
-/* MODAL */
-.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
-.mov.on{display:flex;animation:pgIn .2s ease}
-.mod{background:var(--ink2);border-top:1px solid var(--br);border-radius:20px 20px 0 0;padding:20px 18px 40px;width:100%;max-width:430px;max-height:92vh;overflow-y:auto;animation:su .3s cubic-bezier(.16,1,.3,1)}
-@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.mh{width:40px;height:4px;background:var(--br2);border-radius:2px;margin:0 auto 16px}
-.mf{margin-bottom:12px}
-.ml{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.5px}
-.mi{width:100%;background:var(--ink);border:1px solid var(--br2);border-radius:10px;padding:11px 14px;font-size:14px;color:var(--text);font-family:'Space Grotesk',sans-serif;outline:none;transition:border-color .2s}
-.mi:focus{border-color:var(--g)}
-.mbtn{width:100%;padding:14px;border-radius:11px;border:none;background:var(--g);color:#fff;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-top:8px}
-
-/* TIP */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sc{background:var(--s);border:1px solid var(--br);border-radius:14px;padding:14px;box-shadow:var(--sh);cursor:pointer;transition:border-color .15s}
+.sc:hover{border-color:var(--g)}
+.sv{font-family:'Syne',sans-serif;font-size:25px;font-weight:800;line-height:1}
+.sl{font-size:11px;color:var(--t2);margin-top:3px}
+.scg{font-size:10px;font-weight:700;color:var(--g);margin-top:5px}
+.cg{color:var(--g)}.cr{color:var(--r)}.cb{color:var(--b)}.co{color:var(--o)}
+.alrt{background:#f0fdf4;border:1px solid rgba(22,163,74,.3);border-radius:14px;padding:13px 15px;display:flex;align-items:center;gap:12px;cursor:pointer;margin-bottom:16px}
+.prc{background:var(--s);border:1px solid var(--br);border-radius:12px;padding:11px 14px;display:flex;gap:12px;align-items:center;margin-bottom:8px;box-shadow:var(--sh);cursor:pointer;transition:border-color .15s}
+.prc:hover{border-color:var(--g)}
+.pav{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.bdg{font-size:9px;font-weight:800;padding:3px 8px;border-radius:8px}
+.bh{background:var(--rd);color:var(--r)}.bw2{background:var(--od);color:var(--o)}.bk{background:var(--gd);color:var(--g)}
 .tip{background:var(--gd);border-left:3px solid var(--g);border-radius:0 10px 10px 0;padding:10px 12px;font-size:12px;line-height:1.6;margin:8px 0}
 .tip strong{color:var(--g)}
-.sttl{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;margin-top:18px}
+.sttl{font-size:12px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;margin-top:18px}
 .slnk{font-size:11px;color:var(--g);font-weight:600;cursor:pointer;text-transform:none;letter-spacing:0}
-
-footer{background:var(--ink2);border-top:1px solid var(--br);padding:20px;text-align:center;padding-bottom:80px}
+.scard{background:var(--s);border:1px solid var(--br);border-radius:14px;overflow:hidden;margin-bottom:12px;box-shadow:var(--sh)}
+.si{padding:13px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--br);cursor:pointer;transition:background .12s}
+.si:last-child{border-bottom:none}.si:hover{background:var(--s2)}
+.tgl{width:40px;height:22px;border-radius:11px;position:relative;cursor:pointer;flex-shrink:0}
+.tgl.on{background:var(--g)}.tgl.off{background:var(--br)}
+.tgl::after{content:'';position:absolute;top:3px;width:16px;height:16px;border-radius:50%;background:#fff}
+.tgl.off::after{left:3px}.tgl.on::after{left:21px}
+.pub{background:var(--s);border:1px solid var(--br);border-radius:14px;overflow:hidden;margin-bottom:10px;box-shadow:var(--sh)}
+.pub-img{height:90px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:32px;position:relative}
+.pub-tag{position:absolute;top:8px;right:8px;font-size:9px;font-weight:800;padding:3px 9px;border-radius:8px}
+.pt-s{background:var(--bd);color:var(--b);border:1px solid rgba(37,99,235,.2)}
+.pt-p{background:var(--gd);color:var(--g);border:1px solid rgba(22,163,74,.2)}
+.adc{background:var(--s);border:1px solid var(--br);border-radius:14px;overflow:hidden;margin-bottom:12px;box-shadow:var(--sh)}
+.adc-h{padding:13px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--br)}
+.adc-s{display:grid;grid-template-columns:repeat(4,1fr);padding:11px 16px;gap:8px;background:var(--s2);border-bottom:1px solid var(--br);text-align:center}
+.asv{font-family:'Syne',sans-serif;font-size:15px;font-weight:800}
+.asl{font-size:9px;color:var(--t3);margin-top:1px}
+.adf{padding:11px 16px}
+.bbar{height:5px;background:var(--br);border-radius:4px;overflow:hidden;margin:5px 0 10px}
+.bfill{height:100%;border-radius:4px;background:var(--g)}
+.adacts{display:flex;gap:6px}
+.adbn{flex:1;padding:8px;border-radius:8px;border:none;font-size:11px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif}
+.ap{background:var(--od);color:var(--o)}.ae{background:var(--bd);color:var(--b)}
+/* CHAT */
+.chat-hdr{background:#075e54;padding:10px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.chat-area{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:5px;background:#e5ddd5;max-height:calc(100vh - 230px)}
+.bbl{display:flex;align-items:flex-end;gap:5px}.bbl.out{flex-direction:row-reverse}
+.bb{max-width:78%;padding:8px 11px 6px;border-radius:10px;font-size:13px;line-height:1.5;box-shadow:var(--sh)}
+.bb-in{background:#fff;border-radius:0 10px 10px 10px;color:var(--t)}
+.bb-out{background:#dcf8c6;border-radius:10px 10px 0 10px;color:var(--t)}
+.bba{width:25px;height:25px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.ai-lbl{font-size:9px;color:#075e54;font-weight:800;margin-bottom:3px}
+.mt{font-size:9px;color:var(--t3);text-align:right;margin-top:2px}
+.tick{font-size:10px;color:#53bdeb}
+.tw{display:none}
+.tbub{background:#fff;border-radius:0 10px 10px 10px;padding:10px 14px;display:inline-flex;gap:4px;box-shadow:var(--sh)}
+.td{width:7px;height:7px;background:#aaa;border-radius:50%;animation:td 1.4s ease-in-out infinite}
+.td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
+@keyframes td{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+.chat-qr{display:flex;gap:6px;padding:7px 12px;background:#f0f2f5;border-top:1px solid var(--br);overflow-x:auto;scrollbar-width:none}
+.chat-qr::-webkit-scrollbar{display:none}
+.qr{padding:5px 12px;border-radius:16px;font-size:11px;font-weight:600;background:#fff;border:1px solid var(--br);color:#075e54;cursor:pointer;white-space:nowrap;box-shadow:var(--sh)}
+.chat-iw{padding:8px 12px 16px;background:var(--s);border-top:1px solid var(--br)}
+.ai-tgl{display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--s2);border-radius:10px;border:1px solid var(--br);margin-bottom:8px}
+.cinrow{display:flex;gap:8px;align-items:flex-end}
+.cin{flex:1;background:var(--s2);border:1px solid var(--br);border-radius:11px;padding:10px 14px;font-size:13px;color:var(--t);font-family:'Plus Jakarta Sans',sans-serif;outline:none;resize:none;min-height:40px;max-height:100px}
+.cin:focus{border-color:var(--g)}
+.csnd{width:40px;height:40px;border-radius:50%;background:#075e54;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;color:#fff;box-shadow:var(--sh2)}
+/* LANDING */
+.hero{padding:50px 22px 36px;background:linear-gradient(180deg,#f0fdf4 0%,#fff 100%)}
+.htag{display:inline-flex;align-items:center;gap:6px;background:var(--gd);border:1px solid rgba(22,163,74,.3);border-radius:20px;padding:5px 14px;font-size:11px;font-weight:700;color:var(--g);margin-bottom:16px}
+.ldot{width:7px;height:7px;background:var(--g);border-radius:50%;animation:bk 1.5s ease-in-out infinite}
+@keyframes bk{0%,100%{opacity:1}50%{opacity:.3}}
+.btn-g{background:var(--g);color:#fff;border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;width:100%;margin-bottom:10px}
+.btn-o{background:#fff;color:var(--g);border:2px solid var(--g);border-radius:12px;padding:13px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;width:100%;margin-bottom:10px}
+.dp{background:#fff;border-radius:18px;overflow:hidden;max-width:300px;margin:0 auto;box-shadow:0 8px 30px rgba(0,0,0,.12)}
+.dp-h{background:#075e54;padding:9px 14px;display:flex;align-items:center;gap:9px}
+.dp-av{width:30px;height:30px;border-radius:50%;background:#25d366;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.dp-ch{background:#e5ddd5;padding:11px;display:flex;flex-direction:column;gap:5px}
+.dm{padding:7px 10px;border-radius:8px;font-size:12px;line-height:1.5;max-width:82%}
+.dm-i{background:#fff;align-self:flex-start;border-radius:0 8px 8px 8px}
+.dm-o{background:#dcf8c6;align-self:flex-end;border-radius:8px 0 8px 8px}
+.dm-l{font-size:9px;font-weight:700;color:#075e54;margin-bottom:2px}
+.dm-t{font-size:9px;color:#999;text-align:right;margin-top:1px}
+.dm-sale{background:#25d366;color:#fff;padding:7px 11px;border-radius:8px;font-size:11px;font-weight:800;text-align:center}
+.sim-c{background:var(--s);border:1px solid var(--br);border-radius:14px;padding:14px;box-shadow:var(--sh)}
+.sim-b{background:#fff;border:2px solid var(--br);border-radius:10px;padding:10px 14px;font-size:12px;font-weight:600;cursor:pointer;text-align:left;width:100%;margin-bottom:8px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--t);display:block;transition:all .2s}
+.sim-b:hover,.sim-b.on{border-color:var(--g);background:var(--gd);color:var(--g)}
+.sim-r{display:none;background:#fff;border:1px solid var(--br);border-radius:12px;padding:13px;margin-top:10px}
+.sim-r.on{display:block;animation:fi .3s ease}
+.sim-n{background:var(--rd);border:1px solid rgba(220,38,38,.2);border-radius:10px;padding:9px 12px;font-size:12px;color:var(--r);font-weight:700;margin-top:8px;display:flex;align-items:center;gap:6px}
+.pc{background:var(--s);border:2px solid var(--br);border-radius:16px;padding:18px;margin-bottom:10px;position:relative;box-shadow:var(--sh)}
+.pc.ft{border-color:var(--g);background:linear-gradient(135deg,#f0fdf4,#fff)}
+.pc-bdg{position:absolute;top:12px;right:12px;background:var(--g);color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:8px}
+.pc-pl{font-size:11px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.pc-pr{font-family:'Syne',sans-serif;font-size:27px;font-weight:800;line-height:1;margin-bottom:3px}
+.pc-pe{font-size:12px;color:var(--t3);margin-bottom:12px}
+.pc-f{font-size:12px;color:var(--t2);display:flex;gap:6px;margin-bottom:6px}
+.pc-f::before{content:'✓';color:var(--g);font-weight:800;flex-shrink:0}
+.pc-bn{width:100%;padding:12px;border-radius:11px;border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:12px}
+.pb-g{background:var(--g);color:#fff}.pb-d{background:var(--s2);color:var(--t);border:1px solid var(--br)}
+.fqi{background:var(--s);border:1px solid var(--br);border-radius:12px;overflow:hidden;cursor:pointer;margin-bottom:8px;box-shadow:var(--sh)}
+.fqq{padding:13px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.fqq-t{font-size:13px;font-weight:700;flex:1}
+.fqa-arr{font-size:11px;color:var(--t3);transition:transform .2s}
+.fqi.on .fqa-arr{transform:rotate(180deg)}
+.fqa{display:none;padding:0 16px 13px;font-size:12px;color:var(--t2);line-height:1.7;border-top:1px solid var(--br)}
+.fqa.on{display:block}.fqa strong{color:var(--g)}
+.rh{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid rgba(22,163,74,.25);border-radius:16px;padding:16px;margin-bottom:14px}
+.ni{background:var(--s);border:1px solid var(--br);border-radius:13px;padding:13px;display:flex;gap:12px;margin-bottom:8px;box-shadow:var(--sh);cursor:pointer}
+.ni.ur{border-color:rgba(22,163,74,.25);background:#f0fdf4}
+.nico{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.ndot{width:8px;height:8px;background:var(--g);border-radius:50%;flex-shrink:0;margin-top:4px}
+.ph{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid rgba(22,163,74,.2);border-radius:18px;padding:20px;text-align:center;margin-bottom:16px}
+.phav{width:72px;height:72px;border-radius:50%;background:var(--g);display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 10px;border:3px solid #fff;box-shadow:var(--sh2)}
+.mov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:flex-end;justify-content:center}
+.mov.on{display:flex;animation:fi .2s ease}
+.mod{background:#fff;border-radius:22px 22px 0 0;padding:22px 20px 40px;width:100%;max-width:430px;max-height:90vh;overflow-y:auto;animation:su .3s cubic-bezier(.16,1,.3,1)}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mh{width:40px;height:4px;background:var(--br);border-radius:2px;margin:0 auto 16px}
+.mf{margin-bottom:13px}
+.ml{font-size:12px;font-weight:700;color:var(--t2);margin-bottom:5px;display:block}
+.mi{width:100%;background:var(--s2);border:1px solid var(--br);border-radius:10px;padding:11px 14px;font-size:14px;color:var(--t);font-family:'Plus Jakarta Sans',sans-serif;outline:none}
+.mi:focus{border-color:var(--g)}
+.mbtn{width:100%;padding:14px;border-radius:12px;border:none;background:var(--g);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:6px}
+footer{background:var(--s2);border-top:1px solid var(--br);padding:20px;text-align:center;padding-bottom:80px}
 </style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════
-     PAGE 1 — DASHBOARD AGENT
-══════════════════════════════════════ -->
-<div class="pg on" id="pg-dash">
-  <div class="hdr">
-    <div class="hrow">
-      <div class="logo">
-        <img src="logo.png" alt="" onerror="this.style.display='none'">
-        <div class="logo-t">Growth<span>AI Africa</span></div>
-      </div>
-      <div style="display:flex;gap:6px;align-items:center">
-        <div class="chip chip-g"><div class="live-dot ld-g"></div>Agent actif</div>
-        <div onclick="gNav('pg-prof','bni-prof')" style="width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--g),var(--b));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;cursor:pointer">A</div>
+<!-- PAGE 1: SITE LANDING -->
+<div class="pg on" id="pg-home">
+  <div style="background:var(--g);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200">
+    <div class="logo"><img src="logo.png" alt="" onerror="this.style.display='none'"><div class="ltxt" style="color:#fff">Growth<span style="color:#86efac">AI Africa</span></div></div>
+    <button onclick="oMod()" style="background:#fff;color:var(--g);border:none;border-radius:8px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">Essai gratuit</button>
+  </div>
+  <div class="hero">
+    <div class="htag"><div class="ldot"></div>Actif à Yaoundé & Douala</div>
+    <h1 style="font-family:'Syne',sans-serif;font-size:30px;font-weight:800;line-height:1.1;letter-spacing:-1px;margin-bottom:12px">Transformez vos messages en <span style="color:var(--g)">ventes</span> automatiquement</h1>
+    <p style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:20px">GrowthAI Africa répond à vos clients 24h/24, relance vos prospects et conclut des ventes — pendant que vous dormez.</p>
+    <button class="btn-g" onclick="oMod()">🚀 Démarrer l'essai gratuit — 30 jours</button>
+    <button class="btn-o" onclick="gNav('pg-chat','bni-chat')">💬 Tester le chatbot IA maintenant</button>
+    <button class="btn-o" style="border-color:var(--b);color:var(--b)" onclick="gNav('pg-app','bni-app')">📱 Voir le dashboard complet</button>
+    <p style="font-size:11px;color:var(--t3);text-align:center;margin-bottom:18px">✓ 30 jours gratuits · ✓ Sans carte bancaire · ✓ Résultats en 48h</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+      <div style="background:#fff;border:1px solid var(--br);border-radius:12px;padding:10px;text-align:center;box-shadow:var(--sh)"><div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--g)">+35%</div><div style="font-size:10px;color:var(--t3);margin-top:2px">Ventes en plus</div></div>
+      <div style="background:#fff;border:1px solid var(--br);border-radius:12px;padding:10px;text-align:center;box-shadow:var(--sh)"><div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--g)">89%</div><div style="font-size:10px;color:var(--t3);margin-top:2px">Réponses auto</div></div>
+      <div style="background:#fff;border:1px solid var(--br);border-radius:12px;padding:10px;text-align:center;box-shadow:var(--sh)"><div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--g)">3.8x</div><div style="font-size:10px;color:var(--t3);margin-top:2px">ROI moyen</div></div>
+    </div>
+  </div>
+
+  <!-- DEMO -->
+  <div style="padding:20px 22px 28px;background:#f0fdf4">
+    <div style="font-size:11px;font-weight:800;color:var(--g);text-transform:uppercase;letter-spacing:2px;text-align:center;margin-bottom:12px">Exemple réel — Vente en 4 minutes</div>
+    <div class="dp">
+      <div class="dp-h"><div class="dp-av">🤖</div><div><div style="font-size:13px;font-weight:700;color:#fff">GrowthAI Africa</div><div style="font-size:11px;color:rgba(255,255,255,.7)">● En ligne</div></div></div>
+      <div class="dp-ch">
+        <div class="dm dm-i">Bonjour, des robes taille M ?</div>
+        <div class="dm dm-o"><div class="dm-l">🤖 12 sec</div>Bonjour ! 😊 Oui, S à XL. Pour quelle occasion ?<div class="dm-t">14:32</div></div>
+        <div class="dm dm-i">Soirée samedi. Prix ?</div>
+        <div class="dm dm-o"><div class="dm-l">🤖 8 sec</div>25 000–45 000 FCFA 🎉 Livraison gratuite Yaoundé !<div class="dm-t">14:33</div></div>
+        <div class="dm dm-i">Je prends la rouge à 35 000</div>
+        <div class="dm-sale">✅ VENTE CONCLUE — 35 000 FCFA</div>
+        <div style="text-align:center;font-size:10px;color:#888;margin-top:5px">4 min · Zéro intervention humaine</div>
       </div>
     </div>
   </div>
 
-  <div class="scr">
-    <!-- SIGNAL-LED SELLING ALERT -->
-    <div class="signal-alert" id="signal-alert" onclick="gNav('pg-chat','bni-chat')" style="display:none">
-      <div style="font-size:20px">📡</div>
-      <div style="flex:1">
-        <div style="font-size:12px;font-weight:700;color:var(--r)">Signal détecté — Prospect chaud !</div>
-        <div style="font-size:11px;color:var(--text2);margin-top:2px" id="signal-desc">Marie N. a visité le site il y a 2 min · Facebook · Mode</div>
-      </div>
-      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--r);font-weight:700">Agir →</div>
-    </div>
-
-    <!-- AGENT STATUS -->
-    <div class="agent-card">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div class="agent-av">🤖</div>
-        <div style="flex:1">
-          <div style="font-size:14px;font-weight:600">Agent Commercial IA</div>
-          <div style="font-size:11px;color:var(--text2);margin-top:1px" id="agent-sector-label">Vendeur autonome 24h/24 · Mode & Vêtements</div>
-        </div>
-        <div class="tgl on" onclick="toggleAgent(this)"></div>
-      </div>
-      <div class="agent-metrics">
-        <div class="am"><div class="am-v">47</div><div class="am-l">Messages</div></div>
-        <div class="am"><div class="am-v">89%</div><div class="am-l">Taux auto</div></div>
-        <div class="am"><div class="am-v vg">14%</div><div class="am-l">Conversion</div></div>
-      </div>
-    </div>
-
-    <!-- KPIs REVENUS -->
-    <div class="sg" style="margin-bottom:8px">
-      <div class="kpi" onclick="gNav('pg-analytics','bni-analytics')">
-        <div style="font-size:13px;margin-bottom:5px">💰</div>
-        <div class="kv vg">240k</div>
-        <div class="kl">CA ce mois (FCFA)</div>
-        <div class="kc">↑ +18% vs mois dernier</div>
-      </div>
-      <div class="kpi" onclick="gNav('pg-analytics','bni-analytics')">
-        <div style="font-size:13px;margin-bottom:5px">📈</div>
-        <div class="kv vo">3.8x</div>
-        <div class="kl">ROI publicités</div>
-        <div class="kc">↑ +0.4x cette semaine</div>
-      </div>
-      <div class="kpi" onclick="gNav('pg-leads','bni-leads')">
-        <div style="font-size:13px;margin-bottom:5px">🔥</div>
-        <div class="kv vr">3</div>
-        <div class="kl">Prospects chauds</div>
-        <div class="kc r">⚡ Action requise !</div>
-      </div>
-      <div class="kpi" onclick="gNav('pg-analytics','bni-analytics')">
-        <div style="font-size:13px;margin-bottom:5px">🎯</div>
-        <div class="kv vp">82</div>
-        <div class="kl">Score intention moyen</div>
-        <div class="kc">↑ +8pts ce mois</div>
-      </div>
-    </div>
-
-    <!-- PIPELINE -->
-    <div class="sttl">Pipeline de vente <span class="slnk" onclick="gNav('pg-leads','bni-leads')">Voir tous →</span></div>
-    <div class="pipeline" style="margin-bottom:14px">
-      <div class="pl-s on" onclick="gNav('pg-leads','bni-leads')"><div class="pl-n vr">3</div><div class="pl-l">🔴 Chauds</div></div>
-      <div class="pl-s" onclick="gNav('pg-leads','bni-leads')"><div class="pl-n vo">8</div><div class="pl-l">🟡 Tièdes</div></div>
-      <div class="pl-s" onclick="gNav('pg-leads','bni-leads')"><div class="pl-n vb">12</div><div class="pl-l">🔵 Froids</div></div>
-      <div class="pl-s" onclick="gNav('pg-leads','bni-leads')"><div class="pl-n vg">18</div><div class="pl-l">✅ Convertis</div></div>
-    </div>
-
-    <!-- CADENCE ACTIVE -->
-    <div class="sttl">Cadence multi-canal active <span class="chip chip-g" style="font-size:9px">Live</span></div>
-    <div class="card" style="margin-bottom:14px">
-      <div class="cadence-step">
-        <div class="cad-num done">✓</div>
-        <div><div class="cad-title">📘 Facebook — Message initial</div><div class="cad-desc">Score prospect détecté · Réponse envoyée</div><div class="cad-time">Jour 1 · Il y a 2h</div></div>
-      </div>
-      <div class="cadence-step">
-        <div class="cad-num active">2</div>
-        <div><div class="cad-title">💬 WhatsApp — Relance</div><div class="cad-desc">Pas de réponse · Relance programmée</div><div class="cad-time">Jour 1 · Dans 4h</div></div>
-      </div>
-      <div class="cadence-step">
-        <div class="cad-num">3</div>
-        <div><div class="cad-title">🎁 Offre spéciale -10%</div><div class="cad-desc">Si pas de réponse WhatsApp</div><div class="cad-time">Jour 2 · Dans 22h</div></div>
-      </div>
-      <div class="cadence-step">
-        <div class="cad-num">4</div>
-        <div><div class="cad-title">⚡ Urgence finale</div><div class="cad-desc">Dernier message · Stock limité</div><div class="cad-time">Jour 4 · Dans 70h</div></div>
-      </div>
-    </div>
-
-    <!-- PROSPECTS CHAUDS -->
-    <div class="sttl">Prospects chauds</div>
-    <div class="lead" onclick="gNav('pg-chat','bni-chat')">
-      <div class="lav" style="background:var(--rd);color:var(--r)">MN</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:600">Marie Nguema</div>
-        <div style="font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">"Je veux commander 3 robes taille M"</div>
-        <div class="sent sent-pos">😊 Enthousiaste · Prête à acheter</div>
-        <div style="display:flex;gap:5px;margin-top:5px;flex-wrap:wrap">
-          <span class="badge bh">🔴 HOT</span>
-          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3)">Score: 94/100</span>
-        </div>
-        <div class="score-100"><div class="score-100-fill" style="width:94%"></div><div class="score-100-mark" style="left:94%"></div></div>
-      </div>
-    </div>
-    <div class="lead" onclick="gNav('pg-chat','bni-chat')">
-      <div class="lav" style="background:var(--od);color:var(--o)">PM</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:600">Paul Mballa</div>
-        <div style="font-size:11px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">"Combien pour 10 unités en gros ?"</div>
-        <div class="sent sent-hes">🤔 Hésitant · Négociation en cours</div>
-        <div style="display:flex;gap:5px;margin-top:5px">
-          <span class="badge bh">🔴 HOT</span>
-          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3)">Score: 78/100</span>
-        </div>
-        <div class="score-100"><div class="score-100-fill" style="width:78%"></div><div class="score-100-mark" style="left:78%"></div></div>
+  <!-- SIMULATION -->
+  <div style="padding:24px 22px">
+    <div style="font-size:11px;font-weight:800;color:var(--g);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Démo interactive</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:22px;margin-bottom:8px">Testez GrowthAI Africa</h2>
+    <p style="font-size:13px;color:var(--t2);margin-bottom:14px">Cliquez sur un scénario et voyez la réaction automatique.</p>
+    <div class="sim-c">
+      <button class="sim-b" onclick="sim(this,'h1')">👗 "Je cherche une robe taille M urgente Yaoundé"</button>
+      <button class="sim-b" onclick="sim(this,'h2')">💄 "I need a wig for tomorrow, how much?"</button>
+      <button class="sim-b" onclick="sim(this,'w1')">🍽️ "Vous faites livraison de nourriture ?"</button>
+      <button class="sim-b" onclick="sim(this,'w2')">📱 "C'est combien le Samsung S24 ?"</button>
+      <button class="sim-b" onclick="sim(this,'c1')" style="margin-bottom:0">💬 "Bonjour"</button>
+      <div class="sim-r" id="sim-r">
+        <div id="sim-sc" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px"></div>
+        <div style="background:var(--gd);border-left:3px solid var(--g);border-radius:0 10px 10px 0;padding:10px 12px;font-size:13px;line-height:1.6" id="sim-rp"></div>
+        <div class="sim-n" id="sim-nt" style="display:none">🔴 Notification WhatsApp envoyée au commercial !</div>
       </div>
     </div>
   </div>
+
+  <!-- PRICING -->
+  <div style="padding:0 22px 24px;background:var(--s2)">
+    <div style="padding-top:22px;font-size:11px;font-weight:800;color:var(--g);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Tarifs</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:22px;margin-bottom:8px">Choisissez votre plan</h2>
+    <p style="font-size:13px;color:var(--t2);margin-bottom:16px">30 jours gratuits. Prix fixes. Sans commission.</p>
+    <div class="pc"><div class="pc-pl">Basic</div><div class="pc-pr">15 000 FCFA</div><div class="pc-pe">par mois</div><div class="pc-f">Chatbot IA 24h/24</div><div class="pc-f">CRM + publications auto</div><div class="pc-f">Facebook + WhatsApp</div><button class="pc-bn pb-d" onclick="oMod('Basic')">Démarrer gratuit</button></div>
+    <div class="pc ft"><div class="pc-bdg">⭐ Populaire</div><div class="pc-pl">Pro</div><div class="pc-pr" style="color:var(--g)">40 000 FCFA</div><div class="pc-pe">par mois</div><div class="pc-f">Tout Basic +</div><div class="pc-f">Relances 6h/24h + Prospection</div><div class="pc-f">Publicités Meta Ads auto</div><div class="pc-f">FB + WhatsApp + Instagram</div><button class="pc-bn pb-g" onclick="oMod('Pro')">Démarrer gratuit</button></div>
+    <div class="pc"><div class="pc-pl">Enterprise</div><div class="pc-pr" style="color:var(--o)">65 000 FCFA</div><div class="pc-pe">par mois</div><div class="pc-f">Tout Pro + Multi-canal</div><div class="pc-f">Mini-site e-commerce</div><div class="pc-f">Support personnalisé</div><button class="pc-bn pb-d" onclick="oMod('Enterprise')">Nous contacter</button></div>
+  </div>
+
+  <!-- FAQ -->
+  <div style="padding:22px">
+    <div style="font-size:11px;font-weight:800;color:var(--g);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">FAQ</div>
+    <h2 style="font-family:'Syne',sans-serif;font-size:22px;margin-bottom:14px">Questions fréquentes</h2>
+    <div class="fqi" onclick="faq(this)"><div class="fqq"><div class="fqq-t">C'est compliqué à utiliser ?</div><div class="fqa-arr">▼</div></div><div class="fqa">Non. Vous recevez juste des <strong>notifications WhatsApp</strong> quand un client est prêt à acheter. Tout le reste est automatique.</div></div>
+    <div class="fqi" onclick="faq(this)"><div class="fqq"><div class="fqq-t">Quand verrai-je les premiers résultats ?</div><div class="fqa-arr">▼</div></div><div class="fqa">Le chatbot répond dès la <strong>première heure</strong>. Les premières ventes arrivent dans la première semaine.</div></div>
+    <div class="fqi" onclick="faq(this)"><div class="fqq"><div class="fqq-t">Comment je paie ?</div><div class="fqa-arr">▼</div></div><div class="fqa">Par <strong>MTN Mobile Money, Orange Money ou Wave</strong>. Simple, sans carte bancaire.</div></div>
+  </div>
+
+  <!-- CTA FINAL -->
+  <div style="padding:22px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-top:1px solid rgba(22,163,74,.2)">
+    <h2 style="font-family:'Syne',sans-serif;font-size:22px;margin-bottom:8px">Prêt à vendre <span style="color:var(--g)">plus</span> ?</h2>
+    <p style="font-size:13px;color:var(--t2);margin-bottom:16px">30 jours gratuits. Activation en 48h.</p>
+    <button class="btn-g" onclick="oMod()">🚀 Démarrer gratuitement</button>
+    <button class="btn-o" style="background:#25d366;color:#fff;border-color:#25d366" onclick="cWA()">💬 Contacter sur WhatsApp</button>
+    <p style="font-size:11px;color:var(--t3);text-align:center;margin-top:8px">✓ Sans engagement · ✓ Sans carte bancaire</p>
+  </div>
+  <footer>
+    <div class="logo" style="justify-content:center;margin-bottom:6px"><img src="logo.png" alt="" style="height:22px" onerror="this.style.display='none'"><div class="ltxt">Growth<span>AI Africa</span></div></div>
+    <div style="font-size:12px;color:var(--t2);margin-bottom:3px">L'IA qui fait vendre plus pour les PME africaines</div>
+    <div style="font-size:11px;color:var(--t3)">© 2026 GrowthAI Africa — Yaoundé, Cameroun</div>
+  </footer>
 </div>
 
-<!-- ══════════════════════════════════════
-     PAGE 2 — CHAT + COPILOTE IA
-══════════════════════════════════════ -->
+<!-- PAGE 2: CHAT IA -->
 <div class="pg" id="pg-chat">
   <div class="chat-hdr">
-    <div style="font-size:18px;color:var(--text2);cursor:pointer" onclick="gNav('pg-dash','bni-dash')">←</div>
-    <div class="chat-av">🤖</div>
-    <div style="flex:1">
-      <div style="font-size:13px;font-weight:600;color:#fff">Agent Commercial IA</div>
-      <div style="font-size:10px;color:var(--g);font-family:'DM Mono',monospace" id="cst">● AUTONOME · Signal-Led · FR/EN/Mix</div>
-    </div>
-    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">
-      <div style="font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:6px;background:rgba(16,185,129,.15);color:var(--g);border:1px solid rgba(16,185,129,.2)" id="cbdg">0/100</div>
-      <div style="font-size:9px;color:var(--text3)" id="sent-badge">🔵 Neutre</div>
-    </div>
+    <div style="font-size:19px;color:rgba(255,255,255,.8);cursor:pointer" onclick="gNav('pg-home','bni-home')">←</div>
+    <div style="width:38px;height:38px;border-radius:50%;background:#25d366;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;border:2px solid rgba(255,255,255,.3)">🤖</div>
+    <div style="flex:1"><div style="font-size:14px;font-weight:700;color:#fff">GrowthAI Africa</div><div style="font-size:11px;color:rgba(255,255,255,.7)" id="cst">● En ligne — répond en moins de 2 min</div></div>
+    <div style="font-size:10px;font-weight:800;padding:3px 10px;border-radius:10px;background:rgba(255,255,255,.15);color:#fff" id="cbdg">Score: 0</div>
   </div>
-
-  <div id="cnb" style="display:none;background:rgba(244,63,94,.15);border-bottom:1px solid rgba(244,63,94,.2);color:var(--r);font-size:12px;font-weight:600;padding:6px 16px;text-align:center">
-    🔴 PROSPECT CHAUD (Score 85+) — Relance cadence activée
-  </div>
-
-  <!-- COPILOTE IA PANEL -->
-  <div class="copilot" id="copilot" style="display:none">
-    <div class="cop-title">🧠 COPILOTE IA — Suggestions en temps réel</div>
-    <div id="cop-suggestions"></div>
-  </div>
-
-  <div class="qr-wrap">
+  <div id="cnb" style="display:none;background:var(--r);color:#fff;font-size:12px;font-weight:700;padding:6px 16px;text-align:center">🔴 Prospect CHAUD ! Commercial notifié !</div>
+  <div class="chat-qr">
     <div onclick="sendQ('Bonjour 👋')" class="qr">👋 Bonjour</div>
-    <div onclick="sendQ('Je cherche une robe urgente Yaoundé')" class="qr">👗 Cherche</div>
-    <div onclick="sendQ('C\'est combien ?')" class="qr">💰 Prix</div>
-    <div onclick="sendQ('C\'est trop cher !')" class="qr">😤 Objection</div>
-    <div onclick="sendQ('Je veux commander maintenant')" class="qr">🛒 Commander</div>
-    <div onclick="sendQ('I need a wig urgent Yaoundé tomorrow')" style="background:var(--rd);border-color:rgba(244,63,94,.3);color:var(--r)" class="qr">🔴 HOT test</div>
+    <div onclick="sendQ('Je cherche une robe taille M')" class="qr">👗 Je cherche</div>
+    <div onclick="sendQ('C\'est combien ?')" class="qr">💰 Prix ?</div>
+    <div onclick="sendQ('Vous livrez à Yaoundé ?')" class="qr">🚚 Livraison ?</div>
+    <div onclick="sendQ('Je veux commander')" class="qr">🛒 Commander</div>
+    <div onclick="sendQ('I need a wig urgent Yaoundé')" style="background:#fee2e2;border-color:rgba(220,38,38,.2);color:var(--r)" class="qr">🔴 Test HOT</div>
   </div>
-
   <div class="chat-area" id="carea">
-    <div class="b-sys">Agent IA activé · Mode autonome · Secteur: <span id="chat-sector-label">Mode</span></div>
-    <div class="typing" id="tw"><div class="typing-b"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>
+    <div style="text-align:center;font-size:10px;color:#888;margin:4px 0"><span style="background:#fff;padding:4px 10px;border-radius:8px;box-shadow:var(--sh)">Aujourd'hui</span></div>
+    <div class="tw" id="tw"><div class="tbub"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>
   </div>
-
   <div class="chat-iw">
-    <div class="mode-row">
-      <div style="font-size:14px">🤖</div>
-      <div style="flex:1">
-        <div style="font-size:11px;font-weight:600">Agent autonome + Copilote IA</div>
-        <div style="font-size:10px;color:var(--text3)">Vend sans intervention · Suggestions en temps réel</div>
-      </div>
+    <div class="ai-tgl">
+      <div style="font-size:15px">🤖</div>
+      <div style="flex:1"><div style="font-size:11px;font-weight:600">Mode IA automatique</div><div style="font-size:10px;color:var(--t3)">L'IA répond à votre place</div></div>
       <div class="tgl on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div>
     </div>
-    <div class="cin-row">
-      <textarea class="cin" id="cin" placeholder="Simulez un message client..." rows="1"
-        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}"
-        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px';onTyping(this.value)"></textarea>
+    <div class="cinrow">
+      <textarea class="cin" id="cin" placeholder="Message..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
       <button class="csnd" onclick="sendChat()">➤</button>
     </div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     PAGE 3 — LEADS CRM
-══════════════════════════════════════ -->
-<div class="pg" id="pg-leads">
-  <div class="hdr"><div class="hrow"><div class="logo-t">Growth<span>AI</span> · CRM</div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">41 prospects</div></div></div>
-  <div class="itabs">
-    <div class="itab on" onclick="iTab('crm-hot',this)">🔴 Chauds (3)</div>
-    <div class="itab" onclick="iTab('crm-warm',this)">🟡 Tièdes (8)</div>
-    <div class="itab" onclick="iTab('crm-conv',this)">✅ Convertis</div>
-    <div class="itab" onclick="iTab('crm-cad',this)">📡 Cadences</div>
-  </div>
-  <div class="ipane on" id="crm-hot">
-    <div class="tip"><strong>Agent IA :</strong> Probabilité de conversion >85%. Réponse automatique envoyée. Cadence multi-canal activée.</div>
-    <div class="lead">
-      <div class="lav" style="background:var(--rd);color:var(--r)">MN</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:600">Marie Nguema · Yaoundé</div>
-        <div style="font-size:11px;color:var(--text2);margin-top:1px">📘 Facebook · Mode · 5 min</div>
-        <div class="sent sent-pos">😊 Sentiment : Enthousiaste</div>
-        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px">
-          <span class="badge bh">🔴 HOT</span>
-          <span class="badge" style="background:var(--pd);color:var(--p);border:1px solid rgba(139,92,246,.2)">Score: 94/100</span>
-          <span class="badge bk">Conv. 92%</span>
-        </div>
-        <div class="score-100"><div class="score-100-fill" style="width:94%"></div><div class="score-100-mark" style="left:94%"></div></div>
-        <div style="display:flex;gap:6px;margin-top:8px">
-          <button onclick="gNav('pg-chat','bni-chat')" style="flex:1;padding:7px;border-radius:8px;border:none;font-size:11px;font-weight:600;cursor:pointer;background:var(--g);color:#fff;font-family:'Space Grotesk',sans-serif">💬 Répondre</button>
-          <button style="flex:1;padding:7px;border-radius:8px;border:1px solid var(--br2);font-size:11px;font-weight:600;cursor:pointer;background:transparent;color:var(--text2);font-family:'Space Grotesk',sans-serif">📡 Cadence</button>
-        </div>
-      </div>
-    </div>
-    <div class="lead">
-      <div class="lav" style="background:var(--od);color:var(--o)">PM</div>
-      <div style="flex:1;min-width:0">
-        <div style="font-size:13px;font-weight:600">Paul Mballa · Douala</div>
-        <div style="font-size:11px;color:var(--text2);margin-top:1px">💬 WhatsApp · Mode · 23 min</div>
-        <div class="sent sent-hes">🤔 Sentiment : Hésitant sur le prix</div>
-        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:5px">
-          <span class="badge bh">🔴 HOT</span>
-          <span class="badge" style="background:var(--pd);color:var(--p);border:1px solid rgba(139,92,246,.2)">Score: 78/100</span>
-          <span class="badge bk">Conv. 75%</span>
-        </div>
-        <div class="score-100"><div class="score-100-fill" style="width:78%"></div><div class="score-100-mark" style="left:78%"></div></div>
+<!-- PAGE 3: DASHBOARD -->
+<div class="pg" id="pg-app">
+  <div class="hdr">
+    <div class="hrow">
+      <div class="logo"><img src="logo.png" alt="" onerror="this.style.display='none'"><div class="ltxt">Growth<span>AI Africa</span></div></div>
+      <div style="display:flex;gap:8px">
+        <div class="hbtn" onclick="gNav('pg-notif','bni-notif')">🔔<div class="hdot"></div></div>
+        <div class="hbtn" onclick="gNav('pg-prof','bni-prof')" style="background:var(--g);border-color:var(--g);color:#fff;font-weight:800;font-size:13px">A</div>
       </div>
     </div>
   </div>
-  <div class="ipane" id="crm-warm">
-    <div class="tip"><strong>Cadence active :</strong> Relances WhatsApp programmées dans 6h pour ces 8 prospects.</div>
-    <div class="lead"><div class="lav" style="background:var(--od);color:var(--o)">SF</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600">Sandra Foka · Yaoundé</div><div style="font-size:11px;color:var(--text2)">📘 Facebook · Mode · 2h</div><div class="sent sent-neu">😐 Sentiment : Neutre · En réflexion</div><div style="display:flex;gap:5px;margin-top:5px"><span class="badge bw2">🟡 WARM</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3)">Score: 52/100 · Relance dans 4h</span></div><div class="score-100"><div class="score-100-fill sf-warm" style="width:52%"></div></div></div></div>
-    <div class="lead"><div class="lav" style="background:var(--bd);color:var(--b)">JK</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600">Jean Kamga · Bafoussam</div><div style="font-size:11px;color:var(--text2)">💬 WhatsApp · Mode · 5h</div><div class="sent sent-hes">🤔 Sentiment : Hésitant sur livraison</div><div style="display:flex;gap:5px;margin-top:5px"><span class="badge bw2">🟡 WARM</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3)">Score: 61/100 · Relance dans 1h</span></div><div class="score-100"><div class="score-100-fill sf-warm" style="width:61%"></div></div></div></div>
-  </div>
-  <div class="ipane" id="crm-conv">
-    <div style="background:var(--gd);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:14px;margin-bottom:12px;text-align:center">
-      <div style="font-family:'DM Mono',monospace;font-size:28px;font-weight:500;color:var(--g)">675 000</div>
-      <div style="font-size:11px;color:var(--text2);margin-top:4px">FCFA générés ce mois · 18 conversions · Taux: 14%</div>
-    </div>
-    <div class="lead"><div class="lav" style="background:var(--gd);color:var(--g)">BF</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Béatrice Fotso</div><div style="font-size:11px;color:var(--text2)">3 commandes · CA: 135 000 FCFA</div><div class="sent sent-pos">😊 Cliente fidèle · Très satisfaite</div><div style="display:flex;gap:5px;margin-top:5px"><span class="badge bk">✅ Converti</span><span class="badge bc">⭐ Fidèle</span></div></div><div style="font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:var(--g)">135k</div></div>
-  </div>
-  <div class="ipane" id="crm-cad">
-    <div class="tip"><strong>Cadence multi-canal :</strong> Séquence automatique FB→WA→Email→Urgence pour chaque prospect non converti.</div>
-    <div class="card" style="margin-bottom:10px">
-      <div style="font-size:12px;font-weight:600;margin-bottom:10px;color:var(--g)">Séquence Active — Marie Nguema</div>
-      <div class="cadence-step"><div class="cad-num done">✓</div><div><div class="cad-title">📘 Facebook</div><div class="cad-desc">Message initial envoyé</div><div class="cad-time">Jour 1 · Il y a 2h</div></div></div>
-      <div class="cadence-step"><div class="cad-num active">2</div><div><div class="cad-title">💬 WhatsApp</div><div class="cad-desc">Relance en cours</div><div class="cad-time">Jour 1 · Dans 4h</div></div></div>
-      <div class="cadence-step"><div class="cad-num">3</div><div><div class="cad-title">🎁 Offre -10%</div><div class="cad-desc">Si pas de réponse</div><div class="cad-time">Jour 2</div></div></div>
-      <div class="cadence-step"><div class="cad-num">4</div><div><div class="cad-title">⚡ Urgence finale</div><div class="cad-desc">Dernier message · Stock limité</div><div class="cad-time">Jour 4</div></div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════
-     PAGE 4 — ANALYTICS REVENUS
-══════════════════════════════════════ -->
-<div class="pg" id="pg-analytics">
-  <div class="hdr"><div class="hrow"><div class="logo-t">Growth<span>AI</span> · Analytics</div><div class="chip chip-g"><div class="live-dot ld-g"></div>Live</div></div></div>
-  <div class="itabs">
-    <div class="itab on" onclick="iTab('an-rev',this)">💰 Revenus</div>
-    <div class="itab" onclick="iTab('an-scen',this)">🎯 Scénarios</div>
-    <div class="itab" onclick="iTab('an-signal',this)">📡 Signaux</div>
-    <div class="itab" onclick="iTab('an-sent',this)">😊 Sentiment</div>
-  </div>
-
-  <div class="ipane on" id="an-rev">
-    <div class="rev-hero">
-      <div style="font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">CA généré par l'Agent IA</div>
-      <div class="rev-val">240 000</div>
-      <div style="font-size:11px;color:var(--text2);margin-top:6px">FCFA · Avril 2026 · ↑ +18%</div>
-      <div style="display:flex;justify-content:center;gap:14px;margin-top:14px">
-        <div style="text-align:center"><div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:var(--g)">14%</div><div style="font-size:10px;color:var(--text3);margin-top:2px">Conversion</div></div>
-        <div style="width:1px;background:var(--br2)"></div>
-        <div style="text-align:center"><div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:var(--o)">3.8x</div><div style="font-size:10px;color:var(--text3);margin-top:2px">ROI Ads</div></div>
-        <div style="width:1px;background:var(--br2)"></div>
-        <div style="text-align:center"><div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:var(--b)">28</div><div style="font-size:10px;color:var(--text3);margin-top:2px">Ventes</div></div>
-        <div style="width:1px;background:var(--br2)"></div>
-        <div style="text-align:center"><div style="font-family:'DM Mono',monospace;font-size:16px;font-weight:500;color:var(--p)">82</div><div style="font-size:10px;color:var(--text3);margin-top:2px">Score moy.</div></div>
-      </div>
-    </div>
-    <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Revenus par canal</div>
-    <div class="bar-chart">
-      <div class="bar-row"><div class="bar-lbl">Facebook</div><div class="bar-track"><div class="bar-fill" style="width:68%;background:linear-gradient(90deg,#1877f2,#4facfe)"></div></div><div class="bar-val">163 000</div></div>
-      <div class="bar-row"><div class="bar-lbl">WhatsApp</div><div class="bar-track"><div class="bar-fill" style="width:24%;background:linear-gradient(90deg,#25d366,#128c7e)"></div></div><div class="bar-val">58 000</div></div>
-      <div class="bar-row"><div class="bar-lbl">Instagram</div><div class="bar-track"><div class="bar-fill" style="width:8%;background:linear-gradient(90deg,#e1306c,#f77737)"></div></div><div class="bar-val">19 000</div></div>
-    </div>
-    <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;margin-top:16px">Heure optimale de vente</div>
-    <div class="bar-chart">
-      <div class="bar-row"><div class="bar-lbl">7h–12h</div><div class="bar-track"><div class="bar-fill" style="width:45%;background:var(--b)"></div></div><div class="bar-val">18%</div></div>
-      <div class="bar-row"><div class="bar-lbl">12h–15h</div><div class="bar-track"><div class="bar-fill" style="width:75%;background:var(--g)"></div></div><div class="bar-val">32%</div></div>
-      <div class="bar-row"><div class="bar-lbl">18h–21h</div><div class="bar-track"><div class="bar-fill" style="width:90%;background:var(--r)"></div></div><div class="bar-val">38%</div></div>
-      <div class="bar-row"><div class="bar-lbl">21h–7h</div><div class="bar-track"><div class="bar-fill" style="width:28%;background:var(--p)"></div></div><div class="bar-val">12%</div></div>
-    </div>
-    <div class="tip"><strong>💡 Insight IA :</strong> 18h-21h génère 38% des ventes. Boostez vos publicités Meta sur ce créneau pour +40% de ROI.</div>
-  </div>
-
-  <div class="ipane" id="an-scen">
-    <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Performance par scénario</div>
-    <div class="card" style="margin-bottom:10px;border-color:var(--g)">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-        <div style="width:32px;height:32px;border-radius:8px;background:var(--gd);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🏆</div>
-        <div><div style="font-size:13px;font-weight:600">Urgence + Localisation</div><div style="font-size:11px;color:var(--text2)">"Je cherche robe urgente Yaoundé"</div></div>
-      </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        <span style="font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:6px;background:rgba(0,0,0,.3);color:var(--text2)">Conv: 38%</span>
-        <span style="font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:6px;background:rgba(0,0,0,.3);color:var(--text2)">Moy: 35k FCFA</span>
-        <span style="font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:6px;background:rgba(0,0,0,.3);color:var(--text2)">Score: 12+</span>
-        <span style="font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:6px;background:var(--gd);color:var(--g)">ROI: 4.2x</span>
-      </div>
-    </div>
-    <div class="card" style="margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="width:32px;height:32px;border-radius:8px;background:var(--od);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">📦</div><div><div style="font-size:13px;font-weight:600">Gros Volume / Grossiste</div><div style="font-size:11px;color:var(--text2)">"Combien pour 10 unités ?"</div></div></div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap"><span style="font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:6px;background:rgba(0,0,0,.3);color:var(--text2)">Conv: 29%</span><span style="font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:6px;background:rgba(0,0,0,.3);color:var(--text2)">Moy: 120k FCFA</span><span style="font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:6px;background:var(--od);color:var(--o)">ROI: 3.8x</span></div>
-    </div>
-    <div class="card" style="margin-bottom:10px">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px"><div style="width:32px;height:32px;border-radius:8px;background:var(--bd);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">💬</div><div><div style="font-size:13px;font-weight:600">Prix d'abord</div><div style="font-size:11px;color:var(--text2)">"C'est combien la robe rouge ?"</div></div></div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap"><span style="font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:6px;background:rgba(0,0,0,.3);color:var(--text2)">Conv: 18%</span><span style="font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:6px;background:rgba(0,0,0,.3);color:var(--text2)">Moy: 25k FCFA</span><span style="font-family:'DM Mono',monospace;font-size:10px;padding:2px 8px;border-radius:6px;background:var(--bd);color:var(--b)">ROI: 2.1x</span></div>
-    </div>
-    <div class="tip"><strong>💡 Recommandation IA :</strong> Boostez le scénario "Urgence + Localisation" avec Meta Ads ciblant femmes 18-35 Yaoundé pour maximiser le ROI.</div>
-  </div>
-
-  <div class="ipane" id="an-signal">
-    <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Signaux détectés aujourd'hui</div>
-    <div class="tip"><strong>Signal-Led Selling :</strong> L'agent contacte automatiquement les prospects dans les 5 minutes après détection d'un signal d'intérêt.</div>
-    <div class="lead" style="border-color:rgba(244,63,94,.3)"><div class="lav" style="background:var(--rd);color:var(--r)">📡</div><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600">Visite page produit</div><div style="font-size:11px;color:var(--text2)">Marie N. · Page "Robes soirée" · 3 min sur site</div><div class="sent sent-pos">✅ Agent a contacté · Il y a 2 min</div></div></div>
-    <div class="lead"><div class="lav" style="background:var(--od);color:var(--o)">📡</div><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600">Clic publicité Facebook</div><div style="font-size:11px;color:var(--text2)">Jean K. · Pub "Collection été" · Bafoussam</div><div class="sent sent-hes">⏳ Agent contacte dans 3 min</div></div></div>
-    <div class="lead"><div class="lav" style="background:var(--bd);color:var(--b)">📡</div><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600">Message WhatsApp entrant</div><div style="font-size:11px;color:var(--text2)">Inconnu · "Bonjour vous vendez quoi ?"</div><div class="sent sent-neu">🤖 Agent répond automatiquement</div></div></div>
-    <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px">Stats signaux ce mois</div>
-    <div class="bar-chart">
-      <div class="bar-row"><div class="bar-lbl">Visites site</div><div class="bar-track"><div class="bar-fill" style="width:80%;background:var(--r)"></div></div><div class="bar-val">142</div></div>
-      <div class="bar-row"><div class="bar-lbl">Clics Ads</div><div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--b)"></div></div><div class="bar-val">89</div></div>
-      <div class="bar-row"><div class="bar-lbl">Messages WA</div><div class="bar-track"><div class="bar-fill" style="width:45%;background:var(--g)"></div></div><div class="bar-val">67</div></div>
-      <div class="bar-row"><div class="bar-lbl">Convertis</div><div class="bar-track"><div class="bar-fill" style="width:19%;background:var(--p)"></div></div><div class="bar-val">28</div></div>
-    </div>
-  </div>
-
-  <div class="ipane" id="an-sent">
-    <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Analyse Sentiment — Ce mois</div>
-    <div class="sg" style="margin-bottom:12px">
-      <div class="kpi"><div style="font-size:18px;margin-bottom:4px">😊</div><div class="kv vg">47%</div><div class="kl">Enthousiasme</div><div class="kc">Conv: 38%</div></div>
-      <div class="kpi"><div style="font-size:18px;margin-bottom:4px">😐</div><div class="kv vb">28%</div><div class="kl">Neutre</div><div class="kc">Conv: 12%</div></div>
-      <div class="kpi"><div style="font-size:18px;margin-bottom:4px">🤔</div><div class="kv vo">18%</div><div class="kl">Hésitant</div><div class="kc o">Conv: 8%</div></div>
-      <div class="kpi"><div style="font-size:18px;margin-bottom:4px">😤</div><div class="kv vr">7%</div><div class="kl">Frustré</div><div class="kc r">Conv: 2%</div></div>
-    </div>
-    <div class="tip"><strong>💡 Insight :</strong> Les prospects "Enthousiasmes" convertissent 4x plus. L'agent adapte automatiquement son ton selon le sentiment détecté.</div>
-    <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px">Réponse agent par sentiment</div>
-    <div class="card" style="margin-bottom:8px"><div style="display:flex;gap:8px;align-items:center"><span style="font-size:16px">😊</span><div style="flex:1"><div style="font-size:12px;font-weight:600">Enthousiaste → Closer immédiatement</div><div style="font-size:11px;color:var(--text2);margin-top:2px">"On valide la commande maintenant ? 🎉"</div></div></div></div>
-    <div class="card" style="margin-bottom:8px"><div style="display:flex;gap:8px;align-items:center"><span style="font-size:16px">🤔</span><div style="flex:1"><div style="font-size:12px;font-weight:600">Hésitant → Lever l'objection</div><div style="font-size:11px;color:var(--text2);margin-top:2px">"Je comprends 😊 Garantie satisfait ou échangé !"</div></div></div></div>
-    <div class="card" style="margin-bottom:8px"><div style="display:flex;gap:8px;align-items:center"><span style="font-size:16px">😤</span><div style="flex:1"><div style="font-size:12px;font-weight:600">Frustré → Empathie + Offre spéciale</div><div style="font-size:11px;color:var(--text2);margin-top:2px">"Je comprends vraiment 🙏 Offre spéciale -15% pour vous !"</div></div></div></div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════
-     PAGE 5 — PITCH ROOM (Simulateur Vente)
-══════════════════════════════════════ -->
-<div class="pg" id="pg-pitch">
-  <div class="hdr"><div class="hrow"><div class="logo-t">Growth<span>AI</span> · Pitch Room</div><div class="chip chip-o">🎭 Entraînement</div></div></div>
   <div class="scr">
-    <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6">Entraînez-vous à vendre face à des clients IA difficiles. Recevez un score et des conseils personnalisés.</div>
-
-    <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Choisissez un scénario difficile</div>
-
-    <div class="pitch-scenario on" onclick="selectPitch(this,'nego')" id="ps-nego">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-        <div style="font-size:20px">💰</div>
-        <div><div style="font-size:13px;font-weight:600">Client qui négocie le prix</div><div style="font-size:11px;color:var(--text2)">"C'est trop cher, votre concurrent fait moins cher"</div></div>
-        <div class="chip chip-r" style="margin-left:auto">Difficile</div>
-      </div>
+    <div style="margin-bottom:16px">
+      <div style="font-size:11px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Mercredi 16 Avril 2026</div>
+      <div style="font-family:'Syne',sans-serif;font-size:21px;font-weight:800">Bonjour, <span style="color:var(--g)">Ambera</span> 👋</div>
+      <div style="font-size:12px;color:var(--t2);margin-top:3px">Résumé commercial du jour</div>
     </div>
-    <div class="pitch-scenario" onclick="selectPitch(this,'urgent')" id="ps-urgent">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-        <div style="font-size:20px">⚡</div>
-        <div><div style="font-size:13px;font-weight:600">Client pressé qui compare</div><div style="font-size:11px;color:var(--text2)">"J'ai vu le même ailleurs, pourquoi vous choisir ?"</div></div>
-        <div class="chip chip-o" style="margin-left:auto">Moyen</div>
-      </div>
+    <div class="alrt" onclick="gNav('pg-crm','bni-crm')">
+      <div style="font-size:24px">🔴</div>
+      <div><div style="font-size:13px;font-weight:700;color:var(--g)">3 prospects chauds en attente !</div><div style="font-size:11px;color:var(--t2);margin-top:2px">Répondez maintenant pour ne pas perdre ces ventes</div></div>
+      <div style="color:var(--g);font-size:16px;margin-left:auto">→</div>
     </div>
-    <div class="pitch-scenario" onclick="selectPitch(this,'gros')" id="ps-gros">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-        <div style="font-size:20px">📦</div>
-        <div><div style="font-size:13px;font-weight:600">Grossiste qui veut rabais volume</div><div style="font-size:11px;color:var(--text2)">"Je veux 50 pièces, quel est votre meilleur prix ?"</div></div>
-        <div class="chip chip-g" style="margin-left:auto">Opportunité</div>
-      </div>
+    <div class="sg">
+      <div class="sc" onclick="gNav('pg-chat','bni-chat')"><div style="font-size:16px;margin-bottom:6px">💬</div><div class="sv cb">47</div><div class="sl">Messages reçus</div><div class="scg">↑ +12 aujourd'hui</div></div>
+      <div class="sc" onclick="gNav('pg-crm','bni-crm')"><div style="font-size:16px;margin-bottom:6px">🔥</div><div class="sv cr">3</div><div class="sl">Prospects chauds</div><div class="scg">↑ +1 ce matin</div></div>
+      <div class="sc" onclick="gNav('pg-pub','bni-pub')"><div style="font-size:16px;margin-bottom:6px">📝</div><div class="sv" style="color:#7c3aed">5</div><div class="sl">Posts planifiés</div><div class="scg">↑ 2 aujourd'hui</div></div>
+      <div class="sc" onclick="gNav('pg-ads','bni-ads')"><div style="font-size:16px;margin-bottom:6px">📣</div><div class="sv" style="color:#db2777">2</div><div class="sl">Pubs actives</div><div class="scg">ROI 3.8x</div></div>
+      <div class="sc"><div style="font-size:16px;margin-bottom:6px">✅</div><div class="sv cg">4</div><div class="sl">Ventes aujourd'hui</div><div class="scg">↑ +2 vs hier</div></div>
+      <div class="sc"><div style="font-size:16px;margin-bottom:6px">💰</div><div class="sv co">240k</div><div class="sl">CA ce mois (FCFA)</div><div class="scg">↑ +18%</div></div>
     </div>
-    <div class="pitch-scenario" onclick="selectPitch(this,'angry')" id="ps-angry">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-        <div style="font-size:20px">😤</div>
-        <div><div style="font-size:13px;font-weight:600">Client mécontent / réclamation</div><div style="font-size:11px;color:var(--text2)">"Ma commande n'est pas arrivée, c'est scandaleux !"</div></div>
-        <div class="chip chip-r" style="margin-left:auto">Critique</div>
-      </div>
-    </div>
-
-    <button onclick="startPitch()" style="width:100%;padding:14px;border-radius:11px;border:none;background:var(--g);color:#fff;font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-top:4px;margin-bottom:16px">🎭 Démarrer la simulation</button>
-
-    <!-- RÉSULTAT PITCH -->
-    <div class="pitch-result" id="pitch-result">
-      <div style="font-size:13px;font-weight:600;color:var(--text2);text-align:center;margin-bottom:12px">Résultat de votre simulation</div>
-      <div class="score-circle" style="--pct:0deg" id="pitch-circle">
-        <div class="score-circle-val" id="pitch-score">72</div>
-      </div>
-      <div style="font-size:11px;color:var(--text2);text-align:center;margin-bottom:14px">Score de vente · <span id="pitch-level" style="color:var(--g)">Bon commercial</span></div>
-      <div id="pitch-feedback"></div>
-      <button onclick="startPitch()" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--br2);background:transparent;color:var(--text2);font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;cursor:pointer;margin-top:8px">🔄 Recommencer</button>
-    </div>
+    <div class="sttl">🔴 Prospects chauds <span class="slnk" onclick="gNav('pg-crm','bni-crm')">Voir tous →</span></div>
+    <div class="prc" onclick="gNav('pg-chat','bni-chat')"><div class="pav" style="background:var(--rd)">👩</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">Marie Nguema</div><div style="font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">"Je veux commander 3 robes taille M"</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div style="font-size:10px;color:var(--t3)">5 min</div><div class="bdg bh">🔴 Chaud</div></div></div>
+    <div class="prc" onclick="gNav('pg-chat','bni-chat')"><div class="pav" style="background:var(--od)">👨</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">Paul Mballa</div><div style="font-size:11px;color:var(--t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">"Combien pour 10 unités ?"</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div style="font-size:10px;color:var(--t3)">23 min</div><div class="bdg bh">🔴 Chaud</div></div></div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════
-     PAGE 6 — CONFIG AGENT
-══════════════════════════════════════ -->
+<!-- PAGE 4: PUBLICATIONS -->
+<div class="pg" id="pg-pub">
+  <div class="hdr"><div class="hrow"><div class="ltxt logo">Growth<span>AI Africa</span></div><button onclick="genPost()" style="background:var(--g);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">✨ Créer</button></div></div>
+  <div class="itabs">
+    <div class="itab on" onclick="iTab('pub-cr',this)">✨ Créer IA</div>
+    <div class="itab" onclick="iTab('pub-pl',this)">📅 Planifiées</div>
+    <div class="itab" onclick="iTab('pub-pu',this)">✅ Publiées</div>
+    <div class="itab" onclick="iTab('pub-st',this)">📈 Stats</div>
+  </div>
+  <div class="ipane on" id="pub-cr">
+    <div style="background:linear-gradient(135deg,#f0fdf4,#f8fafb);border:1px solid rgba(22,163,74,.2);border-radius:14px;padding:14px;margin-bottom:12px">
+      <div style="font-size:13px;font-weight:800;color:var(--g);margin-bottom:10px">🤖 Générateur IA</div>
+      <input style="width:100%;background:#fff;border:1px solid var(--br);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--t);font-family:'Plus Jakarta Sans',sans-serif;outline:none;margin-bottom:10px" placeholder="Décrivez votre publication...">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+        <span style="padding:4px 12px;border-radius:16px;font-size:11px;font-weight:700;background:var(--gd);border:1px solid rgba(22,163,74,.3);color:var(--g);cursor:pointer">📸 Post produit</span>
+        <span style="padding:4px 12px;border-radius:16px;font-size:11px;font-weight:700;background:#fff;border:1px solid var(--br);color:var(--t2);cursor:pointer">🎉 Promotion</span>
+        <span style="padding:4px 12px;border-radius:16px;font-size:11px;font-weight:700;background:#fff;border:1px solid var(--br);color:var(--t2);cursor:pointer">🎬 Vidéo</span>
+      </div>
+      <button id="gen-btn" onclick="genPost()" style="width:100%;padding:12px;border-radius:11px;border:none;background:var(--g);color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer">✨ Générer avec l'IA</button>
+    </div>
+    <div id="gen-res" style="display:none">
+      <div class="pub"><div class="pub-img" style="background:#f0fdf4">👗<div class="pub-tag pt-p">🤖 Généré</div></div><div style="padding:12px 14px"><div style="font-size:13px;font-weight:700;margin-bottom:5px">Nouvelle collection robes d'été</div><div style="font-size:12px;color:var(--t2);line-height:1.6;margin-bottom:10px">✨ NOUVELLE COLLECTION ! Robes S à XL. Livraison Yaoundé 24h. 15k–45k FCFA</div><div style="display:flex;gap:8px"><button style="flex:1;padding:9px;border-radius:9px;border:none;font-size:12px;font-weight:700;cursor:pointer;background:var(--g);color:#fff;font-family:'Plus Jakarta Sans',sans-serif">📤 Publier</button><button style="flex:1;padding:9px;border-radius:9px;border:1px solid var(--b);font-size:12px;font-weight:700;cursor:pointer;background:var(--bd);color:var(--b);font-family:'Plus Jakarta Sans',sans-serif">📅 Planifier</button></div></div></div>
+    </div>
+  </div>
+  <div class="ipane" id="pub-pl">
+    <div class="pub"><div class="pub-img" style="background:#eff6ff">👗<div class="pub-tag pt-s">Aujourd'hui 18h</div></div><div style="padding:12px 14px"><div style="font-size:13px;font-weight:700">Nouvelle collection robes</div><div style="font-size:11px;color:var(--t2);margin-top:4px">📘📸 Facebook + Instagram</div></div></div>
+    <div class="pub"><div class="pub-img" style="background:#fefce8">🏷️<div class="pub-tag pt-s">Demain 9h</div></div><div style="padding:12px 14px"><div style="font-size:13px;font-weight:700">Promo weekend -15%</div><div style="font-size:11px;color:var(--t2);margin-top:4px">💬 WhatsApp Status</div></div></div>
+  </div>
+  <div class="ipane" id="pub-pu">
+    <div class="pub"><div class="pub-img" style="background:#fdf2f8">💄<div class="pub-tag pt-p">✓ Publié hier</div></div><div style="padding:12px 14px"><div style="font-size:13px;font-weight:700">Collection cosmétiques</div><div style="display:flex;gap:12px;margin-top:6px"><span style="font-size:10px;color:var(--t2)">👁️ 1.2k</span><span style="font-size:10px;color:var(--t2)">❤️ 87</span><span style="font-size:10px;color:var(--g);font-weight:700">🛒 5 ventes</span></div></div></div>
+  </div>
+  <div class="ipane" id="pub-st">
+    <div class="sg">
+      <div class="sc"><div class="sv cb">6.5k</div><div class="sl">Vues cette semaine</div><div class="scg">↑ +28%</div></div>
+      <div class="sc"><div class="sv cg">28</div><div class="sl">Ventes via posts</div><div class="scg">↑ +8</div></div>
+      <div class="sc"><div class="sv co">420k</div><div class="sl">CA généré (FCFA)</div><div class="scg">↑ +35%</div></div>
+      <div class="sc"><div class="sv" style="color:#db2777">386</div><div class="sl">Interactions</div><div class="scg">↑ +15%</div></div>
+    </div>
+    <div class="tip"><strong>Meilleur créneau :</strong> 18h-20h génère 2.4x plus d'engagement.</div>
+  </div>
+</div>
+
+<!-- PAGE 5: PUBLICITÉS -->
+<div class="pg" id="pg-ads">
+  <div class="hdr"><div class="hrow"><div class="ltxt logo">Growth<span>AI Africa</span></div><button style="background:linear-gradient(135deg,#1877f2,#e1306c);color:#fff;border:none;border-radius:10px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif">+ Créer</button></div></div>
+  <div class="scr">
+    <div class="rh">
+      <div style="font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">Performance ce mois</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center">
+        <div><div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--g)">3.8x</div><div style="font-size:10px;color:var(--t2);margin-top:2px">ROI moyen</div></div>
+        <div><div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--o)">380k</div><div style="font-size:10px;color:var(--t2);margin-top:2px">CA (FCFA)</div></div>
+        <div><div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--b)">2.1k</div><div style="font-size:10px;color:var(--t2);margin-top:2px">Touchées</div></div>
+      </div>
+    </div>
+    <div class="sttl">🟢 Campagnes actives</div>
+    <div class="adc">
+      <div class="adc-h"><div style="width:36px;height:36px;border-radius:10px;background:#eff6ff;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">📘📸</div><div style="flex:1"><div style="font-size:13px;font-weight:700">Collection Robes — Yaoundé</div><div style="font-size:11px;color:var(--t2);margin-top:1px">🎯 Femmes 18-35 ans</div></div><div style="font-size:10px;font-weight:800;padding:3px 9px;border-radius:8px;background:var(--gd);color:var(--g);border:1px solid rgba(22,163,74,.2)">● Actif</div></div>
+      <div class="adc-s"><div><div class="asv cb">1.2k</div><div class="asl">Touchées</div></div><div><div class="asv cg">84</div><div class="asl">Clics</div></div><div><div class="asv co">12</div><div class="asl">Ventes</div></div><div><div class="asv cg">4.1x</div><div class="asl">ROI</div></div></div>
+      <div class="adf"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t2);margin-bottom:3px"><span>Budget utilisé</span><span style="font-weight:700">6 500 / 10 000 FCFA</span></div><div class="bbar"><div class="bfill" style="width:65%"></div></div><div class="adacts"><button class="adbn ap">⏸ Pause</button><button class="adbn ae">✏️ Modifier</button></div></div>
+    </div>
+    <div class="tip"><strong>🎯 Retargeting :</strong> ROI 5.2x sur les visiteurs ayant déjà interagi.</div>
+  </div>
+</div>
+
+<!-- PAGE 6: CRM -->
+<div class="pg" id="pg-crm">
+  <div class="hdr"><div class="hrow"><div class="ltxt logo">Growth<span>AI Africa</span></div><div style="font-size:11px;color:var(--t3)">👥 18 clients</div></div></div>
+  <div class="itabs">
+    <div class="itab on" onclick="iTab('crm-pi',this)">🔄 Pipeline</div>
+    <div class="itab" onclick="iTab('crm-cl',this)">✅ Clients</div>
+    <div class="itab" onclick="iTab('crm-ve',this)">💰 Ventes</div>
+  </div>
+  <div class="ipane on" id="crm-pi">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
+      <div class="sc" style="padding:10px 6px;text-align:center"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--r)">3</div><div style="font-size:9px;color:var(--t2);margin-top:2px">🔴 Chauds</div></div>
+      <div class="sc" style="padding:10px 6px;text-align:center"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--o)">8</div><div style="font-size:9px;color:var(--t2);margin-top:2px">🟡 Moyens</div></div>
+      <div class="sc" style="padding:10px 6px;text-align:center"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--b)">7</div><div style="font-size:9px;color:var(--t2);margin-top:2px">🔵 Faibles</div></div>
+      <div class="sc" style="padding:10px 6px;text-align:center;border-color:var(--g)"><div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--g)">18</div><div style="font-size:9px;color:var(--t2);margin-top:2px">✅ Clients</div></div>
+    </div>
+    <div class="sttl">🔴 Agir maintenant</div>
+    <div class="prc" onclick="gNav('pg-chat','bni-chat')"><div class="pav" style="background:var(--rd)">👩</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">Marie Nguema</div><div style="font-size:11px;color:var(--t2)">📘 Facebook · Robes · 5 min</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="bdg bh">🔴 Chaud</div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--g)">75 000</div></div></div>
+    <div class="prc" onclick="gNav('pg-chat','bni-chat')"><div class="pav" style="background:var(--od)">👨</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700">Paul Mballa</div><div style="font-size:11px;color:var(--t2)">💬 WhatsApp · 10 unités</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="bdg bh">🔴 Chaud</div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--g)">150 000</div></div></div>
+  </div>
+  <div class="ipane" id="crm-cl">
+    <div class="prc"><div class="pav" style="background:var(--gd)">👩</div><div style="flex:1"><div style="font-size:13px;font-weight:700">Béatrice Fotso</div><div style="font-size:11px;color:var(--t2)">3 commandes · Dernière : hier</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="bdg bk">⭐ Fidèle</div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--g)">135 000</div></div></div>
+    <div class="prc"><div class="pav" style="background:var(--bd)">👩</div><div style="flex:1"><div style="font-size:13px;font-weight:700">Sandra Ekotto</div><div style="font-size:11px;color:var(--t2)">5 commandes · Cliente fidèle</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="bdg bk">⭐ Fidèle</div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--g)">280 000</div></div></div>
+  </div>
+  <div class="ipane" id="crm-ve">
+    <div class="sg">
+      <div class="sc"><div class="sv cg">240k</div><div class="sl">CA ce mois</div><div class="scg">↑ +18%</div></div>
+      <div class="sc"><div class="sv co">28</div><div class="sl">Ventes ce mois</div><div class="scg">↑ +6</div></div>
+    </div>
+    <div class="prc"><div class="pav" style="background:var(--gd)">👩</div><div style="flex:1"><div style="font-size:13px;font-weight:700">Béatrice Fotso</div><div style="font-size:11px;color:var(--t2)">✅ Robes x2 + Sac · MTN · 2h</div></div><div style="display:flex;flex-direction:column;align-items:flex-end"><div class="bdg bk">✅ Payé</div><div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--g);margin-top:4px">45 000</div></div></div>
+  </div>
+</div>
+
+<!-- PAGE 7: NOTIFICATIONS -->
+<div class="pg" id="pg-notif">
+  <div class="hdr"><div class="hrow"><div class="ltxt logo">Growth<span>AI Africa</span></div><div style="font-size:12px;font-weight:700;color:var(--g);cursor:pointer">Tout lire</div></div></div>
+  <div class="scr">
+    <div style="font-size:12px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Aujourd'hui</div>
+    <div class="ni ur"><div class="nico" style="background:var(--rd)">🔴</div><div style="flex:1"><div style="font-size:13px;font-weight:700">Prospect chaud détecté !</div><div style="font-size:11px;color:var(--t2);margin-top:2px;line-height:1.5">Marie Nguema veut commander 3 robes</div><div style="font-size:10px;color:var(--t3);margin-top:4px">Il y a 5 min</div></div><div class="ndot"></div></div>
+    <div class="ni ur"><div class="nico" style="background:var(--gd)">✅</div><div style="flex:1"><div style="font-size:13px;font-weight:700">Vente conclue !</div><div style="font-size:11px;color:var(--t2);margin-top:2px;line-height:1.5">Béatrice Fotso a payé 45 000 FCFA</div><div style="font-size:10px;color:var(--t3);margin-top:4px">Il y a 2h</div></div><div class="ndot"></div></div>
+    <div class="ni"><div class="nico" style="background:var(--bd)">📣</div><div style="flex:1"><div style="font-size:13px;font-weight:700">Campagne performante</div><div style="font-size:11px;color:var(--t2);margin-top:2px;line-height:1.5">Pub "Robes Yaoundé" — ROI 4.1x</div><div style="font-size:10px;color:var(--t3);margin-top:4px">Il y a 4h</div></div></div>
+    <div class="ni"><div class="nico" style="background:var(--od)">📊</div><div style="flex:1"><div style="font-size:13px;font-weight:700">Rapport hebdomadaire</div><div style="font-size:11px;color:var(--t2);margin-top:2px;line-height:1.5">47 messages, 3 ventes, ROI 3.8x</div><div style="font-size:10px;color:var(--t3);margin-top:4px">Hier 7h</div></div></div>
+  </div>
+</div>
+
+<!-- PAGE 8: PROFIL -->
 <div class="pg" id="pg-prof">
-  <div class="hdr"><div class="hrow"><div class="logo-t">Growth<span>AI</span> · Config</div><div style="font-size:11px;font-family:'DM Mono',monospace;color:var(--text3)">v3.0</div></div></div>
+  <div class="hdr"><div class="hrow"><div class="ltxt logo">Growth<span>AI Africa</span></div><div style="font-size:14px;cursor:pointer;color:var(--t2)">✏️</div></div></div>
   <div class="scr">
-    <!-- PROFIL -->
-    <div style="background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(59,130,246,.05));border:1px solid rgba(16,185,129,.2);border-radius:14px;padding:20px;text-align:center;margin-bottom:16px">
-      <div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--g),var(--b));display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 10px;box-shadow:0 0 25px rgba(16,185,129,.3)">🏪</div>
-      <div style="font-size:18px;font-weight:600">Boutique Ambera</div>
-      <div style="font-size:12px;color:var(--text2);margin-top:3px">Mode & Vêtements · Yaoundé · Cameroun</div>
-      <div style="font-size:11px;font-weight:600;padding:3px 12px;border-radius:8px;background:var(--gd);color:var(--g);border:1px solid rgba(16,185,129,.2);display:inline-block;margin-top:8px">⭐ Plan Pro · 40 000 FCFA/mois</div>
+    <div class="ph">
+      <div class="phav">🏪</div>
+      <div style="font-family:'Syne',sans-serif;font-size:19px;font-weight:800">Boutique Ambera</div>
+      <div style="font-size:12px;color:var(--t2);margin-top:3px">Mode & Vêtements • Yaoundé</div>
+      <div style="font-size:12px;font-weight:700;padding:4px 12px;border-radius:10px;background:var(--gd);color:var(--g);border:1px solid rgba(22,163,74,.2);display:inline-block;margin-top:6px">⭐ Plan Pro — 40 000 FCFA/mois</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:14px">
+        <div style="background:#fff;border-radius:10px;padding:10px;text-align:center;box-shadow:var(--sh)"><div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--g)">240k</div><div style="font-size:10px;color:var(--t3);margin-top:2px">CA ce mois</div></div>
+        <div style="background:#fff;border-radius:10px;padding:10px;text-align:center;box-shadow:var(--sh)"><div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--g)">18</div><div style="font-size:10px;color:var(--t3);margin-top:2px">Clients</div></div>
+        <div style="background:#fff;border-radius:10px;padding:10px;text-align:center;box-shadow:var(--sh)"><div style="font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:var(--g)">3.8x</div><div style="font-size:10px;color:var(--t3);margin-top:2px">ROI</div></div>
+      </div>
     </div>
-
-    <!-- SECTEUR -->
-    <div class="sttl">Secteur d'activité (obligatoire)</div>
-    <div class="sect-grid" style="margin-bottom:14px">
-      <div class="sect-card on" onclick="switchSector(this,'mode','Mode & Vêtements')"><div class="sect-icon">👗</div><div class="sect-lbl">Mode</div></div>
-      <div class="sect-card" onclick="switchSector(this,'beaute','Beauté')"><div class="sect-icon">💄</div><div class="sect-lbl">Beauté</div></div>
-      <div class="sect-card" onclick="switchSector(this,'resto','Restaurant')"><div class="sect-icon">🍽️</div><div class="sect-lbl">Restaurant</div></div>
-      <div class="sect-card" onclick="switchSector(this,'automobile','Automobile')"><div class="sect-icon">🚗</div><div class="sect-lbl">Automobile</div></div>
-      <div class="sect-card" onclick="switchSector(this,'tech','Téléphonie')"><div class="sect-icon">📱</div><div class="sect-lbl">Téléphonie</div></div>
-      <div class="sect-card" onclick="switchSector(this,'coiffure','Coiffure')"><div class="sect-icon">💇‍♀️</div><div class="sect-lbl">Coiffure</div></div>
-    </div>
-
-    <!-- FONCTIONNALITÉS RINGOVER -->
-    <div class="sttl">Fonctionnalités Agent IA</div>
+    <div class="sttl">⚙️ Paramètres</div>
     <div class="scard">
-      <div class="si"><div style="font-size:16px;width:26px;text-align:center">🤖</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Agent autonome</div><div style="font-size:10px;color:var(--text2)">Vend sans intervention humaine</div></div><div class="tgl on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
-      <div class="si"><div style="font-size:16px;width:26px;text-align:center">📡</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Signal-Led Selling</div><div style="font-size:10px;color:var(--text2)">Contact dans 5 min après signal</div></div><div class="tgl on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
-      <div class="si"><div style="font-size:16px;width:26px;text-align:center">😊</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Sentiment Analysis</div><div style="font-size:10px;color:var(--text2)">Adapte le ton selon l'émotion</div></div><div class="tgl on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
-      <div class="si"><div style="font-size:16px;width:26px;text-align:center">🧠</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Copilote IA temps réel</div><div style="font-size:10px;color:var(--text2)">Suggestions pendant la conversation</div></div><div class="tgl on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
-      <div class="si"><div style="font-size:16px;width:26px;text-align:center">📡</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Cadence Multi-Canal</div><div style="font-size:10px;color:var(--text2)">FB→WA→Email→Urgence auto</div></div><div class="tgl on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
-      <div class="si"><div style="font-size:16px;width:26px;text-align:center">⚡</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Offre flash (Score 85+)</div><div style="font-size:10px;color:var(--text2)">-10% automatique si score critique</div></div><div class="tgl on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
-      <div class="si"><div style="font-size:16px;width:26px;text-align:center">🌍</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Multilangue FR/EN/Mix</div><div style="font-size:10px;color:var(--text2)">Détection + réponse automatique</div></div><div class="tgl on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
-      <div class="si"><div style="font-size:16px;width:26px;text-align:center">🌙</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Mode nuit (20h–7h)</div><div style="font-size:10px;color:var(--text2)">Agent continue de vendre</div></div><div class="tgl on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
+      <div class="si"><div style="font-size:18px;width:28px;text-align:center">🤖</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Réponses automatiques</div></div><div class="tgl on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
+      <div class="si"><div style="font-size:18px;width:28px;text-align:center">🔔</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Notifications WhatsApp</div></div><div class="tgl on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
+      <div class="si"><div style="font-size:18px;width:28px;text-align:center">🌙</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Mode nuit (20h-7h)</div></div><div class="tgl on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
+      <div class="si"><div style="font-size:18px;width:28px;text-align:center">🔄</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Relances automatiques</div></div><div class="tgl on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div></div>
     </div>
-
-    <!-- CANAUX -->
-    <div class="sttl">Canaux connectés</div>
+    <div class="sttl">📱 Plateformes</div>
     <div class="scard">
-      <div class="si"><div style="font-size:16px;width:26px;text-align:center">📘</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Facebook</div><div style="font-size:10px;color:var(--g)">● Connecté · Scraping 2h</div></div><div style="font-size:12px;color:var(--text3)">→</div></div>
-      <div class="si"><div style="font-size:16px;width:26px;text-align:center">💬</div><div style="flex:1"><div style="font-size:13px;font-weight:600">WhatsApp Business</div><div style="font-size:10px;color:var(--g)">● Connecté · UltraMsg</div></div><div style="font-size:12px;color:var(--text3)">→</div></div>
-      <div class="si"><div style="font-size:16px;width:26px;text-align:center">📸</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Instagram</div><div style="font-size:10px;color:var(--o)">⏳ En cours</div></div><div style="font-size:12px;color:var(--text3)">→</div></div>
-      <div class="si"><div style="font-size:16px;width:26px;text-align:center">🌐</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Web Chat</div><div style="font-size:10px;color:var(--g)">● Actif · Intégré</div></div><div style="font-size:12px;color:var(--text3)">→</div></div>
+      <div class="si"><div style="font-size:18px;width:28px;text-align:center">📘</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Facebook</div><div style="font-size:11px;color:var(--g)">● Connecté</div></div><div style="font-size:13px;color:var(--t3)">→</div></div>
+      <div class="si"><div style="font-size:18px;width:28px;text-align:center">💬</div><div style="flex:1"><div style="font-size:13px;font-weight:600">WhatsApp Business</div><div style="font-size:11px;color:var(--g)">● Connecté</div></div><div style="font-size:13px;color:var(--t3)">→</div></div>
+      <div class="si"><div style="font-size:18px;width:28px;text-align:center">📸</div><div style="flex:1"><div style="font-size:13px;font-weight:600">Instagram</div><div style="font-size:11px;color:var(--o)">⏳ En attente</div></div><div style="font-size:13px;color:var(--t3)">→</div></div>
     </div>
     <div class="scard" style="margin-top:6px">
-      <div class="si" onclick="openMod()"><div style="font-size:16px;width:26px;text-align:center">➕</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--g)">Ajouter un nouveau client</div></div></div>
-      <div class="si"><div style="font-size:16px;width:26px;text-align:center">🚪</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--r)">Se déconnecter</div></div></div>
+      <div class="si"><div style="font-size:18px;width:28px;text-align:center">🚪</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--r)">Se déconnecter</div></div></div>
     </div>
   </div>
 </div>
 
 <!-- BOTTOM NAV -->
 <div class="bnav">
-  <div class="bni on" id="bni-dash" onclick="gNav('pg-dash','bni-dash')"><div class="bni-i">🏠</div><div class="bni-l">Agent</div></div>
-  <div class="bni" id="bni-chat" onclick="gNav('pg-chat','bni-chat')"><div class="bni-i">💬</div><div class="bni-l">Chat IA</div><div class="bni-b">3</div></div>
-  <div class="bni" id="bni-leads" onclick="gNav('pg-leads','bni-leads')"><div class="bni-i">👥</div><div class="bni-l">CRM</div><div class="bni-b">3</div></div>
-  <div class="bni" id="bni-analytics" onclick="gNav('pg-analytics','bni-analytics')"><div class="bni-i">📊</div><div class="bni-l">Analytics</div></div>
-  <div class="bni" id="bni-pitch" onclick="gNav('pg-pitch','bni-pitch')"><div class="bni-i">🎭</div><div class="bni-l">Pitch Room</div></div>
-  <div class="bni" id="bni-prof" onclick="gNav('pg-prof','bni-prof')"><div class="bni-i">⚙️</div><div class="bni-l">Config</div></div>
+  <div class="bni on" id="bni-home" onclick="gNav('pg-home','bni-home')"><div class="bni-i">🌐</div><div class="bni-l">Site</div></div>
+  <div class="bni" id="bni-app" onclick="gNav('pg-app','bni-app')"><div class="bni-i">🏠</div><div class="bni-l">Accueil</div></div>
+  <div class="bni" id="bni-chat" onclick="gNav('pg-chat','bni-chat')"><div class="bni-i">💬</div><div class="bni-l">Chat</div><div class="bni-b">3</div></div>
+  <div class="bni" id="bni-pub" onclick="gNav('pg-pub','bni-pub')"><div class="bni-i">📝</div><div class="bni-l">Posts</div></div>
+  <div class="bni" id="bni-ads" onclick="gNav('pg-ads','bni-ads')"><div class="bni-i">📣</div><div class="bni-l">Pubs</div></div>
+  <div class="bni" id="bni-crm" onclick="gNav('pg-crm','bni-crm')"><div class="bni-i">👥</div><div class="bni-l">CRM</div><div class="bni-b">3</div></div>
+  <div class="bni" id="bni-notif" onclick="gNav('pg-notif','bni-notif')"><div class="bni-i">🔔</div><div class="bni-l">Alertes</div><div class="bni-b">2</div></div>
+  <div class="bni" id="bni-prof" onclick="gNav('pg-prof','bni-prof')"><div class="bni-i">⚙️</div><div class="bni-l">Profil</div></div>
 </div>
 
-<!-- NOTIFICATION POPUP -->
-<div class="notif-pop" id="notif-pop">
-  <div style="font-size:20px" id="notif-icon">🔴</div>
-  <div style="flex:1">
-    <div style="font-size:12px;font-weight:600" id="notif-title">Signal détecté !</div>
-    <div style="font-size:11px;color:var(--text2);margin-top:1px" id="notif-body">Agent IA a répondu automatiquement</div>
-  </div>
-</div>
-
-<!-- MODAL INSCRIPTION CLIENT -->
+<!-- MODAL INSCRIPTION -->
 <div class="mov" id="mod" onclick="if(event.target===this)cMod()">
   <div class="mod">
     <div class="mh"></div>
-    <div style="font-size:18px;font-weight:700;margin-bottom:5px">➕ Nouveau client PME</div>
-    <div style="font-size:13px;color:var(--text2);margin-bottom:16px">Activer GrowthAI Africa pour ce client</div>
-    <div class="mf"><label class="ml">Nom du client *</label><input class="mi" id="f1" placeholder="Ex: Marie Nguema"></div>
-    <div class="mf"><label class="ml">Nom de l'entreprise *</label><input class="mi" id="f2" placeholder="Ex: Boutique Mode Élégance"></div>
-    <div class="mf"><label class="ml">Secteur</label><select class="mi" id="f-sect"><option value="mode">👗 Mode & Vêtements</option><option value="beaute">💄 Beauté</option><option value="resto">🍽️ Restaurant</option><option value="automobile">🚗 Automobile</option><option value="tech">📱 Téléphonie</option><option value="coiffure">💇‍♀️ Coiffure</option></select></div>
-    <div class="mf"><label class="ml">WhatsApp *</label><input class="mi" id="f3" placeholder="+237 6XX XXX XXX" type="tel"></div>
-    <div class="mf"><label class="ml">Ville</label><input class="mi" id="f4" placeholder="Yaoundé / Douala / N'Djamena..."></div>
-    <div class="mf"><label class="ml">Plan</label><select class="mi"><option>Basic — 15 000 FCFA/mois</option><option selected>Pro — 40 000 FCFA/mois</option><option>Enterprise — 65 000 FCFA/mois</option></select></div>
-    <button class="mbtn" onclick="activateClient()">✅ Activer le client maintenant</button>
+    <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:5px">🚀 Démarrer l'essai gratuit</div>
+    <div style="font-size:13px;color:var(--t2);margin-bottom:16px" id="mod-sub">30 jours gratuits — sans carte bancaire</div>
+    <div class="mf"><label class="ml">Votre prénom *</label><input class="mi" id="f1" placeholder="Ex: Marie"></div>
+    <div class="mf"><label class="ml">Nom de votre entreprise *</label><input class="mi" id="f2" placeholder="Ex: Boutique Mode Élégance"></div>
+    <div class="mf"><label class="ml">Secteur d'activité</label><select class="mi"><option>Mode & Vêtements</option><option>Beauté & Cosmétiques</option><option>Salon de Coiffure</option><option>Restaurant & Pâtisserie</option><option>Téléphones & Accessoires</option><option>E-commerce Local</option><option>Autre</option></select></div>
+    <div class="mf"><label class="ml">Numéro WhatsApp *</label><input class="mi" id="f3" placeholder="+237 6XX XXX XXX" type="tel"></div>
+    <button class="mbtn" onclick="subForm()">✅ Démarrer mon essai gratuit</button>
+  </div>
+</div>
+
+<!-- MODAL SUCCÈS -->
+<div class="mov" id="mod-ok" onclick="if(event.target===this)cOk()">
+  <div class="mod" style="text-align:center">
+    <div class="mh"></div>
+    <div style="font-size:56px;margin-bottom:14px">🎉</div>
+    <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:800;margin-bottom:8px">Bienvenue chez GrowthAI Africa !</div>
+    <div style="font-size:13px;color:var(--t2);margin-bottom:18px;line-height:1.7">Votre essai gratuit est confirmé. Notre équipe vous contactera sur WhatsApp dans les prochaines heures.</div>
+    <div style="background:var(--gd);border-radius:12px;padding:14px;margin-bottom:16px;text-align:left">
+      <div style="font-size:12px;font-weight:700;color:var(--g);margin-bottom:8px">📋 Prochaines étapes :</div>
+      <div style="font-size:12px;color:var(--t2);line-height:2">✅ Confirmation reçue<br>⏳ Appel WhatsApp dans 24h<br>⏳ Activation sous 48h<br>⏳ Premiers résultats semaine 1</div>
+    </div>
+    <button class="btn-g" onclick="cOk()">Parfait, j'attends ! 😊</button>
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
 // NAVIGATION
-// ═══════════════════════════════════════════════════════
-function gNav(pgId, bniId) {
-  document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
-  document.querySelectorAll('.bni').forEach(b => b.classList.remove('on'));
+function gNav(pgId,bniId){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.bni').forEach(b=>b.classList.remove('on'));
   document.getElementById(pgId).classList.add('on');
-  const b = document.getElementById(bniId);
-  if(b) b.classList.add('on');
+  const b=document.getElementById(bniId);if(b)b.classList.add('on');
   window.scrollTo(0,0);
 }
-function iTab(id, el) {
-  const pg = el.closest('.pg');
-  pg.querySelectorAll('.itab').forEach(t => t.classList.remove('on'));
-  pg.querySelectorAll('.ipane').forEach(p => p.classList.remove('on'));
-  document.getElementById(id).classList.add('on');
-  el.classList.add('on');
+
+// INNER TABS
+function iTab(id,el){
+  const pg=el.closest('.pg');
+  pg.querySelectorAll('.itab').forEach(t=>t.classList.remove('on'));
+  pg.querySelectorAll('.ipane').forEach(p=>p.classList.remove('on'));
+  document.getElementById(id).classList.add('on');el.classList.add('on');
 }
 
-// ═══════════════════════════════════════════════════════
-// NOTIFICATIONS
-// ═══════════════════════════════════════════════════════
-function showNotif(icon, title, body, duration=4000) {
-  const pop = document.getElementById('notif-pop');
-  document.getElementById('notif-icon').textContent = icon;
-  document.getElementById('notif-title').textContent = title;
-  document.getElementById('notif-body').textContent = body;
-  pop.classList.add('show');
-  setTimeout(() => pop.classList.remove('show'), duration);
-}
-
-// ═══════════════════════════════════════════════════════
-// AGENT TOGGLE
-// ═══════════════════════════════════════════════════════
-function toggleAgent(tgl) {
-  tgl.classList.toggle('on');
-  tgl.classList.toggle('off');
-  const on = tgl.classList.contains('on');
-  showNotif(on ? '🤖' : '⏸️', on ? 'Agent réactivé' : 'Agent en pause', on ? 'Reprise du service commercial immédiat' : 'Vous gérez manuellement les conversations');
-}
-
-// ═══════════════════════════════════════════════════════
-// SIGNAL-LED SELLING — Simulation
-// ═══════════════════════════════════════════════════════
-function triggerSignal(name, canal, action) {
-  const alert = document.getElementById('signal-alert');
-  document.getElementById('signal-desc').textContent = `${name} · ${action} · ${canal}`;
-  alert.style.display = 'flex';
-  showNotif('📡', 'Signal détecté !', `${name} montre de l'intérêt — Agent contacte dans 5 min`);
-  setTimeout(() => { alert.style.display = 'none'; }, 10000);
-}
-
-// ═══════════════════════════════════════════════════════
-// SECTOR SWITCH
-// ═══════════════════════════════════════════════════════
-window.SECTOR = 'mode';
-function switchSector(card, sector, label) {
-  document.querySelectorAll('.sect-card').forEach(c => c.classList.remove('on'));
-  card.classList.add('on');
-  window.SECTOR = sector;
-  const el = document.getElementById('agent-sector-label');
-  if(el) el.textContent = `Vendeur autonome 24h/24 · ${label}`;
-  const cl = document.getElementById('chat-sector-label');
-  if(cl) cl.textContent = label;
-  showNotif('🔄', 'Secteur mis à jour', `Agent configuré pour : ${label}`);
-}
-
-// ═══════════════════════════════════════════════════════
-// CHAT ENGINE — Agent Commercial Autonome Complet
-// ═══════════════════════════════════════════════════════
-const MSGS = {
-  mode: {
-    greeting: { fr:["Bonjour ! 👗 Vous cherchez quoi — robe, chaussure ou accessoire ?","Salut 😊 Nouvelle collection disponible ! Je vous aide ?"], en:["Hello! 👗 What are you looking for — dress, shoes, or accessories?","Hi 😊 New collection available! Can I help?"], mix:["Hello! 👗 Vous cherchez quoi today?"] },
-    qualification: { fr:["C'est pour quelle occasion — soirée, bureau ou décontracté ?","Vous avez une taille en tête ? On a S à XL 😊","C'est pour vous ou pour offrir ?"], en:["What's the occasion — evening, office, casual?","What size? We have S to XL 😊","For you or a gift?"], mix:["C'est pour quelle occasion? What size?"] },
-    offer: { fr:["On a exactement ce modèle ! 🔥 Disponible en 3 couleurs","Nouvelle collection arrivée — parfait pour vous 🎉","C'est notre bestseller — très demandé ! 💕"], en:["We have exactly that! 🔥 Available in 3 colors","New collection just arrived — perfect for you 🎉","It's our bestseller! 💕"], mix:["On a exactly ça 🔥 in 3 colors!"] },
-    objection: { fr:["Je comprends 😊 Mais cette qualité à ce prix, c'est rare à Yaoundé !","On a aussi des modèles à partir de 8 000 FCFA 😊","Garantie satisfait ou échangé — aucun risque !"], en:["I understand 😊 This quality at this price is rare!","We also have models from 8,000 FCFA 😊","Satisfaction guaranteed!"], mix:["Je comprends 😊 But this quality is rare at this price!"] },
-    closing: { fr:["C'est à 25 000 FCFA — livraison gratuite Yaoundé 🚚 On valide ?","Je vous réserve maintenant ? Stock limité ⚡","Paiement MTN ou Orange — livraison demain !"], en:["It's 25,000 FCFA — free delivery 🚚 Shall I confirm?","Should I reserve now? Limited stock ⚡","Payment MTN or Orange — delivery tomorrow!"], mix:["C'est 25,000 FCFA — free delivery! On valide?"] },
-    follow_up: { fr:["Bonjour 👗 Le modèle dont on parlait est encore dispo !","Offre spéciale aujourd'hui 🎁 -15% sur toute la collection","Stock limité ! Il reste 2 pièces 😮"], en:["Hello 👗 The model we discussed is still available!","Special offer today 🎁 -15% on entire collection","Limited stock! Only 2 left 😮"], mix:["Bonjour 👗 Still available! Promo -15% today!"] }
-  },
-  beaute: {
-    greeting: { fr:["Bonjour 💄 Maquillage, soin ou parfum aujourd'hui ?","Salut 😊 On a les meilleures marques. Je vous aide ?"], en:["Hello 💄 Makeup, skincare, or perfume today?","Hi 😊 Best beauty brands. Can I help?"], mix:["Hello 💄 Makeup, soin, ou parfum today?"] },
-    qualification: { fr:["C'est pour quel type de peau — normale, grasse ou sèche ?","Usage quotidien ou occasion spéciale ?"], en:["What skin type — normal, oily, or dry?","Daily use or special occasion?"], mix:["Quel skin type — normal, oily, dry?"] },
-    offer: { fr:["J'ai exactement ce soin pour vous 💆‍♀️ Très populaire !","Nouvelle gamme arrivée ✨ Parfaite pour vous"], en:["I have exactly that skincare 💆‍♀️ Very popular!","New range arrived ✨ Perfect for you"], mix:["J'ai exactly what you need 💆‍♀️ Very popular!"] },
-    objection: { fr:["Je comprends 😊 Ce produit dure 3 mois — très rentable !","On a aussi une version moins chère 😊"], en:["I understand 😊 Lasts 3 months — great value!","More affordable version available 😊"], mix:["Je comprends 😊 Lasts 3 months — great value!"] },
-    closing: { fr:["Ce soin est à 18 000 FCFA 😊 Livraison gratuite ! On valide ?","MTN ou Orange — je prépare votre colis 📱"], en:["This skincare is 18,000 FCFA 😊 Free delivery! Confirm?","MTN or Orange — preparing your package 📱"], mix:["Ce soin is 18,000 FCFA 😊 Free delivery! On valide?"] },
-    follow_up: { fr:["Bonjour 💄 Promo -20% sur tous les soins visage 🎁","Le soin que vous cherchiez est arrivé 😊"], en:["Hello 💄 Promo -20% on all face care 🎁","The skincare you were looking for has arrived 😊"], mix:["Bonjour 💄 Promo -20% today!"] }
-  },
-  resto: {
-    greeting: { fr:["Bonjour ! 🍽️ Commander ou réserver une table ?","Plats chauds disponibles ! Vous voulez voir le menu ? 😋"], en:["Hello! 🍽️ Order or book a table?","Hot dishes available! Want to see the menu? 😋"], mix:["Bonjour! 🍽️ Commander ou réserver today?"] },
-    qualification: { fr:["C'est pour combien de personnes ?","Livraison ou sur place ?"], en:["How many people?","Delivery or dine in?"], mix:["Pour combien de personnes? Delivery ou sur place?"] },
-    offer: { fr:["Poulet braisé à 3 500 FCFA avec riz 🍗 Livraison 30 min !","Menu du chef : ndolé + plantain à 4 500 FCFA 🔥"], en:["Grilled chicken 3,500 FCFA with rice 🍗 30 min delivery!","Chef's menu: ndolé + plantain 4,500 FCFA 🔥"], mix:["Poulet braisé 3,500 FCFA 🍗 30 min delivery!"] },
-    objection: { fr:["Portions à 1 500 FCFA disponibles 😊","Livraison gratuite dès 3 000 FCFA !"], en:["Portions at 1,500 FCFA available 😊","Free delivery from 3,000 FCFA!"], mix:["Je comprends 😊 Portions at 1,500 FCFA!"] },
-    closing: { fr:["Je valide votre commande ? Adresse de livraison ? 🚚","Paiement MTN ou Orange — livraison 30 min ⚡"], en:["Shall I confirm your order? Delivery address? 🚚","Payment MTN or Orange — 30 min delivery ⚡"], mix:["Je valide maintenant? Delivery address? 🚚"] },
-    follow_up: { fr:["Bonjour 🍽️ Menu du jour disponible ! Vous commandez ?","Vendredi spécial 🎁 2 plats = 1 boisson offerte !"], en:["Hello 🍽️ Today's menu available! Ordering?","Friday special 🎁 2 dishes = 1 free drink!"], mix:["Bonjour 🍽️ Menu today! Promo vendredi!"] }
-  },
-  automobile: {
-    greeting: { fr:["Bonjour ! 🚗 Véhicule, pièce ou service auto ?","Salut 😊 Achat, vente ou réparation ? Je vous oriente !"], en:["Hello! 🚗 Vehicle, part, or service?","Hi 😊 Buying, selling, or repairs? Let me help!"], mix:["Hello! 🚗 Vehicle, pièce, ou service today?"] },
-    qualification: { fr:["Quel type — berline, SUV ou pick-up ?","Quelle marque et quel budget ?"], en:["What type — sedan, SUV, or pickup?","Which brand and budget?"], mix:["Quel type de vehicle? Budget?"] },
-    offer: { fr:["Ce modèle est en stock 🚗 Kilométrage impeccable !","Véhicule importé — prix imbattable 💪"], en:["This model is in stock 🚗 Perfect mileage!","Imported vehicle — unbeatable price 💪"], mix:["On a ce modèle 🚗 Prix imbattable!"] },
-    objection: { fr:["Paiement en plusieurs fois possible 😊","Garantie incluse — aucun risque !"], en:["Installment payment possible 😊","Warranty included — no risk!"], mix:["Je comprends 😊 Paiement échelonné possible!"] },
-    closing: { fr:["Je bloque ce véhicule pour vous ? Stock limité ⚡","Comptant ou échelonné ? On s'adapte 😊"], en:["Shall I reserve this vehicle? Limited stock ⚡","Cash or installments? We adapt 😊"], mix:["Je bloque maintenant? Stock limité ⚡"] },
-    follow_up: { fr:["Bonjour 🚗 Le véhicule est toujours disponible !","Nouveaux arrivages cette semaine 😊"], en:["Hello 🚗 The vehicle is still available!","New arrivals this week 😊"], mix:["Bonjour 🚗 Still available! New arrivals!"] }
-  },
-  tech: {
-    greeting: { fr:["Bonjour ! 📱 Téléphone, accessoire ou réparation ?","Samsung, iPhone, Tecno... on a tout ! Je vous aide ?"], en:["Hello! 📱 Phone, accessory, or repair?","Samsung, iPhone, Tecno... we have it all!"], mix:["Hello! 📱 Phone, accessoire, ou repair today?"] },
-    qualification: { fr:["Budget — 50k, 100k, 200k FCFA ?","Usage — photos, jeux ou business ?"], en:["Budget — 50k, 100k, 200k FCFA?","Use — photos, gaming, business?"], mix:["Budget? 50k, 100k, 200k FCFA?"] },
-    offer: { fr:["Le Samsung S24 est parfait ! 📱 128GB à 195 000 FCFA","Neuf et scellé — meilleur rapport qualité-prix 🎉"], en:["Samsung S24 is perfect! 📱 128GB at 195,000 FCFA","New and sealed — best value 🎉"], mix:["Samsung S24 is parfait 📱 195,000 FCFA!"] },
-    objection: { fr:["On a aussi le A54 à 120 000 FCFA — quasi les mêmes specs !","Reprise de votre ancien téléphone possible 😊"], en:["We also have A54 at 120,000 FCFA — almost same specs!","Trade-in your old phone possible 😊"], mix:["Je comprends 😊 On a A54 at 120,000 FCFA!"] },
-    closing: { fr:["Samsung S24 à 195 000 FCFA neuf 😊 On valide ?","Livraison aujourd'hui ! MTN ou Orange 📱"], en:["Samsung S24 at 195,000 FCFA new 😊 Confirm?","Delivery today! MTN or Orange 📱"], mix:["Samsung S24 195,000 FCFA neuf 😊 On valide?"] },
-    follow_up: { fr:["Bonjour 📱 Le Samsung est encore dispo !","Promo flash — 48h seulement ⚡"], en:["Hello 📱 The Samsung is still available!","Flash sale — 48 hours only ⚡"], mix:["Bonjour 📱 Still available! Flash sale!"] }
-  },
-  coiffure: {
-    greeting: { fr:["Bonjour ! 💇‍♀️ Rendez-vous ou renseignements ?","Tresses, perruques, lissage... on fait tout ! 😊"], en:["Hello! 💇‍♀️ Appointment or info?","Braids, wigs, relaxer... we do it all! 😊"], mix:["Hello! 💇‍♀️ Appointment ou renseignements today?"] },
-    qualification: { fr:["Quel type de coiffure — tresses, perruque ou lissage ?","C'est pour quand — aujourd'hui ou cette semaine ?"], en:["What style — braids, wig, or relaxer?","When — today or this week?"], mix:["Quel type? Tresses, perruque, lissage?"] },
-    offer: { fr:["On fait exactement ça 💇‍♀️ Nos coiffeuses sont expertes !","Rendez-vous dispo dès 10h aujourd'hui !"], en:["We do exactly that 💇‍♀️ Expert stylists!","Appointment available from 10am today!"], mix:["On fait exactly ça 💇‍♀️ Available today!"] },
-    objection: { fr:["Tarifs à partir de 3 000 FCFA 😊","Qualité garantie — satisfaite ou refait !"], en:["Prices from 3,000 FCFA 😊","Quality guaranteed — not satisfied? We redo!"], mix:["Je comprends 😊 From 3,000 FCFA!"] },
-    closing: { fr:["Je vous réserve un RDV demain à 10h ? C'est à 8 000 FCFA 😊","Nom pour la réservation ? On confirme WhatsApp ✅"], en:["Shall I book you tomorrow at 10am? It's 8,000 FCFA 😊","Name for booking? WhatsApp confirmation ✅"], mix:["Je vous réserve demain at 10am — 8,000 FCFA? 😊"] },
-    follow_up: { fr:["Bonjour 💇‍♀️ Disponible ce week-end ! Vous venez ?","Promo tresses complètes à 15 000 FCFA 🎁"], en:["Hello 💇‍♀️ Available this weekend! Coming?","Full braids promo at 15,000 FCFA 🎁"], mix:["Bonjour 💇‍♀️ Available weekend! Promo!"] }
-  },
-  default: {
-    greeting: { fr:["Bonjour 😊 comment je peux vous aider ?","Salut 👋 vous cherchez quelque chose ?"], en:["Hello 😊 how can I help?","Hi 👋 what are you looking for?"], mix:["Hello 😊 comment puis-je vous aider today?"] },
-    qualification: { fr:["C'est pour quel usage ?","Dites-moi plus 😊"], en:["What exactly?","Tell me more 😊"], mix:["Tell me more, qu'est-ce qu'il vous faut?"] },
-    offer: { fr:["On a exactement ce qu'il vous faut 🔥","Bonne nouvelle — en stock ! 🎉"], en:["We have exactly what you need 🔥","Good news — in stock! 🎉"], mix:["On a exactly what you need 🔥"] },
-    objection: { fr:["Je comprends 😊 La qualité est top !","On peut s'arranger 😊"], en:["I understand 😊 Quality is top!","We can work something out 😊"], mix:["Je comprends 😊 Quality is top!"] },
-    closing: { fr:["Le prix commence à 15 000 FCFA 😊 On valide ?","Je vous réserve maintenant ?"], en:["Starting from 15,000 FCFA 😊 Confirm?","Should I reserve it?"], mix:["From 15,000 FCFA 😊 On valide?"] },
-    follow_up: { fr:["Toujours intéressé(e) ? 😊","Offre spéciale 🎁 -10% maintenant !"], en:["Still interested? 😊","Special offer 🎁 -10% now!"], mix:["Still interested? Offre spéciale 🎁"] }
-  }
+// CHAT ENGINE
+const CM={
+  greeting:{fr:["Bonjour 😊 comment je peux vous aider ?","Salut 👋 vous cherchez quelque chose ?"],en:["Hello 😊 how can I help you?","Hi 👋 what are you looking for?"],mix:["Hello 😊 comment puis-je vous aider today?"]},
+  qualification:{fr:["C'est pour quel usage exactement ?","Vous cherchez quel type précisément ?","Dites-moi plus 😊"],en:["What exactly are you looking for?","Tell me more 😊"],mix:["Tell me more, qu'est-ce qu'il vous faut?"]},
+  product_pitch:{fr:["On a exactement ce qu'il vous faut 🔥","Bonne nouvelle — on a ça en stock ! 🎉"],en:["We have exactly what you need 🔥","Good news — in stock! 🎉"],mix:["On a exactly what you need 🔥"]},
+  closing:{fr:["Le prix commence à 15 000 FCFA 😊 On valide ?","Entre 15 000 et 80 000 FCFA. Je vous réserve ?"],en:["Starting from 15,000 FCFA 😊 Shall I confirm?"],mix:["From 15,000 FCFA 😊 On valide?"]},
+  delivery:{fr:["Livraison Yaoundé sous 24h 🚚 Livraison gratuite !"],en:["Delivery within 24h 🚚 Free!"],mix:["Livraison within 24h 🚚 Free!"]},
+  payment:{fr:["Paiement MTN Money ou Orange Money 📱"],en:["Payment via MTN or Orange Money 📱"],mix:["Payment MTN ou Orange Money 📱"]},
+  follow_up:{fr:["Vous êtes toujours intéressé(e) ? 😊","Offre spéciale 🎁 -10% maintenant !"],en:["Still interested? 😊","Special offer 🎁 -10% now!"],mix:["Still interested? Offre spéciale 🎁"]},
+  not_understood:{fr:["Désolé, je n'ai pas compris 😅 Reformulez ?"],en:["Sorry 😅 Can you rephrase?"],mix:["Sorry 😅 je n'ai pas compris."]}
 };
+const CS={fr:["tranquille 😄","on gère ça"],en:["no worries 😄","we got you"],mix:["no worry 😄","on gère ça"]};
+let cst={language:"fr",stage:"greeting",score:0,lead_status:"COLD"};
 
-// ─── SENTIMENT ANALYSIS ───────────────────────────────────
-function analyzeSentiment(msg) {
-  msg = msg.toLowerCase();
-  const positive = ["super","excellent","parfait","génial","j'adore","top","j'aime","oui","ok","bien","voilà","d'accord","wow","cool","amazing","great","love","yes","perfect","want","order","commander","acheter"];
-  const negative = ["non","pas","jamais","trop cher","expensive","cher","mauvais","nul","déçu","problème","réclamation","scandaleux","pas content","bad","terrible","disappointed","angry","awful"];
-  const hesitant = ["peut-être","je sais pas","hésit","réfléchis","pas sûr","maybe","not sure","think","compare","comparison","concurrent","ailleurs","cheaper","moins cher"];
-  let pos = 0, neg = 0, hes = 0;
-  positive.forEach(w => { if(msg.includes(w)) pos++; });
-  negative.forEach(w => { if(msg.includes(w)) neg++; });
-  hesitant.forEach(w => { if(msg.includes(w)) hes++; });
-  if(neg > pos && neg > hes) return { type:'negative', label:'😤 Frustré', class:'sent-neg', response:'empathy' };
-  if(hes > pos) return { type:'hesitant', label:'🤔 Hésitant', class:'sent-hes', response:'objection' };
-  if(pos > 0) return { type:'positive', label:'😊 Enthousiaste', class:'sent-pos', response:'closing' };
-  return { type:'neutral', label:'😐 Neutre', class:'sent-neu', response:'qualification' };
+function rnd(a){return a[Math.floor(Math.random()*a.length)];}
+function dL(m){
+  m=m.toLowerCase();
+  const en=["hello","hi","price","buy","need","how much","i want","i need","looking","delivery"];
+  const fr=["bonjour","salut","prix","acheter","besoin","cherche","je veux","livraison","combien"];
+  let es=0,fs=0;en.forEach(w=>{if(m.includes(w))es++;});fr.forEach(w=>{if(m.includes(w))fs++;});
+  if(es>fs)return"en";if(fs>es)return"fr";if(es>0&&fs>0)return"mix";return"fr";
 }
-
-// ─── SCORE 0-100 ──────────────────────────────────────────
-function calcScore100(msg) {
-  msg = msg.toLowerCase();
-  let s = 0;
-  // Haute intention
-  ["je veux commander","i want to buy","je prends","confirmer","valider","commander maintenant"].forEach(w => { if(msg.includes(w)) s += 30; });
-  ["je cherche","i need","looking for","je veux","besoin"].forEach(w => { if(msg.includes(w)) s += 20; });
-  // Produit
-  ["robe","chaussure","perruque","sac","téléphone","voiture","dress","wig","bag","phone","car"].forEach(w => { if(msg.includes(w)) s += 15; });
-  // Urgence
-  ["urgent","today","aujourd'hui","maintenant","vite","asap","demain"].forEach(w => { if(msg.includes(w)) s += 15; });
-  // Localisation
-  ["yaoundé","douala","bafoussam","bamenda","livraison","delivery"].forEach(w => { if(msg.includes(w)) s += 10; });
-  // Prix
-  ["prix","combien","how much","price","tarif"].forEach(w => { if(msg.includes(w)) s += 5; });
-  return Math.min(s, 100);
+function dI(m){
+  m=m.toLowerCase();
+  if(["prix","price","combien","how much"].some(w=>m.includes(w)))return"closing";
+  if(["acheter","buy","commander","je prends","valider"].some(w=>m.includes(w)))return"closing";
+  if(["livraison","delivery","yaoundé","douala"].some(w=>m.includes(w)))return"delivery";
+  if(["mtn","orange money","wave","payer"].some(w=>m.includes(w)))return"payment";
+  if(["cherche","need","looking","veux","want","besoin","vous avez"].some(w=>m.includes(w)))return"qualification";
+  if(["bonjour","hello","hi","salut"].some(w=>m.includes(w)))return"greeting";
+  return"not_understood";
 }
-
-// ─── COPILOTE IA ──────────────────────────────────────────
-function updateCopilot(msg, sentiment, score) {
-  const cop = document.getElementById('copilot');
-  const sugg = document.getElementById('cop-suggestions');
-  if(!cop || !sugg) return;
-  let suggestions = [];
-  if(score >= 85) {
-    suggestions = [
-      { tag:'CLOSER', tagClass:'ct-close', text:'⚡ Score critique — Offre flash -10% maintenant !' },
-      { tag:'CLOSER', tagClass:'ct-close', text:'✅ "On valide la commande ? Livraison demain !" ' }
-    ];
-  } else if(sentiment.type === 'hesitant') {
-    suggestions = [
-      { tag:'OBJECTION', tagClass:'ct-obj', text:'💪 "Garantie satisfait ou échangé — aucun risque !"' },
-      { tag:'OBJECTION', tagClass:'ct-obj', text:'💰 "Paiement en 2 fois possible MTN/Orange 😊"' }
-    ];
-  } else if(sentiment.type === 'negative') {
-    suggestions = [
-      { tag:'EMPATHIE', tagClass:'ct-obj', text:'🙏 "Je comprends vraiment votre frustration..."' },
-      { tag:'SOLUTION', tagClass:'ct-close', text:'🎁 "Offre spéciale -15% + priorité livraison !"' }
-    ];
-  } else if(score >= 40) {
-    suggestions = [
-      { tag:'QUALIFIER', tagClass:'ct-qual', text:'❓ "C\'est pour quelle occasion exactement ?"' },
-      { tag:'QUALIFIER', tagClass:'ct-qual', text:'📦 "Vous avez un budget en tête ?"' }
-    ];
-  } else {
-    suggestions = [
-      { tag:'ACCUEIL', tagClass:'ct-qual', text:'👋 "Bonjour ! Comment puis-je vous aider ?"' }
-    ];
-  }
-  if(suggestions.length > 0) {
-    cop.style.display = 'block';
-    sugg.innerHTML = suggestions.map(s =>
-      `<div class="cop-sugg" onclick="useSuggestion('${s.text.replace(/'/g,"\\'")}')">
-        <span class="cop-tag ${s.tagClass}">${s.tag}</span>
-        <span style="flex:1;font-size:11px">${s.text}</span>
-      </div>`
-    ).join('');
-  }
+function cSc(m){
+  m=m.toLowerCase();let s=0;
+  ["je cherche","je veux","i need","i want","looking for","besoin"].forEach(w=>{if(m.includes(w))s+=5;});
+  ["robe","chaussure","perruque","sac","téléphone","dress","shoes","wig","bag","phone"].forEach(w=>{if(m.includes(w))s+=3;});
+  ["urgent","vite","today","aujourd'hui","maintenant"].forEach(w=>{if(m.includes(w))s+=2;});
+  ["yaoundé","douala","livraison","delivery"].forEach(w=>{if(m.includes(w))s+=2;});
+  ["prix","price","combien","how much"].forEach(w=>{if(m.includes(w))s+=1;});
+  return s;
 }
+const FL={greeting:"qualification",qualification:"product_pitch",product_pitch:"closing",closing:"delivery",delivery:"payment",payment:"follow_up",follow_up:"follow_up",not_understood:"not_understood"};
 
-window.useSuggestion = function(text) {
-  document.getElementById('cin').value = text.replace(/"/g,'').replace(/^\w+\s*/,'');
-};
-
-// ─── AGENT REPLY ENGINE ───────────────────────────────────
-function getAgentReply(userMsg, sentiment, score) {
-  const msg = userMsg.toLowerCase();
-  const lang = detectLang(userMsg);
-  const sectorMsgs = MSGS[window.SECTOR] || MSGS.default;
-  let step = 'greeting';
-  // Décision basée sur sentiment + contenu + score
-  if(['acheter','buy','commander','order','je prends','valider','confirmer'].some(w => msg.includes(w))) step = 'closing';
-  else if(['cher','expensive','concurrent','moins cher','cheaper','trop'].some(w => msg.includes(w)) || sentiment.type === 'negative' || sentiment.type === 'hesitant') step = 'objection';
-  else if(score >= 85) step = 'closing'; // Offre flash si score critique
-  else if(['prix','price','combien','how much'].some(w => msg.includes(w))) step = 'closing';
-  else if(['livraison','delivery','yaoundé','douala'].some(w => msg.includes(w))) step = 'closing';
-  else if(['cherche','need','looking','veux','want','besoin'].some(w => msg.includes(w))) step = 'offer';
-  else if(['bonjour','hello','hi','salut'].some(w => msg.includes(w))) step = 'greeting';
-  else step = 'qualification';
-  const pool = sectorMsgs[step]?.[lang] || sectorMsgs[step]?.fr || MSGS.default[step]?.fr || ['Je suis là pour vous aider 😊'];
-  let reply = pool[Math.floor(Math.random() * pool.length)];
-  // Offre flash si score >= 85
-  if(score >= 85) {
-    const flash = {
-      fr: " ⚡ OFFRE FLASH : -10% si vous commandez dans les 30 prochaines minutes !",
-      en: " ⚡ FLASH OFFER: -10% if you order in the next 30 minutes!",
-      mix: " ⚡ FLASH OFFER: -10% dans les 30 min !"
-    };
-    reply += flash[lang] || flash.fr;
-  }
+function pChat(msg){
+  const lang=dL(msg);const intent=dI(msg);
+  const nsc=cst.score+cSc(msg);
+  const ls=nsc>=8?"HOT":nsc>=5?"WARM":"COLD";
+  const nxt=intent!=="not_understood"?(FL[intent]||FL[cst.stage]):"not_understood";
+  const pool=CM[nxt]?.[lang]||CM[nxt]?.fr||["Je suis là 😊"];
+  let reply=rnd(pool);
+  if(Math.random()>.5&&CS[lang])reply+=" "+rnd(CS[lang]);
+  cst={...cst,language:lang,stage:nxt,score:nsc,lead_status:ls};
   return reply;
 }
 
-function detectLang(m) {
-  m = m.toLowerCase();
-  const en = ["hello","hi","price","buy","need","how much","i want","i need","looking","delivery","available","what","cheaper"];
-  const fr = ["bonjour","salut","prix","acheter","besoin","cherche","je veux","livraison","combien","merci","trop","cher"];
-  let es = 0, fs = 0;
-  en.forEach(w => { if(m.includes(w)) es++; });
-  fr.forEach(w => { if(m.includes(w)) fs++; });
-  if(es > fs) return "en";
-  if(fs > es) return "fr";
-  if(es > 0 && fs > 0) return "mix";
-  return "fr";
+function addCMsg(txt,type){
+  const area=document.getElementById("carea");
+  const tw=document.getElementById("tw");
+  const w=document.createElement("div");
+  w.className=`bbl ${type==="bot"?"":"out"}`;
+  const b=document.createElement("div");
+  b.className=`bb ${type==="bot"?"bb-in":"bb-out"}`;
+  if(type==="bot"){const l=document.createElement("div");l.className="ai-lbl";l.textContent="🤖 GrowthAI Africa";b.appendChild(l);}
+  const p=document.createElement("p");p.textContent=txt;b.appendChild(p);
+  const t=document.createElement("div");t.className="mt";
+  t.textContent=new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
+  if(type!=="bot"){const tk=document.createElement("span");tk.className="tick";tk.textContent=" ✓✓";t.appendChild(tk);}
+  b.appendChild(t);w.appendChild(b);
+  area.insertBefore(w,tw);area.scrollTop=area.scrollHeight;
 }
 
-// ─── CHAT UI ──────────────────────────────────────────────
-let agentScore = 0;
-
-function addMsg(txt, type, extra='') {
-  const area = document.getElementById("carea");
-  const tw = document.getElementById("tw");
-  const w = document.createElement("div");
-  w.className = `msg ${type === "bot" ? "" : "out"}`;
-  const b = document.createElement("div");
-  b.className = `bubble ${type === "bot" ? "b-ai" : "b-out"}`;
-  if(type === "bot") {
-    const chip = document.createElement("div");
-    chip.className = "ai-chip";
-    chip.innerHTML = `<span style="width:5px;height:5px;background:var(--g);border-radius:50%;display:inline-block"></span> AGENT IA · ${(window.SECTOR || 'mode').toUpperCase()}`;
-    b.appendChild(chip);
-  }
-  const p = document.createElement("p");
-  p.textContent = txt;
-  b.appendChild(p);
-  if(extra) {
-    const ex = document.createElement("div");
-    ex.style.cssText = "margin-top:6px;font-size:11px;padding:5px 8px;border-radius:6px;background:rgba(0,0,0,.3);color:var(--text2)";
-    ex.textContent = extra;
-    b.appendChild(ex);
-  }
-  const meta = document.createElement("div");
-  meta.className = "msg-meta";
-  meta.textContent = new Date().toLocaleTimeString("fr-FR",{hour:"2-digit",minute:"2-digit"});
-  if(type !== "bot") {
-    const tick = document.createElement("span");
-    tick.className = "tick"; tick.textContent = " ✓✓";
-    meta.appendChild(tick);
-  }
-  b.appendChild(meta);
-  w.appendChild(b);
-  area.insertBefore(w, tw);
-  area.scrollTop = area.scrollHeight;
+function updUI(){
+  const bdg=document.getElementById("cbdg");
+  const nb=document.getElementById("cnb");
+  const st=document.getElementById("cst");
+  bdg.textContent=`Score: ${cst.score} — ${cst.lead_status}`;
+  bdg.style.background=cst.lead_status==="HOT"?"rgba(220,38,38,.3)":cst.lead_status==="WARM"?"rgba(217,119,6,.3)":"rgba(255,255,255,.15)";
+  if(cst.lead_status==="HOT"){nb.style.display="block";st.textContent="🔴 Prospect chaud — Commercial notifié !";setTimeout(()=>{nb.style.display="none";},5000);}
+  else if(cst.lead_status==="WARM"){st.textContent="🟡 Prospect tiède — Relance dans 6h";}
 }
 
-function updateChatUI(score, sentiment) {
-  const bdg = document.getElementById("cbdg");
-  const nb = document.getElementById("cnb");
-  const st = document.getElementById("cst");
-  const sb = document.getElementById("sent-badge");
-  if(bdg) { bdg.textContent = `${score}/100`; bdg.style.background = score>=85?"rgba(244,63,94,.2)":score>=50?"rgba(245,158,11,.15)":"rgba(16,185,129,.12)"; bdg.style.color = score>=85?"var(--r)":score>=50?"var(--o)":"var(--g)"; }
-  if(sb) sb.textContent = sentiment.label;
-  if(score >= 85) {
-    if(nb) nb.style.display = "block";
-    if(st) st.textContent = "🔴 PROSPECT CHAUD · Offre flash activée · Cadence démarrée";
-    showNotif('🔴', `Prospect HOT — Score ${score}/100`, 'Offre flash -10% envoyée · Cadence multi-canal activée');
-    setTimeout(() => { if(nb) nb.style.display = "none"; }, 7000);
-  } else if(score >= 50) {
-    if(st) st.textContent = "🟡 Prospect tiède · Relance dans 6h";
-  }
-}
+window.sendChat=function(){
+  const inp=document.getElementById("cin");
+  const txt=inp.value.trim();if(!txt)return;
+  addCMsg(txt,"user");inp.value="";inp.style.height="auto";
+  const tw=document.getElementById("tw");
+  tw.style.display="flex";document.getElementById("carea").scrollTop=9999;
+  setTimeout(()=>{tw.style.display="none";addCMsg(pChat(txt),"bot");updUI();},800+Math.random()*700);
+};
+window.sendQ=function(t){document.getElementById("cin").value=t;sendChat();};
 
-// Suggestions copilote pendant la frappe
-window.onTyping = function(val) {
-  if(val.length < 3) return;
-  const sentiment = analyzeSentiment(val);
-  const score = calcScore100(val);
-  updateCopilot(val, sentiment, score);
+// SIMULATION
+const SIM={
+  h1:{score:12,level:"HOT",tags:["intent +5","produit +3","urgence +2","location +2"],reply:"On a exactement ce qu'il vous faut 🔥 Robes taille M : 25 000–45 000 FCFA. Livraison gratuite Yaoundé ! On valide ? 😊",notif:true},
+  h2:{score:10,level:"HOT",tags:["intent +5","produit +3","urgence +2"],reply:"We have exactly what you need 🔥 Wigs from 15,000 FCFA. Free delivery Yaounde! Shall I confirm? 😊",notif:true},
+  w1:{score:7,level:"WARM",tags:["intent +5","location +2"],reply:"Bonjour 😊 Oui, nous livrons dans toute la ville ! Qu'est-ce que vous souhaitez commander ? 🍽️",notif:false},
+  w2:{score:6,level:"WARM",tags:["produit +3","prix +1","intent +2"],reply:"Le Samsung S24 est disponible ! À partir de 350 000 FCFA, neuf avec garantie 📱",notif:false},
+  c1:{score:0,level:"COLD",tags:["salutation"],reply:"Bonjour 😊 Bienvenue chez GrowthAI Africa ! Comment puis-je vous aider aujourd'hui ?",notif:false}
 };
 
-window.sendChat = function() {
-  const inp = document.getElementById("cin");
-  const txt = inp.value.trim();
-  if(!txt) return;
-  addMsg(txt, "user");
-  inp.value = ""; inp.style.height = "auto";
-  // Analyser
-  const sentiment = analyzeSentiment(txt);
-  const newScore = Math.min(agentScore + calcScore100(txt), 100);
-  agentScore = newScore;
-  const tw = document.getElementById("tw");
-  if(tw) tw.style.display = "flex";
-  document.getElementById("carea").scrollTop = 9999;
-  // Délai réaliste
-  setTimeout(() => {
-    if(tw) tw.style.display = "none";
-    const reply = getAgentReply(txt, sentiment, newScore);
-    const extra = sentiment.type !== 'neutral' ? `${sentiment.label} · Score: ${newScore}/100` : '';
-    addMsg(reply, "bot", extra);
-    updateChatUI(newScore, sentiment);
-    updateCopilot(txt, sentiment, newScore);
-  }, 700 + Math.random() * 800);
+window.sim=function(btn,key){
+  document.querySelectorAll('.sim-b').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  const s=SIM[key];
+  const lc=s.level==="HOT"?"background:var(--rd);color:var(--r)":s.level==="WARM"?"background:var(--od);color:var(--o)":"background:var(--s2);color:var(--t3)";
+  document.getElementById('sim-sc').innerHTML=`<span style="font-size:11px;font-weight:800;padding:3px 12px;border-radius:16px;${lc}">${s.level==="HOT"?"🔴":s.level==="WARM"?"🟡":"🔵"} ${s.level}</span><span style="font-size:12px;font-weight:700;color:var(--t2)">Score: ${s.score}</span>${s.tags.map(t=>`<span style="font-size:10px;padding:2px 8px;border-radius:8px;background:var(--s2);color:var(--t3)">${t}</span>`).join('')}`;
+  document.getElementById('sim-rp').innerHTML=`<strong>🤖 Réponse automatique :</strong><br><br>${s.reply}`;
+  document.getElementById('sim-nt').style.display=s.notif?'flex':'none';
+  const r=document.getElementById('sim-r');r.classList.add('on');r.scrollIntoView({behavior:'smooth',block:'nearest'});
 };
 
-window.sendQ = function(t) { document.getElementById("cin").value = t; sendChat(); };
+// FAQ
+window.faq=function(item){
+  const a=item.querySelector('.fqa');const open=a.classList.contains('on');
+  document.querySelectorAll('.fqa').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.fqi').forEach(x=>x.classList.remove('on'));
+  if(!open){a.classList.add('on');item.classList.add('on');}
+};
 
-// ═══════════════════════════════════════════════════════
-// PITCH ROOM
-// ═══════════════════════════════════════════════════════
-let currentPitch = 'nego';
-function selectPitch(el, id) {
-  document.querySelectorAll('.pitch-scenario').forEach(p => p.classList.remove('on'));
-  el.classList.add('on');
-  currentPitch = id;
-  document.getElementById('pitch-result').classList.remove('on');
-}
-
-function startPitch() {
-  const scores = { nego: 72, urgent: 85, gros: 68, angry: 59 };
-  const feedbacks = {
-    nego: [
-      { type:'good', text:'✅ Vous avez bien valorisé la qualité du produit' },
-      { type:'good', text:'✅ La garantie satisfait/échangé rassure le client' },
-      { type:'bad', text:'❌ Vous avez cédé trop vite sur le prix — tenez la valeur !' },
-      { type:'tip', text:'💡 Technique : "Ce prix inclut livraison + garantie — valeur réelle 35 000 FCFA"' }
-    ],
-    urgent: [
-      { type:'good', text:'✅ Bonne réponse à la comparaison concurrente' },
-      { type:'good', text:'✅ Vous avez créé l\'urgence avec le stock limité' },
-      { type:'tip', text:'💡 Ajoutez : "Livraison aujourd\'hui — ils font demain minimum"' }
-    ],
-    gros: [
-      { type:'good', text:'✅ Excellente gestion du volume' },
-      { type:'bad', text:'❌ Vous avez proposé le rabais trop tôt — d\'abord montrer la valeur !' },
-      { type:'tip', text:'💡 Technique : "Pour 50 pièces, je peux faire un tarif exclusif — mais d\'abord..." ' }
-    ],
-    angry: [
-      { type:'good', text:'✅ Bonne empathie initiale' },
-      { type:'bad', text:'❌ Vous n\'avez pas proposé de solution concrète assez vite' },
-      { type:'tip', text:'💡 Règle des 3C : Comprendre → Compatir → Corriger immédiatement' }
-    ]
-  };
-  const score = scores[currentPitch] || 72;
-  const fb = feedbacks[currentPitch] || feedbacks.nego;
-  const levels = score >= 80 ? ['🏆 Expert commercial','var(--g)'] : score >= 65 ? ['⭐ Bon commercial','var(--o)'] : ['📚 En progression','var(--b)'];
-  const result = document.getElementById('pitch-result');
-  document.getElementById('pitch-score').textContent = score;
-  document.getElementById('pitch-level').textContent = levels[0];
-  document.getElementById('pitch-level').style.color = levels[1];
-  const pct = Math.round(score / 100 * 360);
-  document.getElementById('pitch-circle').style.setProperty('--pct', `${pct}deg`);
-  document.getElementById('pitch-circle').style.background = `conic-gradient(var(--g) ${pct}deg, var(--br2) 0)`;
-  document.getElementById('pitch-feedback').innerHTML = fb.map(f =>
-    `<div class="feedback-item fi-${f.type === 'good' ? 'good' : f.type === 'bad' ? 'bad' : 'tip'}">${f.text}</div>`
-  ).join('');
-  result.classList.add('on');
-  result.scrollIntoView({behavior:'smooth', block:'nearest'});
-  showNotif('🎭', `Simulation terminée — Score: ${score}/100`, levels[0]);
-}
-
-// ═══════════════════════════════════════════════════════
 // MODAL
-// ═══════════════════════════════════════════════════════
-window.openMod = function() { document.getElementById('mod').classList.add('on'); };
-window.cMod = function() { document.getElementById('mod').classList.remove('on'); };
-window.activateClient = function() {
-  const name = document.getElementById('f1').value.trim();
-  const biz = document.getElementById('f2').value.trim();
-  const phone = document.getElementById('f3').value.trim();
-  if(!name || !biz || !phone) { alert('Remplissez tous les champs !'); return; }
-  cMod();
-  showNotif('✅', `${biz} activé !`, `Agent IA configuré pour ${name} · Secteur: ${document.getElementById('f-sect').value}`);
+window.oMod=function(plan=''){
+  if(plan)document.getElementById('mod-sub').textContent=`Plan ${plan} — 30 jours gratuits`;
+  document.getElementById('mod').classList.add('on');
+};
+window.cMod=function(){document.getElementById('mod').classList.remove('on');};
+window.cOk=function(){document.getElementById('mod-ok').classList.remove('on');};
+window.subForm=function(){
+  const p=document.getElementById('f1').value.trim();
+  const e=document.getElementById('f2').value.trim();
+  const ph=document.getElementById('f3').value.trim();
+  if(!p||!e||!ph){alert('Remplissez tous les champs !');return;}
+  cMod();document.getElementById('mod-ok').classList.add('on');
 };
 
-// ═══════════════════════════════════════════════════════
+// PUBLICATIONS
+window.genPost=function(){
+  const btn=document.getElementById('gen-btn');
+  btn.textContent='🤖 Génération...';btn.disabled=true;
+  setTimeout(()=>{btn.textContent='✨ Générer avec l\'IA';btn.disabled=false;document.getElementById('gen-res').style.display='block';},1500);
+};
+
+// WHATSAPP
+window.cWA=function(){
+  const msg=encodeURIComponent("Bonjour GrowthAI Africa ! Je veux tester gratuitement 30 jours.");
+  window.open(`https://wa.me/237678658152?text=${msg}`,'_blank');
+};
+
 // INIT
-// ═══════════════════════════════════════════════════════
-setTimeout(() => {
-  addMsg("Bonjour 😊 Agent Commercial GrowthAI Africa activé. Je suis prêt à vendre à votre place — 24h/24, sans intervention humaine. Testez-moi avec un message client !", "bot");
-}, 600);
-
-// Signal-Led Selling demo
-setTimeout(() => {
-  triggerSignal('Marie N.', 'Facebook', 'A visité la page "Robes soirée" · 3 min');
-}, 5000);
-
-// Notification live
-setTimeout(() => {
-  showNotif('💬', 'Nouveau message entrant', 'Jean K. · WhatsApp · "Bonjour vous vendez quoi ?"');
-}, 10000);
+setTimeout(()=>{addCMsg("Bonjour 😊 Bienvenue chez GrowthAI Africa ! Comment puis-je vous aider ?","bot");},600);
 </script>
 </body>
 </html>

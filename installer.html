@@ -604,6 +604,23 @@ setPersistence(auth, browserLocalPersistence).catch(()=>{});
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = '/auth'; return; }
   currentUser = user;
+
+  // Vérifier le rôle → seuls les installateurs peuvent accéder
+  try {
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    const role = userDoc.exists() ? userDoc.data().role : null;
+    if (role !== 'installateur') {
+      // Client ou rôle inconnu → pas accès ici
+      alert('⛔ Accès réservé aux installateurs certifiés Tracium.');
+      window.location.href = '/app';
+      return;
+    }
+  } catch(e) {
+    console.error('Erreur vérification rôle', e);
+    window.location.href = '/app';
+    return;
+  }
+
   await loadInstallerProfile();
   await loadMissions();
   await loadCommissions();

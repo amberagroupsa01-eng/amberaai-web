@@ -1,5 +1,13 @@
 {
   "version": 2,
+  "headers": [
+    {
+      "source": "/(.*).html",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+      ]
+    }
+  ],
   "routes": [
     {
       "src": "/manifest.json",
@@ -48,6 +56,10 @@
     {
       "src": "/installer",
       "dest": "/installer.html"
+    },
+    {
+      "src": "/installer-auth",
+      "dest": "/installer-auth.html"
     },
     {
       "src": "/shop",
